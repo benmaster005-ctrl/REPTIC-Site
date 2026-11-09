@@ -3,7 +3,9 @@
 import { z } from "zod";
 import { isSupabaseConfigured } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
+import { after } from "next/server";
 import { emailSchema, fieldErrors, formValues, isLikelySpam, type FormState } from "@/lib/forms";
+import { internalRecipient, sendTemplated } from "@/lib/email/send";
 
 const NEWSLETTER_CONSENT =
   "J'accepte de recevoir la lettre d'information de REPTIC.CM. Je peux me désinscrire à tout moment.";
@@ -82,5 +84,13 @@ export async function sendContactMessage(_prev: FormState, formData: FormData): 
     console.error("sendContactMessage", error.message);
     return { status: "error", message: "Une erreur est survenue. Réessayez plus tard.", values: formValues(formData, CONTACT_FIELDS) };
   }
+  after(async () =>
+    sendTemplated(
+      "contact.received",
+      await internalRecipient(),
+      { nom: row.full_name, email: row.email, telephone: row.phone || null, objet: row.subject, message: row.message },
+      { replyTo: row.email },
+    ),
+  );
   return { status: "success", message: "Merci, votre message a bien été envoyé. Nous vous répondrons rapidement." };
 }

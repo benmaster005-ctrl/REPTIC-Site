@@ -5,6 +5,7 @@ import { z } from "zod";
 import { assertPermission, sqlMessage } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
 import { fieldErrors, formValues, type FormState } from "@/lib/forms";
+import { queueEmail } from "@/lib/email/send";
 
 async function guard(): Promise<FormState | null> {
   try {
@@ -93,6 +94,15 @@ export async function setMemberStatus(_prev: FormState, formData: FormData): Pro
   const { error } = await supabase.rpc("set_member_status", { p_member_id: parsed.data.member_id, p_status: parsed.data.status, p_reason: parsed.data.reason || null });
   const message = sqlMessage(error, "Le statut n'a pas pu être modifié.");
   if (message) return { status: "error", message };
+  if (parsed.data.status !== "archived") {
+    const { data: m } = await supabase.from("members").select("member_number,first_name,account:profiles(email,first_name)").eq("id", parsed.data.member_id).maybeSingle();
+    const acc = (Array.isArray(m?.account) ? m?.account[0] : m?.account) as { email?: string; first_name?: string } | null;
+    queueEmail(parsed.data.status === "suspended" ? "member.suspended" : "member.reactivated", acc?.email, {
+      prenom: (m?.first_name as string) ?? acc?.first_name ?? "",
+      numero: (m?.member_number as string) ?? "",
+      motif: parsed.data.reason || null,
+    });
+  }
   refresh();
   const done = { active: "Compte réactivé.", suspended: "Compte suspendu.", archived: "Membre archivé." }[parsed.data.status];
   return { status: "success", message: `${done} Le membre a été notifié.` };

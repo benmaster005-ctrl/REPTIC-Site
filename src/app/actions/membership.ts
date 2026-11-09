@@ -5,7 +5,9 @@ import { z } from "zod";
 import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { fieldErrors, formValues, type FormState } from "@/lib/forms";
-import { MAX_FILE_BYTES, fieldsFor, isEditable, schemaFor, type ApplicantType, type ApplicationStatus } from "@/lib/membership";
+import { MAX_FILE_BYTES, applicantTypeLabels, fieldsFor, isEditable, schemaFor, type ApplicantType, type ApplicationStatus } from "@/lib/membership";
+import { queueEmail } from "@/lib/email/send";
+import { formatDate } from "@/lib/format";
 
 const ROUTE = "/espace/adhesion";
 
@@ -204,18 +206,26 @@ export async function submitApplication(_prev: FormState, formData: FormData): P
     return { status: "error", fieldErrors: { accuracy: ["Vous devez certifier l'exactitude des informations."] } };
   }
   const applicationId = String(formData.get("application_id") ?? "");
+  let ctx;
   try {
-    await loadEditable(applicationId);
+    ctx = await loadEditable(applicationId);
   } catch (e) {
     return { status: "error", message: (e as Error).message };
   }
   const supabase = await createClient();
-  const { error } = await supabase.rpc("submit_application", { p_application_id: applicationId });
+  const { data: reference, error } = await supabase.rpc("submit_application", { p_application_id: applicationId });
   if (error) {
     // Les messages métier de la fonction SQL sont destinés au candidat.
     const message = error.code === "P0001" || error.code === "P0002" ? error.message : "L'envoi a échoué. Réessayez dans un instant.";
     if (!(error.code === "P0001" || error.code === "P0002")) console.error("submitApplication", error.message);
     return { status: "error", message };
   }
+  const payload = ctx.app.payload as Record<string, unknown>;
+  queueEmail("application.submitted", ctx.user.email, {
+    prenom: String(payload.first_name ?? payload.rep_first_name ?? ctx.user.firstName ?? ""),
+    reference: String(reference ?? ""),
+    type: applicantTypeLabels[ctx.app.applicant_type],
+    date: formatDate(new Date().toISOString()),
+  });
   redirect(`${ROUTE}?envoye=1`);
 }

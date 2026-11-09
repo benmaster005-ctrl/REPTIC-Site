@@ -6,6 +6,8 @@ import { z } from "zod";
 import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { fieldErrors, formValues, type FormState } from "@/lib/forms";
+import { queueEmail } from "@/lib/email/send";
+import { formatDate } from "@/lib/format";
 
 // ---------------------------------------------------------------------------
 // Profil
@@ -135,6 +137,21 @@ export async function registerForEvent(formData: FormData) {
   const { error } = existing
     ? await supabase.from("event_registrations").update({ status: "registered" }).eq("id", existing.id)
     : await supabase.from("event_registrations").insert({ event_id: eventId.data, user_id: user.id, full_name: fullName, email: user.email });
+  if (!error) {
+    const [{ data: ev }, { data: reg }] = await Promise.all([
+      supabase.from("events").select("title,starts_at,location_name,city").eq("id", eventId.data).maybeSingle(),
+      supabase.from("event_registrations").select("status").eq("event_id", eventId.data).eq("user_id", user.id).maybeSingle(),
+    ]);
+    if (ev) {
+      queueEmail("event.registered", user.email, {
+        prenom: user.firstName ?? "",
+        evenement: ev.title as string,
+        date: formatDate(ev.starts_at as string, { weekday: "long", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }),
+        lieu: [ev.location_name, ev.city].filter(Boolean).join(", ") || null,
+        statut: reg?.status === "waitlisted" ? "Liste d'attente (vous serez prévenu si une place se libère)" : "Inscription confirmée",
+      });
+    }
+  }
   redirect(`/espace/evenements?${error ? "erreur=inscription" : "inscrit=1"}#evenement-${eventId.data}`);
 }
 

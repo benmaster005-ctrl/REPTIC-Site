@@ -5,6 +5,25 @@ import { z } from "zod";
 import { assertPermission, sqlMessage } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
 import { type FormState } from "@/lib/forms";
+import { queueEmail } from "@/lib/email/send";
+import { formatDate } from "@/lib/format";
+
+/** Destinataire et variables communes d'un e-mail lié à un dossier. */
+async function candidateOf(applicationId: string) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("applications")
+    .select("reference,payload,candidate:profiles!applications_user_id_fkey(email,first_name)")
+    .eq("id", applicationId)
+    .maybeSingle();
+  if (!data) return null;
+  const cand = (Array.isArray(data.candidate) ? data.candidate[0] : data.candidate) as { email?: string; first_name?: string } | null;
+  const p = (data.payload ?? {}) as Record<string, unknown>;
+  return {
+    email: cand?.email ?? null,
+    vars: { prenom: String(p.first_name ?? p.rep_first_name ?? cand?.first_name ?? ""), reference: data.reference as string },
+  };
+}
 
 async function guard(): Promise<FormState | null> {
   try {
@@ -50,6 +69,8 @@ export async function decideApplication(_prev: FormState, formData: FormData): P
   });
   const message = sqlMessage(error, "La décision n'a pas pu être enregistrée.");
   if (message) return { status: "error", message, values };
+  const who = await candidateOf(parsed.data.application_id);
+  if (who) queueEmail(parsed.data.decision === "reject" ? "application.rejected" : "application.additional_info", who.email, { ...who.vars, motif: parsed.data.reason });
   refresh();
   return {
     status: "success",
@@ -83,6 +104,9 @@ export async function acceptApplication(_prev: FormState, formData: FormData): P
   });
   const message = sqlMessage(error, "L'acceptation a échoué.");
   if (message) return { status: "error", message, values };
+  const who = await candidateOf(parsed.data.application_id);
+  const endsOn = parsed.data.ends_on ?? `${parsed.data.starts_on.slice(0, 4)}-12-31`;
+  if (who) queueEmail("application.accepted", who.email, { ...who.vars, numero: String(data ?? ""), date_fin: formatDate(`${endsOn}T12:00:00Z`) });
   refresh();
   return { status: "success", message: `Adhésion acceptée. Numéro de membre attribué : ${data}. Le compte est actif.` };
 }

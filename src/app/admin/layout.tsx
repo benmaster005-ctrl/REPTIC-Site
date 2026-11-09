@@ -35,7 +35,13 @@ const sections: { title: string; items: Item[] }[] = [
     ],
   },
   { title: "Relations", items: [{ href: "/admin/messages", label: "Messages", perm: "contact.manage", badge: "contact" }] },
-  { title: "Paramètres", items: [{ href: "/admin/utilisateurs", label: "Utilisateurs et rôles", perm: "users.manage" }] },
+  {
+    title: "Paramètres",
+    items: [
+      { href: "/admin/utilisateurs", label: "Utilisateurs et rôles", perm: "users.manage" },
+      { href: "/admin/emails", label: "E-mails", perm: "settings.manage" },
+    ],
+  },
 ];
 
 const strip = (s: typeof sections): AdminNavSection[] => s.map((sec) => ({ title: sec.title, items: sec.items.filter((i) => !i.perm).map(({ href, label }) => ({ href, label })) })).filter((sec) => sec.items.length);
