@@ -38,7 +38,7 @@ async function Emails() {
       />
       {!isEmailConfigured && (
         <Flash tone="error">
-          Aucun e-mail n&apos;est envoyé tant que la clé du service d&apos;envoi (RESEND_API_KEY) n&apos;est pas renseignée dans les variables d&apos;environnement. Les textes restent modifiables.
+          Aucun e-mail n&apos;est envoyé tant que le serveur SMTP (SMTP_HOST, SMTP_USER, SMTP_PASSWORD…) n&apos;est pas renseigné dans les variables d&apos;environnement. Les textes restent modifiables.
         </Flash>
       )}
       {!rows.length && (

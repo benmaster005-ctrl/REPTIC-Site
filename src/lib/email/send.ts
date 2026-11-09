@@ -1,23 +1,45 @@
 import "server-only";
 import { after } from "next/server";
+import nodemailer, { type Transporter } from "nodemailer";
 import { SITE_URL, isSupabaseConfigured } from "@/lib/env";
 import { createPublicClient } from "@/lib/supabase/public";
 import { getSiteSettings } from "@/lib/data/public";
 import { buildEmail, type TemplateKey, type Vars } from "./transactional";
 
 /**
- * Envoi des e-mails du site via Resend (https://resend.com), par simple requête
- * HTTP. Variables d'environnement :
- *   RESEND_API_KEY   clé d'API (sans elle, aucun e-mail n'est envoyé)
- *   EMAIL_FROM       expéditeur, ex. « REPTIC.CM <noreply@reptic.cm> » (domaine vérifié chez Resend)
+ * Envoi des e-mails du site par SMTP (le même fournisseur que celui configuré
+ * dans Supabase pour les e-mails de compte). Variables d'environnement :
+ *   SMTP_HOST        serveur SMTP (sans lui, aucun e-mail n'est envoyé)
+ *   SMTP_PORT        587 (STARTTLS, par défaut) ou 465 (SSL)
+ *   SMTP_SECURE      "true" pour forcer SSL ; par défaut : vrai si le port est 465
+ *   SMTP_USER        identifiant
+ *   SMTP_PASSWORD    mot de passe ou clé SMTP
+ *   EMAIL_FROM       expéditeur, ex. « REPTIC.CM <noreply@reptic.cm> »
  *   EMAIL_REPLY_TO   adresse de réponse (par défaut : l'e-mail de contact du site)
  *   EMAIL_NOTIFY_TO  destinataire des alertes internes (par défaut : idem)
  * L'envoi a lieu après la réponse (after()) : il ne ralentit ni ne bloque l'action.
  */
 
-const API_KEY = process.env.RESEND_API_KEY ?? "";
+const HOST = process.env.SMTP_HOST ?? "";
+const PORT = Number(process.env.SMTP_PORT || 587);
+const SECURE = process.env.SMTP_SECURE ? process.env.SMTP_SECURE === "true" : PORT === 465;
 const FROM = process.env.EMAIL_FROM ?? "REPTIC.CM <noreply@reptic.cm>";
-export const isEmailConfigured = Boolean(API_KEY);
+export const isEmailConfigured = Boolean(HOST);
+
+let transporter: Transporter | null = null;
+function getTransporter() {
+  transporter ??= nodemailer.createTransport({
+    host: HOST,
+    port: PORT,
+    secure: SECURE,
+    auth: process.env.SMTP_USER ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASSWORD ?? "" } : undefined,
+    // Délais courts : une fonction serveur ne doit pas rester bloquée sur un SMTP lent.
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 20_000,
+  });
+  return transporter;
+}
 
 async function contactEmail() {
   const { contact } = await getSiteSettings();
@@ -35,28 +57,33 @@ async function loadTemplate(key: TemplateKey) {
 }
 
 export async function deliver(message: { to: string; subject: string; html: string; text: string; replyTo?: string }) {
-  if (!API_KEY) {
-    console.info(`[e-mail non envoyé : RESEND_API_KEY absente] « ${message.subject} » → ${message.to}`);
-    return { ok: false as const, error: "Envoi désactivé : clé RESEND_API_KEY absente." };
+  if (!HOST) {
+    console.info(`[e-mail non envoyé : SMTP_HOST absent] « ${message.subject} » → ${message.to}`);
+    return { ok: false as const, error: "Envoi désactivé : serveur SMTP non configuré (SMTP_HOST)." };
   }
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${API_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
+  try {
+    await getTransporter().sendMail({
       from: FROM,
-      to: [message.to],
+      to: message.to,
+      replyTo: message.replyTo || process.env.EMAIL_REPLY_TO || (await contactEmail()),
       subject: message.subject,
       html: message.html,
       text: message.text,
-      reply_to: message.replyTo || process.env.EMAIL_REPLY_TO || (await contactEmail()),
-    }),
-  });
-  if (!res.ok) {
-    const detail = await res.text().catch(() => "");
-    console.error("Envoi e-mail échoué", res.status, detail.slice(0, 300));
-    return { ok: false as const, error: `Le service d'envoi a refusé le message (${res.status}).` };
+    });
+    return { ok: true as const };
+  } catch (e) {
+    const err = e as { code?: string; responseCode?: number; message?: string };
+    console.error("Envoi SMTP échoué", err.code, err.responseCode, err.message);
+    const reason =
+      err.code === "EAUTH"
+        ? "identifiant ou mot de passe SMTP refusé"
+        : err.code === "ECONNECTION" || err.code === "ETIMEDOUT" || err.code === "ESOCKET"
+          ? "serveur SMTP injoignable (hôte ou port)"
+          : err.responseCode
+            ? `refus du serveur (${err.responseCode})`
+            : "erreur inconnue";
+    return { ok: false as const, error: `L'e-mail n'a pas pu être envoyé : ${reason}.` };
   }
-  return { ok: true as const };
 }
 
 /** Prépare et envoie un e-mail à partir de son modèle. Ne lève jamais d'erreur. */

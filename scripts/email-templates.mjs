@@ -152,7 +152,7 @@ ${templates.map((t) => `| ${t.dashboard} | ${t.subject} | \`${t.file}\` |`).join
 
 Réglages liés :
 - **Authentication > URL Configuration > Site URL** : l'adresse réelle du site (aperçu Vercel, puis https://reptic.cm). Les liens des e-mails pointent vers \`{{ .SiteURL }}/auth/callback\`.
-- **Authentication > SMTP Settings** : un serveur d'envoi pour expédier depuis \`noreply@reptic.cm\` avec le nom « REPTIC.CM ».
+- **Authentication > SMTP Settings** : les paramètres de votre fournisseur SMTP (les mêmes que les variables \`SMTP_*\` du site), expéditeur \`noreply@reptic.cm\`, nom « REPTIC.CM ».
 - **Durée des liens** (Email OTP Expiration) : 3600 s par défaut, ce que disent les textes (« une heure »).
 `,
   "utf8",

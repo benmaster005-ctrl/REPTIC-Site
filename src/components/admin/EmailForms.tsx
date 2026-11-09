@@ -46,7 +46,7 @@ export function EmailTemplateEditor({ templateKey, initial, variables, previewHt
             {showPreview ? "Masquer l'aperçu" : "Aperçu (version enregistrée)"}
           </button>
           <ActionForm action={sendTestEmail} hidden={{ key: templateKey }} submitLabel="M'envoyer un test" tone="secondary" pendingLabel="Envoi…" className="space-y-3 [&_button]:px-4 [&_button]:py-2 [&_button]:text-[0.85rem]">
-            {!canSend && <p className="text-[0.8rem] text-amber-800">Envoi non configuré (clé RESEND_API_KEY absente).</p>}
+            {!canSend && <p className="text-[0.8rem] text-amber-800">Envoi non configuré (serveur SMTP absent).</p>}
           </ActionForm>
         </div>
       </div>
