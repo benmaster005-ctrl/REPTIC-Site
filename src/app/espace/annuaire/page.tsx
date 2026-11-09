@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { ArrowUpRight, Search } from "lucide-react";
 import { getSpaceContext } from "@/lib/space";
@@ -60,17 +61,21 @@ async function Directory({ searchParams }: Pick<PageProps<"/espace/annuaire">, "
       {members.length ? (
         <ul className="mt-3 grid gap-px bg-line sm:grid-cols-2">
           {members.map((m) => (
-            <li key={m.id} className="flex gap-4 bg-white p-6">
+            <li key={m.id} className="group relative flex gap-4 bg-white p-6 transition-colors hover:bg-cyan-tint/50">
               <span aria-hidden className="grid size-12 shrink-0 place-items-center bg-paper font-display text-lg font-extrabold text-navy">
                 {initials(m.name)}
               </span>
               <div className="min-w-0">
-                <p className="font-display text-[1.1rem] font-bold text-navy">{m.name}</p>
+                <p className="font-display text-[1.1rem] font-bold text-navy">
+                  <Link href={`/espace/annuaire/${m.id}`} className="title-sweep after:absolute after:inset-0 group-hover:text-cyan-dark">
+                    {m.name}
+                  </Link>
+                </p>
                 <p className="text-[0.88rem] text-muted">{[m.profession, m.city].filter(Boolean).join(" · ") || applicantTypeLabels[m.memberType]}</p>
                 {m.category && <p className="label mt-2 text-cyan-dark">{m.category}</p>}
                 {m.bio && <p className="mt-2 line-clamp-3 text-[0.88rem] text-ink/80">{m.bio}</p>}
                 {m.website && (
-                  <a href={m.website} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-[0.85rem] font-semibold text-navy hover:text-cyan-dark">
+                  <a href={m.website} target="_blank" rel="noopener noreferrer" className="relative z-10 mt-2 inline-flex items-center gap-1 text-[0.85rem] font-semibold text-navy hover:text-cyan-dark">
                     Site web <ArrowUpRight aria-hidden className="size-3.5" />
                   </a>
                 )}

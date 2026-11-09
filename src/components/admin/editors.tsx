@@ -114,6 +114,7 @@ export function ImageField({ name, label, folder, state }: { name: string; label
 export function AssociationDocumentUpload() {
   const router = useRouter();
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [visibility, setVisibility] = useState<"members" | "public">("members");
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -134,10 +135,11 @@ export function AssociationDocumentUpload() {
       setBusy(false);
       return setError("L'envoi a échoué.");
     }
-    const res = await registerAssociationDocument({ storagePath: path, title: title.trim(), fileName: file.name, visibility });
+    const res = await registerAssociationDocument({ storagePath: path, title: title.trim(), description: description.trim() || undefined, fileName: file.name, visibility });
     setBusy(false);
     if (!res.ok) return setError(res.error);
     setTitle("");
+    setDescription("");
     setFile(null);
     startTransition(() => router.refresh());
   }
@@ -152,8 +154,12 @@ export function AssociationDocumentUpload() {
         <span className="field-label">Accès</span>
         <select value={visibility} onChange={(e) => setVisibility(e.target.value as "members" | "public")} className="field-input">
           <option value="members">Membres uniquement</option>
-          <option value="public">Tous les comptes connectés</option>
+          <option value="public">Public (page Ressources du site)</option>
         </select>
+      </label>
+      <label className="block sm:col-span-2">
+        <span className="field-label">Description (facultatif)</span>
+        <input value={description} onChange={(e) => setDescription(e.target.value)} maxLength={400} className="field-input" placeholder="Une phrase pour présenter le document" />
       </label>
       <label className="block sm:col-span-2">
         <span className="field-label">Fichier</span>

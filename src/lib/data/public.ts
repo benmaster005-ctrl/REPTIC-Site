@@ -37,6 +37,7 @@ export const tags = {
   categories: "categories",
   figures: "key-figures",
   settings: "site-settings",
+  documents: "documents",
 } as const;
 
 export const isDemo = !isSupabaseConfigured;
@@ -248,5 +249,46 @@ export async function getSiteSettings(): Promise<{ contact: SiteContact; social:
   return {
     contact: { ...fallbackContact, ...(byKey.contact ?? {}) },
     social: { ...fallbackSocial, ...(byKey.social ?? {}) },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Ressources publiques (story 15)
+// ---------------------------------------------------------------------------
+export type PublicResource = { id: string; title: string; description: string | null; fileName: string; mimeType: string; sizeBytes: number; createdAt: string };
+
+export async function getPublicResources(): Promise<PublicResource[]> {
+  "use cache";
+  cacheTag(tags.documents);
+  cacheLife("hours");
+  if (isDemo) return [];
+  const { data, error } = await createPublicClient()
+    .from("documents")
+    .select("id,title,description,file_name,mime_type,size_bytes,created_at")
+    .eq("visibility", "public")
+    .is("application_id", null)
+    .order("created_at", { ascending: false });
+  if (error) {
+    // Colonne « description » absente tant que la migration 7 n'est pas appliquée
+    const { data: fallback } = await createPublicClient()
+      .from("documents")
+      .select("id,title,file_name,mime_type,size_bytes,created_at")
+      .eq("visibility", "public")
+      .is("application_id", null)
+      .order("created_at", { ascending: false });
+    return (fallback ?? []).map((r: Row) => ({ ...toResource(r), description: null }));
+  }
+  return (data ?? []).map(toResource);
+}
+
+function toResource(r: Row): PublicResource {
+  return {
+    id: r.id as string,
+    title: str(r.title) ?? (r.file_name as string),
+    description: str(r.description),
+    fileName: r.file_name as string,
+    mimeType: r.mime_type as string,
+    sizeBytes: Number(r.size_bytes),
+    createdAt: r.created_at as string,
   };
 }

@@ -292,3 +292,37 @@ export function upcomingEvents<T extends { startsAt: string; endsAt: string | nu
 export function isPast(iso: string | null) {
   return iso ? new Date(iso).getTime() < Date.now() : false;
 }
+
+/** Fiche profil d'un membre de l'annuaire (story 3). La RLS ne renvoie que les fiches visibles. */
+export async function getMemberProfile(id: string) {
+  const supabase = await createClient();
+  const full =
+    "id,member_type,display_name,profession,city,category,website,bio,phone,organization_email,organization_phone,organization_address,legal_form,organization_description,contact_name,member_number,created_at";
+  let { data, error } = await supabase.from("member_directory").select(full).eq("id", id).maybeSingle();
+  if (error) {
+    // Annuaire non enrichi tant que la migration 7 n'est pas appliquée
+    ({ data, error } = await supabase.from("member_directory").select("id,member_type,display_name,profession,city,category,website,bio").eq("id", id).maybeSingle());
+  }
+  if (!data) return null;
+  const r = data as Row;
+  const s = (v: unknown) => (typeof v === "string" && v.trim() ? v : null);
+  return {
+    id: r.id as string,
+    memberType: r.member_type as ApplicantType,
+    name: s(r.display_name) ?? "Membre",
+    profession: s(r.profession),
+    city: s(r.city),
+    category: s(r.category),
+    website: s(r.website),
+    bio: s(r.bio),
+    phone: s(r.phone),
+    organizationEmail: s(r.organization_email),
+    organizationPhone: s(r.organization_phone),
+    organizationAddress: s(r.organization_address),
+    legalForm: s(r.legal_form),
+    organizationDescription: s(r.organization_description),
+    contactName: s(r.contact_name),
+    memberNumber: s(r.member_number),
+    memberSince: s(r.created_at),
+  };
+}

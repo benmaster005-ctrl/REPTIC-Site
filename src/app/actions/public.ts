@@ -4,6 +4,7 @@ import { z } from "zod";
 import { isSupabaseConfigured } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import { after } from "next/server";
+import { redirect } from "next/navigation";
 import { emailSchema, fieldErrors, formValues, isLikelySpam, type FormState } from "@/lib/forms";
 import { internalRecipient, sendTemplated } from "@/lib/email/send";
 
@@ -25,16 +26,28 @@ export async function subscribeNewsletter(_prev: FormState, formData: FormData):
   if (!isSupabaseConfigured) return { status: "error", message: "Service indisponible (base non connectée)." };
 
   const supabase = await createClient();
-  const { error } = await supabase
-    .from("newsletter_subscribers")
-    .insert({ email: parsed.data.email, consent_text: NEWSLETTER_CONSENT });
-
-  // 23505 = déjà inscrit : on ne le révèle pas.
-  if (error && error.code !== "23505") {
+  // Crée l'abonné ou réactive un abonné désinscrit, sans révéler si l'adresse existait.
+  let { error } = await supabase.rpc("newsletter_subscribe", { p_email: parsed.data.email, p_consent: NEWSLETTER_CONSENT });
+  if (error?.code === "PGRST202") {
+    // Migration 7 pas encore appliquée : ancienne méthode.
+    ({ error } = await supabase.from("newsletter_subscribers").insert({ email: parsed.data.email, consent_text: NEWSLETTER_CONSENT }));
+    if (error?.code === "23505") error = null;
+  }
+  if (error) {
     console.error("subscribeNewsletter", error.message);
     return { status: "error", message: "Une erreur est survenue. Réessayez plus tard." };
   }
   return { status: "success", message: "Merci, votre inscription est enregistrée." };
+}
+
+/** Désinscription par le lien personnel figurant dans chaque lettre (confirmée par un bouton). */
+export async function unsubscribeNewsletter(formData: FormData) {
+  const token = z.uuid().safeParse(formData.get("token"));
+  if (!token.success || !isSupabaseConfigured) redirect("/newsletter/desinscription?etat=invalide");
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("newsletter_unsubscribe", { p_token: token.data });
+  if (error) console.error("unsubscribeNewsletter", error.message);
+  redirect(`/newsletter/desinscription?etat=${data ? "ok" : "invalide"}`);
 }
 
 const contactSchema = z.object({

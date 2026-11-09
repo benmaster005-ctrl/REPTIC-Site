@@ -12,6 +12,7 @@ const staticRoutes = [
   "/adhesion",
   "/actualites",
   "/evenements",
+  "/ressources",
   "/contact",
   "/mentions-legales",
   "/confidentialite",

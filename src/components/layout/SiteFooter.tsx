@@ -28,6 +28,7 @@ const footerLinks = [
     links: [
       { label: "Actualités", href: "/actualites" },
       { label: "Événements", href: "/evenements" },
+      { label: "Ressources", href: "/ressources" },
       { label: "Contact", href: "/contact" },
     ],
   },

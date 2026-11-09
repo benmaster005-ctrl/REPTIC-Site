@@ -86,16 +86,19 @@ export async function saveNews(_prev: FormState, formData: FormData): Promise<Fo
     seo_title: d.seo_title,
     seo_description: d.seo_description,
   };
+  const { data: before } = id ? await supabase.from("news").select("*").eq("id", id).maybeSingle() : { data: null };
   const { data, error } = id
-    ? await supabase.from("news").update(row).eq("id", id).select("id").single()
-    : await supabase.from("news").insert({ ...row, author_id: ctx.user.id }).select("id").single();
+    ? await supabase.from("news").update(row).eq("id", id).select("*").single()
+    : await supabase.from("news").insert({ ...row, author_id: ctx.user.id }).select("*").single();
   if (error) return dbError(error, values);
+  const justNotified = Boolean(data.notified_at) && !before?.notified_at;
 
   updateTag(tags.news);
   updateTag(`news:${slug}`);
   if (!id) redirect(`/admin/actualites/${data.id}?enregistre=1`);
   refresh();
-  return { status: "success", message: d.status === "published" ? "Actualité publiée." : d.status === "scheduled" ? "Publication programmée." : "Brouillon enregistré.", values: { ...values, slug } };
+  const published = justNotified ? "Actualité publiée. Les membres ont reçu une notification." : "Actualité publiée.";
+  return { status: "success", message: d.status === "published" ? published : d.status === "scheduled" ? "Publication programmée." : "Brouillon enregistré.", values: { ...values, slug } };
 }
 
 export async function deleteNews(formData: FormData) {
@@ -172,15 +175,17 @@ export async function saveEvent(_prev: FormState, formData: FormData): Promise<F
     cover_path: d.cover_path,
   };
   const supabase = await createClient();
+  const { data: before } = id ? await supabase.from("events").select("*").eq("id", id).maybeSingle() : { data: null };
   const { data, error } = id
-    ? await supabase.from("events").update(row).eq("id", id).select("id").single()
-    : await supabase.from("events").insert({ ...row, created_by: ctx.user.id }).select("id").single();
+    ? await supabase.from("events").update(row).eq("id", id).select("*").single()
+    : await supabase.from("events").insert({ ...row, created_by: ctx.user.id }).select("*").single();
   if (error) return dbError(error, values);
+  const justNotified = Boolean(data.notified_at) && !before?.notified_at;
   updateTag(tags.events);
   updateTag(`event:${slug}`);
   if (!id) redirect(`/admin/evenements/${data.id}?enregistre=1`);
   refresh();
-  return { status: "success", message: "Événement enregistré.", values: { ...values, slug } };
+  return { status: "success", message: justNotified ? "Événement publié. Les membres ont reçu une notification." : "Événement enregistré.", values: { ...values, slug } };
 }
 
 export async function deleteEvent(formData: FormData) {
@@ -302,6 +307,7 @@ export async function deleteKeyFigure(formData: FormData) {
 const assocDocSchema = z.object({
   storagePath: z.string().regex(/^association\/[a-zA-Z0-9._-]+$/),
   title: z.string().trim().min(2).max(160),
+  description: z.string().trim().max(400).optional(),
   fileName: z.string().min(1).max(200),
   visibility: z.enum(["members", "public"]),
 });
@@ -328,12 +334,14 @@ export async function registerAssociationDocument(input: z.infer<typeof assocDoc
     size_bytes: Number(object.metadata?.size ?? 1),
     owner_id: ctx.user.id,
     title: parsed.data.title,
+    ...(parsed.data.description ? { description: parsed.data.description } : {}),
     visibility: parsed.data.visibility,
   });
   if (error) {
     await supabase.storage.from("private-documents").remove([parsed.data.storagePath]);
     return { ok: false, error: "Le document n'a pas pu être enregistré." };
   }
+  updateTag(tags.documents);
   return { ok: true };
 }
 
@@ -346,6 +354,7 @@ export async function deleteAssociationDocument(formData: FormData) {
     await supabase.from("documents").delete().eq("id", id);
     await supabase.storage.from("private-documents").remove([data.storage_path as string]);
   }
+  updateTag(tags.documents);
   refresh();
 }
 

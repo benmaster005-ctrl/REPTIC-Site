@@ -27,6 +27,7 @@ export const mainNav: NavItem[] = [
       { label: "Objectifs & missions", href: "/objectifs-missions", description: "Nos axes d'action" },
       { label: "Mot du Président", href: "/mot-du-president", description: "Message institutionnel" },
       { label: "Bureau exécutif", href: "/gouvernance", description: "Gouvernance et mandats" },
+      { label: "Ressources", href: "/ressources", description: "Documents publics à télécharger" },
     ],
   },
   {
