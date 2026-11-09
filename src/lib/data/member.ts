@@ -326,3 +326,48 @@ export async function getMemberProfile(id: string) {
     memberSince: s(r.created_at),
   };
 }
+
+// ---------------------------------------------------------------------------
+// Cotisations (story 19)
+// ---------------------------------------------------------------------------
+export type FeePayment = {
+  reference: string;
+  year: number;
+  amount: number;
+  currency: string;
+  status: "pending" | "paid" | "failed" | "cancelled";
+  method: string | null;
+  createdAt: string;
+  paidAt: string | null;
+};
+
+export async function getFeeOverview(userId: string, memberType: ApplicantType | null) {
+  const supabase = await createClient();
+  const [{ data: fee, error: feeError }, { data: pays }] = await Promise.all([
+    memberType ? supabase.from("membership_fees").select("label,amount,currency").eq("member_type", memberType).maybeSingle() : Promise.resolve({ data: null, error: null }),
+    supabase.from("payments").select("reference,year,amount,currency,status,payment_method,created_at,paid_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(50),
+  ]);
+  const payments: FeePayment[] = (pays ?? []).map((r: Row) => ({
+    reference: r.reference as string,
+    year: Number(r.year),
+    amount: Number(r.amount),
+    currency: (r.currency as string) ?? "XAF",
+    status: r.status as FeePayment["status"],
+    method: (r.payment_method as string) ?? null,
+    createdAt: r.created_at as string,
+    paidAt: (r.paid_at as string) ?? null,
+  }));
+  return {
+    available: !feeError,
+    fee: fee ? { label: fee.label as string, amount: (fee.amount as number) ?? null, currency: (fee.currency as string) ?? "XAF" } : null,
+    payments,
+    paidYears: new Set(payments.filter((p) => p.status === "paid").map((p) => p.year)),
+  };
+}
+
+/** Années payables : l'année en cours, et la suivante à partir d'octobre. */
+export function payableYears() {
+  const now = new Date();
+  const y = now.getFullYear();
+  return now.getMonth() >= 9 ? [y, y + 1] : [y];
+}

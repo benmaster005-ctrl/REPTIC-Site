@@ -24,6 +24,7 @@ const candidateNav: SpaceNavItem[] = [
 const memberNav: SpaceNavItem[] = [
   { href: "/espace", label: "Tableau de bord" },
   { href: "/espace/adhesion", label: "Mon adhésion" },
+  { href: "/espace/cotisation", label: "Cotisation" },
   { href: "/espace/profil", label: "Mon profil" },
   { href: "/espace/documents", label: "Mes documents" },
   { href: "/espace/annuaire", label: "Annuaire" },
@@ -41,7 +42,7 @@ export default function SpaceLayout({ children }: { children: React.ReactNode })
       <a href="#contenu" className="sr-only z-[60] bg-navy px-4 py-2 font-semibold text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3">
         Aller au contenu
       </a>
-      <header className="border-b border-line bg-white">
+      <header className="border-b border-line bg-white print:hidden">
         <div className="container-site flex h-[4.5rem] items-center justify-between gap-4">
           <div className="flex items-center gap-5">
             <Logo className="h-10 w-auto" />
@@ -66,7 +67,7 @@ export default function SpaceLayout({ children }: { children: React.ReactNode })
       </header>
 
       <div className="container-site grid gap-8 py-8 lg:grid-cols-12 lg:gap-6 lg:py-12">
-        <aside className="lg:col-span-3 lg:pr-8">
+        <aside className="lg:col-span-3 lg:pr-8 print:hidden">
           <div className="lg:sticky lg:top-8">
             <Suspense fallback={<SpaceNavList items={candidateNav} pathname={null} />}>
               <NavForUser />

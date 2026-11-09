@@ -22,6 +22,7 @@ const sections: { title: string; items: Item[] }[] = [
     items: [
       { href: "/admin/demandes", label: "Demandes", perm: "applications.read", badge: "pending" },
       { href: "/admin/membres", label: "Membres", perm: "members.read" },
+      { href: "/admin/cotisations", label: "Cotisations", perm: "members.read" },
     ],
   },
   {
