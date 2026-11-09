@@ -24,7 +24,8 @@ export type Permission =
   | "roles.manage"
   | "settings.manage"
   | "audit.read"
-  | "stats.read";
+  | "stats.read"
+  | "broadcasts.send";
 
 export type StaffContext = { user: CurrentUser; permissions: Set<Permission>; can: (p: Permission) => boolean };
 

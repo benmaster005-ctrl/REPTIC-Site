@@ -15,7 +15,8 @@ export type TemplateKey =
   | "member.suspended"
   | "member.reactivated"
   | "event.registered"
-  | "contact.received";
+  | "contact.received"
+  | "invitation.member";
 
 export type Vars = Record<string, string | null | undefined>;
 
@@ -102,6 +103,12 @@ export const definitions: Record<TemplateKey, Definition> = {
     quoted: { message: "Message" },
     reason: "Alerte interne envoyée à l'adresse du secrétariat du REPTIC.CM.",
   },
+  "invitation.member": {
+    eyebrow: "Invitation",
+    button: { label: "Découvrir l'adhésion", path: "/adhesion" },
+    quoted: { message: "Son message" },
+    reason: "Vous recevez cet e-mail car un membre du REPTIC.CM a souhaité vous inviter. Vous ne recevrez pas d'autre message si vous ne donnez pas suite.",
+  },
 };
 
 /** Exemples utilisés par l'aperçu et l'envoi de test du back-office. */
@@ -119,6 +126,7 @@ export const sampleVars: Vars = {
   nom: "Aminata Ndongo",
   email: "a.ndongo@exemple.cm",
   telephone: "+237 6 99 00 00 00",
+  parrain: "Aminata Ndongo",
   objet: "Partenariat pour le forum 2027",
   message: "Bonjour,\nNous souhaiterions présenter notre offre de sponsoring pour le prochain forum.\nCordialement.",
 };

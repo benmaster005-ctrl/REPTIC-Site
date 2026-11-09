@@ -30,7 +30,8 @@ export type EmailBlock =
   | { type: "quote"; label?: string; html: string }
   | { type: "code"; value: string }
   | { type: "link"; label: string; url: string }
-  | { type: "note"; html: string };
+  | { type: "note"; html: string }
+  | { type: "article"; title: string; html?: string; url: string; meta?: string };
 
 export type EmailContent = {
   /** Texte d'aperçu affiché par la messagerie à côté du sujet. */
@@ -44,6 +45,8 @@ export type EmailContent = {
   /** Adresse de contact affichée en pied de page. */
   contactEmail?: string;
   siteUrl?: string;
+  /** Lien de désinscription (lettres d'information). */
+  unsubscribeUrl?: string;
 };
 
 export function escapeHtml(value: string) {
@@ -106,6 +109,20 @@ function link(label: string, url: string) {
   return `<p style="margin:-8px 0 26px;font-family:${brand.font};font-size:13px;line-height:20px;color:${brand.muted};">${label}<br><a href="${url}" style="color:${brand.cyanDark};word-break:break-all;">${url}</a></p>`;
 }
 
+function article(title: string, url: string, html?: string, meta?: string) {
+  return `
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 22px;border-top:2px solid ${brand.navy};">
+  <tr>
+    <td style="padding-top:14px;">
+      ${meta ? `<p style="margin:0 0 6px;font-family:${brand.mono};font-size:11px;letter-spacing:1px;text-transform:uppercase;color:${brand.cyanDark};">${meta}</p>` : ""}
+      <p style="margin:0 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:19px;line-height:25px;font-weight:bold;"><a href="${url}" style="color:${brand.navy};text-decoration:none;">${title}</a></p>
+      ${html ? `<p style="margin:0 0 10px;font-family:${brand.font};font-size:15px;line-height:23px;color:${brand.muted};">${html}</p>` : ""}
+      <a href="${url}" style="font-family:${brand.font};font-size:14px;font-weight:bold;color:${brand.cyanDark};text-decoration:none;">Lire la suite &rarr;</a>
+    </td>
+  </tr>
+</table>`;
+}
+
 function note(html: string) {
   return `<p style="margin:8px 0 0;padding-top:18px;border-top:1px solid ${brand.line};font-family:${brand.font};font-size:13px;line-height:20px;color:${brand.muted};">${html}</p>`;
 }
@@ -126,6 +143,8 @@ function renderBlock(b: EmailBlock) {
       return link(b.label, b.url);
     case "note":
       return note(b.html);
+    case "article":
+      return article(b.title, b.url, b.html, b.meta);
   }
 }
 
@@ -194,7 +213,7 @@ export function renderEmail(c: EmailContent) {
           <td class="pad" style="padding:26px 44px 30px;background:${brand.navy};">
             <p style="margin:0 0 6px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:900;color:#ffffff;">REPTIC<span style="color:${brand.cyan};">.cm</span></p>
             <p style="margin:0 0 14px;font-family:${brand.font};font-size:12px;line-height:19px;color:#B9C0D6;">Yaound&eacute;, Cameroun &middot; <a href="mailto:${contact}" style="color:#ffffff;text-decoration:none;">${contact}</a> &middot; <a href="${site}" style="color:#ffffff;text-decoration:none;">${siteLabel}</a></p>
-            <p style="margin:0;font-family:${brand.font};font-size:11px;line-height:17px;color:#8E97B3;">${c.reason}</p>
+            <p style="margin:0;font-family:${brand.font};font-size:11px;line-height:17px;color:#8E97B3;">${c.reason}${c.unsubscribeUrl ? ` <a href="${c.unsubscribeUrl}" style="color:#ffffff;">Se d&eacute;sinscrire</a>` : ""}</p>
           </td>
         </tr>
       </table>
@@ -227,7 +246,9 @@ export function renderText(c: EmailContent) {
     else if (b.type === "button" || b.type === "link") lines.push(`${strip(b.label)} : ${b.url}`, "");
     else if (b.type === "code") lines.push(b.value, "");
     else if (b.type === "facts") lines.push(...b.rows.map((r) => `${strip(r.label)} : ${strip(r.value)}`), "");
+    else if (b.type === "article") lines.push(`${b.meta ? `[${strip(b.meta)}] ` : ""}${strip(b.title)}`, ...(b.html ? [strip(b.html)] : []), b.url, "");
   }
   lines.push("--", "REPTIC.CM · Yaoundé, Cameroun", strip(c.reason));
+  if (c.unsubscribeUrl) lines.push(`Se désinscrire : ${c.unsubscribeUrl}`);
   return lines.join("\n");
 }

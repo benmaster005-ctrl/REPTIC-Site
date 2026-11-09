@@ -29,6 +29,8 @@ const memberNav: SpaceNavItem[] = [
   { href: "/espace/annuaire", label: "Annuaire" },
   { href: "/espace/actualites", label: "Actualités" },
   { href: "/espace/evenements", label: "Événements" },
+  { href: "/espace/messages", label: "Messages" },
+  { href: "/espace/inviter", label: "Inviter" },
   { href: "/espace/notifications", label: "Notifications" },
   { href: "/espace/securite", label: "Sécurité" },
 ];

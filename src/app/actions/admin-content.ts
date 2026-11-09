@@ -7,6 +7,24 @@ import { assertPermission, slugify, type Permission } from "@/lib/admin";
 import { tags } from "@/lib/data/public";
 import { createClient } from "@/lib/supabase/server";
 import { fieldErrors, formValues, type FormState } from "@/lib/forms";
+import { after } from "next/server";
+import { SITE_URL } from "@/lib/env";
+import { getSiteSettings } from "@/lib/data/public";
+import { buildPublicationEmail } from "@/lib/email/content";
+import { deliverBcc, isEmailConfigured } from "@/lib/email/send";
+import { formatDate } from "@/lib/format";
+
+/** E-mail aux membres qui l'ont accepté, après la réponse (copie cachée par lots). */
+async function emailPublication(p: { kind: "news" | "event"; title: string; excerpt: string | null; path: string; meta?: string }) {
+  if (!isEmailConfigured) return;
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("publication_email_recipients");
+  if (error || !data?.length) return;
+  const recipients = (data as unknown as string[]).filter(Boolean);
+  const { contact } = await getSiteSettings();
+  const email = buildPublicationEmail({ kind: p.kind, title: p.title, excerpt: p.excerpt, url: `${SITE_URL}${p.path}`, meta: p.meta }, { siteUrl: SITE_URL, contactEmail: contact.email });
+  after(() => deliverBcc(recipients, email).catch((e) => console.error("emailPublication", e)));
+}
 
 async function guard(p: Permission): Promise<FormState | null> {
   try {
@@ -92,6 +110,15 @@ export async function saveNews(_prev: FormState, formData: FormData): Promise<Fo
     : await supabase.from("news").insert({ ...row, author_id: ctx.user.id }).select("*").single();
   if (error) return dbError(error, values);
   const justNotified = Boolean(data.notified_at) && !before?.notified_at;
+  if (justNotified) {
+    await emailPublication({
+      kind: "news",
+      title: d.title,
+      excerpt: d.excerpt,
+      path: d.visibility === "members" ? `/espace/actualites/${slug}` : `/actualites/${slug}`,
+      meta: d.visibility === "members" ? "Réservé aux membres" : undefined,
+    });
+  }
 
   updateTag(tags.news);
   updateTag(`news:${slug}`);
@@ -181,6 +208,15 @@ export async function saveEvent(_prev: FormState, formData: FormData): Promise<F
     : await supabase.from("events").insert({ ...row, created_by: ctx.user.id }).select("*").single();
   if (error) return dbError(error, values);
   const justNotified = Boolean(data.notified_at) && !before?.notified_at;
+  if (justNotified && row.starts_at) {
+    await emailPublication({
+      kind: "event",
+      title: d.title,
+      excerpt: d.excerpt,
+      path: `/evenements/${slug}`,
+      meta: [formatDate(row.starts_at, { weekday: "long", day: "numeric", month: "long", year: "numeric" }), d.city].filter(Boolean).join(" · "),
+    });
+  }
   updateTag(tags.events);
   updateTag(`event:${slug}`);
   if (!id) redirect(`/admin/evenements/${data.id}?enregistre=1`);

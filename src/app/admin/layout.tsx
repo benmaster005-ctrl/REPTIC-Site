@@ -34,7 +34,14 @@ const sections: { title: string; items: Item[] }[] = [
       { href: "/admin/documents", label: "Documents", perm: "documents.manage" },
     ],
   },
-  { title: "Relations", items: [{ href: "/admin/messages", label: "Messages", perm: "contact.manage", badge: "contact" }] },
+  {
+    title: "Relations",
+    items: [
+      { href: "/admin/messages", label: "Messages de contact", perm: "contact.manage", badge: "contact" },
+      { href: "/admin/diffusion", label: "Diffusion", perm: "broadcasts.send" },
+      { href: "/admin/newsletter", label: "Lettre d'information", perm: "contact.manage" },
+    ],
+  },
   {
     title: "Paramètres",
     items: [

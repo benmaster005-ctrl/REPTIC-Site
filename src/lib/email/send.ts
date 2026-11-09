@@ -56,7 +56,9 @@ async function loadTemplate(key: TemplateKey) {
   return data as { subject: string; body: string; is_enabled: boolean } | null;
 }
 
-export async function deliver(message: { to: string; subject: string; html: string; text: string; replyTo?: string }) {
+export type OutgoingEmail = { to: string; bcc?: string[]; subject: string; html: string; text: string; replyTo?: string; headers?: Record<string, string> };
+
+export async function deliver(message: OutgoingEmail) {
   if (!HOST) {
     console.info(`[e-mail non envoyé : SMTP_HOST absent] « ${message.subject} » → ${message.to}`);
     return { ok: false as const, error: "Envoi désactivé : serveur SMTP non configuré (SMTP_HOST)." };
@@ -65,6 +67,8 @@ export async function deliver(message: { to: string; subject: string; html: stri
     await getTransporter().sendMail({
       from: FROM,
       to: message.to,
+      bcc: message.bcc,
+      headers: message.headers,
       replyTo: message.replyTo || process.env.EMAIL_REPLY_TO || (await contactEmail()),
       subject: message.subject,
       html: message.html,
@@ -97,6 +101,28 @@ export async function sendTemplated(key: TemplateKey, to: string | null | undefi
   } catch (e) {
     console.error(`sendTemplated(${key})`, e);
   }
+}
+
+/** Expéditeur nu (sans nom) : destinataire visible des envois groupés en copie cachée. */
+export function senderAddress() {
+  const m = FROM.match(/<([^>]+)>/);
+  return m ? m[1] : FROM;
+}
+
+/**
+ * Envoi groupé du même message à de nombreux destinataires : copie cachée par
+ * lots de 40 (les adresses ne sont jamais visibles entre destinataires).
+ * Renvoie le nombre d'adresses effectivement transmises au serveur.
+ */
+export async function deliverBcc(recipients: string[], email: { subject: string; html: string; text: string; replyTo?: string }) {
+  const unique = [...new Set(recipients.filter(Boolean).map((r) => r.toLowerCase()))];
+  let sent = 0;
+  for (let i = 0; i < unique.length; i += 40) {
+    const batch = unique.slice(i, i + 40);
+    const res = await deliver({ to: senderAddress(), bcc: batch, ...email });
+    if (res.ok) sent += batch.length;
+  }
+  return sent;
 }
 
 /** Programme l'envoi après la réponse : à utiliser dans les Server Actions. */

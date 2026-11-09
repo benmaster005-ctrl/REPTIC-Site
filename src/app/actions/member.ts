@@ -182,3 +182,56 @@ export async function downloadDocument(formData: FormData) {
   if (!signed?.signedUrl) redirect("/espace/documents?erreur=lien");
   redirect(signed.signedUrl);
 }
+
+// ---------------------------------------------------------------------------
+// Invitations (story 11)
+// ---------------------------------------------------------------------------
+const invitationSchema = z.object({
+  emails: z
+    .string()
+    .trim()
+    .min(3, { error: "Indiquez au moins une adresse e-mail." })
+    .transform((v) => [...new Set(v.split(/[\s,;]+/).map((e) => e.trim().toLowerCase()).filter(Boolean))])
+    .refine((list) => list.length <= 5, { error: "5 adresses maximum à la fois." })
+    .refine((list) => list.every((e) => z.email().safeParse(e).success), { error: "Une des adresses est invalide." }),
+  message: z.string().trim().max(600, { error: "600 caractères maximum." }).optional(),
+});
+
+/** Un membre invite jusqu'à 5 personnes ; les contrôles anti-abus sont faits en base. */
+export async function inviteContacts(_prev: FormState, formData: FormData): Promise<FormState> {
+  const user = await requireUser("/espace/inviter");
+  const values = formValues(formData, ["emails", "message"]);
+  const parsed = invitationSchema.safeParse(values);
+  if (!parsed.success) return { status: "error", fieldErrors: fieldErrors(parsed.error), values };
+
+  const supabase = await createClient();
+  const sent: string[] = [];
+  const refused: string[] = [];
+  for (const email of parsed.data.emails) {
+    const { data, error } = await supabase.rpc("create_invitation", { p_email: email, p_message: parsed.data.message ?? null });
+    if (error) {
+      refused.push(`${email} : ${error.code === "P0001" || error.code === "42501" ? error.message : "erreur"}`);
+      continue;
+    }
+    const row = (Array.isArray(data) ? data[0] : data) as { inviter_name?: string } | null;
+    queueEmail("invitation.member", email, { parrain: row?.inviter_name ?? user.email, message: parsed.data.message || null }, { replyTo: user.email });
+    sent.push(email);
+  }
+  refresh();
+  if (!sent.length) return { status: "error", message: `Aucune invitation envoyée. ${refused.join(" · ")}`, values };
+  return {
+    status: "success",
+    message: `${sent.length} invitation${sent.length > 1 ? "s" : ""} envoyée${sent.length > 1 ? "s" : ""}.${refused.length ? ` Non envoyées : ${refused.join(" · ")}` : ""}`,
+  };
+}
+
+/** Préférence : recevoir un e-mail à chaque publication (story 2). */
+export async function updateEmailPreferences(_prev: FormState, formData: FormData): Promise<FormState> {
+  const user = await requireUser("/espace/profil");
+  const supabase = await createClient();
+  const value = formData.get("email_publications") === "on";
+  const { error } = await supabase.from("profiles").update({ email_publications: value }).eq("id", user.id);
+  if (error) return { status: "error", message: "La préférence n'a pas pu être enregistrée." };
+  refresh();
+  return { status: "success", message: value ? "Vous serez prévenu par e-mail des nouvelles publications." : "Vous ne recevrez plus d'e-mail à chaque publication.", values: { email_publications: value ? "on" : "" } };
+}

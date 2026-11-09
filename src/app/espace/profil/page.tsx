@@ -5,6 +5,8 @@ import { getMyMember } from "@/lib/data/member";
 import { applicantTypeLabels } from "@/lib/membership";
 import { Panel, SpaceHeader } from "@/components/space/ui";
 import { AccountForm, MemberProfileForm } from "@/components/space/AccountForms";
+import { EmailPreferencesForm } from "@/components/space/InviteForm";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Mon profil" };
 
@@ -19,6 +21,9 @@ export default function ProfilePage() {
 async function Profile() {
   const { user, isMember } = await getSpaceContext("/espace/profil");
   const member = isMember ? await getMyMember(user.id) : null;
+  const supabase = await createClient();
+  const { data: prefs } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
+  const emailPublications = (prefs as { email_publications?: boolean } | null)?.email_publications ?? true;
   return (
     <>
       <SpaceHeader label="Mon profil" title="Informations personnelles" description="Les changements sensibles (identité légale, raison sociale, type de membre) passent par le secrétariat." />
@@ -30,6 +35,15 @@ async function Profile() {
         </dl>
         <AccountForm initial={{ first_name: user.firstName ?? "", last_name: user.lastName ?? "", phone: user.phone ?? "" }} />
       </Panel>
+
+      {isMember && (
+        <Panel className="mt-6">
+          <h2 className="font-display text-xl font-bold text-navy">Préférences e-mail</h2>
+          <div className="mt-5">
+            <EmailPreferencesForm enabled={emailPublications} />
+          </div>
+        </Panel>
+      )}
 
       {member && (
         <Panel className="mt-6">
