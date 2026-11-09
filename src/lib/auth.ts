@@ -17,6 +17,7 @@ export type CurrentUser = {
   email: string;
   firstName: string | null;
   lastName: string | null;
+  phone: string | null;
   role: RoleKey;
   status: "pending" | "active" | "suspended" | "archived";
 };
@@ -34,7 +35,7 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const supabase = await createClient();
   const { data } = await supabase
     .from("profiles")
-    .select("id,email,first_name,last_name,role_key,status")
+    .select("id,email,first_name,last_name,phone,role_key,status")
     .eq("id", userId)
     .maybeSingle();
   if (!data) return null;
@@ -43,6 +44,7 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
     email: data.email,
     firstName: data.first_name,
     lastName: data.last_name,
+    phone: data.phone,
     role: data.role_key,
     status: data.status,
   };

@@ -20,6 +20,8 @@ Sans `.env.local`, le site tourne en **mode démonstration** : il affiche les co
    - `supabase/migrations/20261109000002_rls.sql` : politiques Row Level Security
    - `supabase/migrations/20261109000003_storage.sql` : buckets `public-media` (public) et `private-documents` (privé)
    - `supabase/seed.sql` : rôles, permissions, catégories, pages et contenus provisoires
+   - `supabase/migrations/20261110000004_phase3_adhesion_espace.sql` : pièces requises, soumission, notifications, annuaire
+   - `supabase/migrations/20261111000005_phase4_backoffice.sql` : décisions, numérotation des membres, rôles, indicateurs, journal
 3. Auth > URL Configuration : `Site URL` = URL du site, ajouter `<site>/auth/callback` aux Redirect URLs.
 4. Premier administrateur : créer l'utilisateur (Auth > Users), puis :
    ```sql
@@ -62,8 +64,8 @@ supabase/            migrations SQL et seed
 
 - [x] Socle : projet, schéma complet, RLS, stockage, rôles et permissions, auth
 - [x] Phase 2 : site public (accueil, pages institutionnelles, acteurs, adhésion, actualités, événements, contact, newsletter, SEO)
-- [ ] Phase 3 : parcours d'adhésion en 5 étapes, dépôt des pièces, espace membre complet
-- [ ] Phase 4 : back-office (dossiers, membres, contenus, rôles, statistiques, journal)
+- [x] Phase 3 : inscription candidat, parcours d'adhésion en 5 étapes, dépôt des pièces, espace membre complet
+- [x] Phase 4 : back-office `/admin` (dossiers, membres et export, contenus, bureau, documents, messages, rôles, statistiques, journal)
 - [ ] Phase 5 : e-mails transactionnels, recette, documentation, déploiement
 
 Points encore à valider avec le commanditaire : voir §10 du cahier des charges (charte, champs et pièces, cotisations, annuaire, langues).

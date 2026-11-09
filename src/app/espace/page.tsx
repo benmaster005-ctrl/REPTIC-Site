@@ -1,68 +1,149 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { requireUser } from "@/lib/auth";
-import { signOut } from "@/app/actions/auth";
-import { Logo } from "@/components/layout/Logo";
-import { SectionLabel } from "@/components/brand/Trace";
+import { ArrowRight } from "lucide-react";
+import { getSpaceContext, displayName } from "@/lib/space";
+import { getMemberEvents, getMemberNews, getMyApplication, getNotifications, upcomingEvents } from "@/lib/data/member";
+import { statusLabels, statusDescriptions } from "@/lib/membership";
+import { formatDate } from "@/lib/format";
+import { Panel, SpaceFlash, SpaceHeader, StatusTag } from "@/components/space/ui";
+import { applicationTone } from "@/components/space/application";
 
-export const metadata: Metadata = { title: "Mon espace", robots: { index: false } };
+export const metadata: Metadata = { title: "Tableau de bord" };
 
-const roleLabels: Record<string, string> = {
-  candidate: "Candidat",
-  member: "Membre",
-  editor: "Éditeur",
-  manager: "Gestionnaire",
-  admin: "Administrateur",
-};
-
-// Socle de l'espace membre (phase 3) : contrôle d'accès et déconnexion.
-export default function MemberSpacePage() {
+export default function DashboardPage({ searchParams }: PageProps<"/espace">) {
   return (
-    <div className="min-h-screen bg-paper">
-      <header className="border-b border-line bg-white">
-        <div className="container-site flex h-[4.5rem] items-center justify-between">
-          <Logo className="h-10 w-auto" />
-          <form action={signOut}>
-            <button type="submit" className="btn-secondary py-2.5">
-              Se déconnecter
-            </button>
-          </form>
-        </div>
-      </header>
-      <main id="contenu" className="container-site py-14">
-        <Suspense fallback={<div className="h-48 animate-pulse bg-white" />}>
-          <Dashboard />
-        </Suspense>
-      </main>
-    </div>
+    <Suspense fallback={<DashboardSkeleton />}>
+      <Dashboard searchParams={searchParams} />
+    </Suspense>
   );
 }
 
-async function Dashboard() {
-  const user = await requireUser("/espace");
-  const name = [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email;
-  const facts = [
-    { label: "Profil", value: roleLabels[user.role] ?? user.role },
-    { label: "Statut du compte", value: user.status === "active" ? "Actif" : "En attente d'activation" },
-    { label: "E-mail", value: user.email },
-  ];
+async function Dashboard({ searchParams }: Pick<PageProps<"/espace">, "searchParams">) {
+  const { user, isMember } = await getSpaceContext();
+  const [{ mdp }, application, notifications] = await Promise.all([searchParams, getMyApplication(user.id), getNotifications(user.id, 4)]);
+  const [news, events] = isMember ? await Promise.all([getMemberNews(3), getMemberEvents(user.id)]) : [[], []];
+  const upcoming = upcomingEvents(events).slice(0, 3);
+
   return (
-    <div className="bg-white p-8 sm:p-12">
-      <SectionLabel>Tableau de bord</SectionLabel>
-      <h1 className="heading-lg mt-5">Bonjour {name}</h1>
-      <dl className="mt-10 grid border-t-2 border-navy sm:grid-cols-3">
-        {facts.map((f, i) => (
-          <div key={f.label} className={`border-b border-line py-5 sm:border-b-0 ${i > 0 ? "sm:border-l sm:pl-6" : ""}`}>
-            <dt className="label">{f.label}</dt>
-            <dd className="mt-1.5 truncate font-semibold text-navy">{f.value}</dd>
+    <>
+      <SpaceHeader label="Tableau de bord" title={`Bonjour ${displayName(user)}`} description={isMember ? "Retrouvez votre adhésion, les annonces et les prochaines échéances du réseau." : "Votre compte candidat vous permet de constituer et de suivre votre demande d'adhésion."} />
+      {mdp === "ok" && <SpaceFlash>Votre mot de passe a été modifié.</SpaceFlash>}
+
+      <div className="mt-8 grid gap-6 xl:grid-cols-5">
+        {/* Adhésion */}
+        <Panel className="xl:col-span-3">
+          <p className="label">{isMember ? "Mon adhésion" : "Ma demande"}</p>
+          {application ? (
+            <>
+              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+                <StatusTag tone={applicationTone(application.status)}>{statusLabels[application.status]}</StatusTag>
+                <span className="font-mono text-[0.75rem] text-muted">{application.reference}</span>
+              </div>
+              <p className="mt-3 font-display text-[1.4rem] leading-tight font-bold text-navy">{statusDescriptions[application.status]}</p>
+              {application.status === "additional_info" && application.decisionReason && (
+                <p className="mt-3 border-l-[3px] border-amber-500 pl-4 text-[0.95rem] text-ink">{application.decisionReason}</p>
+              )}
+              <Link href="/espace/adhesion" className="link-arrow mt-6">
+                {application.status === "draft" ? "Reprendre ma demande" : application.status === "additional_info" ? "Compléter mon dossier" : "Voir le suivi"}
+                <ArrowRight aria-hidden className="size-4" />
+              </Link>
+            </>
+          ) : (
+            <>
+              <p className="mt-3 font-display text-[1.4rem] leading-tight font-bold text-navy">Vous n&apos;avez pas encore commencé votre demande.</p>
+              <p className="mt-2 text-[0.95rem] text-muted">Comptez une quinzaine de minutes, justificatifs prêts.</p>
+              <Link href="/espace/adhesion" className="btn-primary mt-6">
+                Commencer ma demande <ArrowRight aria-hidden className="size-4" />
+              </Link>
+            </>
+          )}
+        </Panel>
+
+        {/* Notifications */}
+        <Panel className="xl:col-span-2">
+          <div className="flex items-center justify-between">
+            <p className="label">Notifications</p>
+            <Link href="/espace/notifications" className="text-sm font-semibold text-navy hover:text-cyan-dark">
+              Tout voir
+            </Link>
           </div>
-        ))}
-      </dl>
-      <p className="mt-10 text-[0.95rem] text-muted">Les modules adhésion, documents, annuaire et notifications arrivent dans la phase suivante.</p>
-      <Link href="/" className="link-arrow mt-6">
-        Retour au site
-      </Link>
+          {notifications.length ? (
+            <ul className="mt-4">
+              {notifications.map((n) => (
+                <li key={n.id} className="border-t border-line py-3 first:border-t-0">
+                  <p className={`text-[0.92rem] ${n.readAt ? "text-muted" : "font-semibold text-navy"}`}>{n.title}</p>
+                  <p className="mt-0.5 font-mono text-[0.72rem] text-muted">{formatDate(n.createdAt, { day: "2-digit", month: "2-digit", year: "numeric" })}</p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-4 text-[0.92rem] text-muted">Aucune notification pour le moment.</p>
+          )}
+        </Panel>
+
+        {isMember && (
+          <>
+            <Panel className="xl:col-span-3">
+              <div className="flex items-center justify-between">
+                <p className="label">Annonces</p>
+                <Link href="/espace/actualites" className="text-sm font-semibold text-navy hover:text-cyan-dark">
+                  Toutes les actualités
+                </Link>
+              </div>
+              <ul className="mt-4">
+                {news.map((n) => (
+                  <li key={n.slug} className="border-t border-line py-4 first:border-t-0">
+                    <p className="font-mono text-[0.72rem] text-muted">
+                      {formatDate(n.publishedAt, { day: "2-digit", month: "2-digit", year: "numeric" })}
+                      {n.membersOnly && <span className="ml-3 text-cyan-dark">Réservé aux membres</span>}
+                    </p>
+                    <Link href={`/espace/actualites/${n.slug}`} className="mt-1 block font-semibold text-navy hover:text-cyan-dark">
+                      {n.title}
+                    </Link>
+                  </li>
+                ))}
+                {!news.length && <li className="text-[0.92rem] text-muted">Aucune annonce.</li>}
+              </ul>
+            </Panel>
+            <Panel className="xl:col-span-2">
+              <div className="flex items-center justify-between">
+                <p className="label">Prochaines échéances</p>
+                <Link href="/espace/evenements" className="text-sm font-semibold text-navy hover:text-cyan-dark">
+                  Agenda
+                </Link>
+              </div>
+              <ul className="mt-4">
+                {upcoming.map((e) => (
+                  <li key={e.id} className="grid grid-cols-[3.5rem_1fr] gap-3 border-t border-line py-3 first:border-t-0">
+                    <span className="font-display text-2xl leading-none font-extrabold text-navy">
+                      {formatDate(e.startsAt, { day: "2-digit" })}
+                      <span className="mt-1 block font-mono text-[0.68rem] font-normal text-muted uppercase">{formatDate(e.startsAt, { month: "short" })}</span>
+                    </span>
+                    <span>
+                      <span className="block text-[0.92rem] font-semibold text-navy">{e.title}</span>
+                      {e.registration && e.registration.status !== "cancelled" && <span className="mt-1 block font-mono text-[0.7rem] text-cyan-dark">Inscrit</span>}
+                    </span>
+                  </li>
+                ))}
+                {!upcoming.length && <li className="text-[0.92rem] text-muted">Aucun événement à venir.</li>}
+              </ul>
+            </Panel>
+          </>
+        )}
+      </div>
+    </>
+  );
+}
+
+function DashboardSkeleton() {
+  return (
+    <div aria-busy className="space-y-6">
+      <div className="h-24 animate-pulse bg-white/60" />
+      <div className="grid gap-6 xl:grid-cols-5">
+        <div className="h-56 animate-pulse bg-white xl:col-span-3" />
+        <div className="h-56 animate-pulse bg-white xl:col-span-2" />
+      </div>
     </div>
   );
 }

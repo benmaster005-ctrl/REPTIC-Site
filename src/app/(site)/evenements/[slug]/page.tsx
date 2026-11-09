@@ -60,7 +60,7 @@ async function EventDetail({ params }: Pick<PageProps<"/evenements/[slug]">, "pa
               ))}
             </dl>
             {item.registrationEnabled ? (
-              <Link href={`/connexion?suite=/espace/evenements/${item.slug}`} className="btn-primary w-full justify-between">
+              <Link href="/espace/evenements" className="btn-primary w-full justify-between">
                 S&apos;inscrire <ArrowRight aria-hidden className="size-4" />
               </Link>
             ) : (
