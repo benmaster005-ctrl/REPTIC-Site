@@ -16,6 +16,7 @@ import {
 } from "@/lib/data/member";
 import {
   applicantTypeLabels,
+  activityDomains,
   fieldLabels,
   fieldsFor,
   isEditable,
@@ -97,6 +98,7 @@ async function ApplicationFlow({ searchParams }: Pick<PageProps<"/espace/adhesio
   if (step === "informations") {
     const initial = Object.fromEntries(fieldsFor(app.applicantType).map((k) => [k, app.payload[k] != null ? String(app.payload[k]) : ""]));
     if (!initial.country) initial.country = "Cameroun";
+    if (!initial.domain) initial.domain = activityDomains[0];
     if (app.applicantType === "legal" && !initial.rep_email) initial.rep_email = user.email;
     if (app.applicantType === "physical") {
       initial.first_name ||= user.firstName ?? "";
