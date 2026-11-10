@@ -108,7 +108,7 @@ export function Field({ name, label, state, type = "text", required, autoComplet
   );
 }
 
-export function SelectField({ name, label, state, options, required, placeholder = "Sélectionner…", hint }: {
+export function SelectField({ name, label, state, options, required, placeholder = "Sélectionner…", hint, onValueChange }: {
   name: string;
   label: string;
   state: FormState;
@@ -116,6 +116,8 @@ export function SelectField({ name, label, state, options, required, placeholder
   required?: boolean;
   placeholder?: string;
   hint?: string;
+  /** Appelé à chaque choix (champ dépendant, comme « Autre : précisez »). */
+  onValueChange?: (value: string) => void;
 }) {
   const errors = state.fieldErrors?.[name];
   const id = `champ-${name}`;
@@ -130,6 +132,7 @@ export function SelectField({ name, label, state, options, required, placeholder
         name={name}
         required={required}
         defaultValue={state.values?.[name] ?? ""}
+        onChange={onValueChange ? (e) => onValueChange(e.target.value) : undefined}
         aria-invalid={errors?.length ? true : undefined}
         aria-describedby={errors?.length ? `${id}-erreur` : hint ? `${id}-aide` : undefined}
         className="field-input appearance-none pr-10"

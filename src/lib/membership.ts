@@ -47,6 +47,24 @@ export type WizardStep = (typeof wizardSteps)[number]["key"];
 export const legalForms = ["SARL", "SARLU", "SA", "SAS", "SASU", "GIE", "Établissement", "Association", "Autre"];
 export const countries = ["Cameroun", "Gabon", "Congo", "Tchad", "République centrafricaine", "Guinée équatoriale", "Nigeria", "France", "Autre"];
 
+/** Valeur des listes qui ouvre un champ libre « Précisez ». */
+export const OTHER = "Autre";
+/** Domaine d'activité : un seul domaine proposé, ou « Autre » à préciser. */
+export const activityDomains = ["Télécom et numérique", OTHER];
+/** Secteur d'activité (liste du formulaire d'adhésion de reptic.cm). */
+export const activitySectors = [
+  "Opérateur télécom",
+  "Opérateur d'infrastructure",
+  "Fournisseur SVA / Contenus",
+  "Fournisseur de services de communication numérique",
+  "Fournisseur de services IT & numériques",
+  "Intégrateur de systèmes TIC",
+  "Distributeur d'équipements",
+  "Étude & Conseil",
+  "Startup",
+  OTHER,
+];
+
 // ---------------------------------------------------------------------------
 // Schémas de validation
 // ---------------------------------------------------------------------------
@@ -66,6 +84,20 @@ const optUrl = z
   .transform((v) => (v ? (/^https?:\/\//i.test(v) ? v : `https://${v}`) : undefined))
   .pipe(z.url({ error: "Adresse de site web invalide." }).optional());
 
+/** Domaine et secteur : valeur de la liste, et texte libre quand « Autre » est choisi. */
+const inList = (label: string, list: string[]) =>
+  req(label, 80).refine((v) => list.includes(v), { error: `${label} : choisissez une valeur de la liste.` });
+const activityFields = {
+  domain: inList("Domaine d'activité", activityDomains),
+  domain_other: opt(120),
+  sector: inList("Secteur d'activité", activitySectors),
+  sector_other: opt(120),
+};
+function requireOther(v: { domain: string; domain_other?: string; sector: string; sector_other?: string }, ctx: z.RefinementCtx) {
+  if (v.domain === OTHER && !v.domain_other) ctx.addIssue({ code: "custom", path: ["domain_other"], message: "Précisez votre domaine d'activité." });
+  if (v.sector === OTHER && !v.sector_other) ctx.addIssue({ code: "custom", path: ["sector_other"], message: "Précisez votre secteur d'activité." });
+}
+
 export const physicalSchema = z.object({
   first_name: req("Prénom", 80),
   last_name: req("Nom", 80),
@@ -80,18 +112,18 @@ export const physicalSchema = z.object({
   country: req("Pays", 80),
   profession: req("Profession", 120),
   organization: opt(160),
-  activity_category: req("Domaine d'activité", 80),
+  ...activityFields,
   experience_years: z.preprocess(
     (v) => (v === "" || v == null ? undefined : Number(v)),
     z.number({ error: "Indiquez un nombre d'années." }).int({ error: "Nombre entier attendu." }).min(0, { error: "Valeur invalide." }).max(60, { error: "Valeur invalide." }),
   ),
   motivation: opt(1500),
-});
+}).superRefine(requireOther);
 
 export const legalSchema = z.object({
   legal_name: req("Dénomination sociale", 160),
   legal_form: req("Forme juridique", 40),
-  sector: req("Secteur d'activité", 80),
+  ...activityFields,
   registration_number: req("Numéro RCCM", 60),
   tax_id: req("NIU", 40),
   address: req("Adresse du siège", 200),
@@ -106,7 +138,7 @@ export const legalSchema = z.object({
   rep_email: emailSchema,
   rep_phone: phone,
   motivation: opt(1500),
-});
+}).superRefine(requireOther);
 
 export const schemaFor = (t: ApplicantType) => (t === "physical" ? physicalSchema : legalSchema);
 export const fieldsFor = (t: ApplicantType) => Object.keys(schemaFor(t).shape);
@@ -121,12 +153,14 @@ export const fieldLabels: Record<string, string> = {
   country: "Pays",
   profession: "Profession",
   organization: "Organisation",
-  activity_category: "Domaine d'activité",
+  domain: "Domaine d'activité",
+  domain_other: "Domaine (précision)",
   experience_years: "Années d'expérience",
   motivation: "Motivation",
   legal_name: "Dénomination sociale",
   legal_form: "Forme juridique",
   sector: "Secteur d'activité",
+  sector_other: "Secteur (précision)",
   registration_number: "Numéro RCCM",
   tax_id: "NIU",
   address: "Adresse du siège",

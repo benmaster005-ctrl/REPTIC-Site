@@ -14,7 +14,6 @@ import {
   type AppDocument,
   type RequiredDocument,
 } from "@/lib/data/member";
-import { getActorCategories } from "@/lib/data/public";
 import {
   applicantTypeLabels,
   fieldLabels,
@@ -96,7 +95,6 @@ async function ApplicationFlow({ searchParams }: Pick<PageProps<"/espace/adhesio
   if (step === "type") return <TypeStep current={app} error={error} header={header} />;
 
   if (step === "informations") {
-    const categories = (await getActorCategories()).map((c) => ({ value: c.slug, label: c.name }));
     const initial = Object.fromEntries(fieldsFor(app.applicantType).map((k) => [k, app.payload[k] != null ? String(app.payload[k]) : ""]));
     if (!initial.country) initial.country = "Cameroun";
     if (app.applicantType === "legal" && !initial.rep_email) initial.rep_email = user.email;
@@ -110,7 +108,7 @@ async function ApplicationFlow({ searchParams }: Pick<PageProps<"/espace/adhesio
         <Panel className="mt-8">
           <h2 className="font-display text-xl font-bold text-navy">Informations et coordonnées</h2>
           <p className="mt-1 mb-8 text-[0.92rem] text-muted">Les champs marqués d&apos;un astérisque sont obligatoires.</p>
-          <ApplicationInfoForm applicationId={app.id} type={app.applicantType} initial={initial} categories={categories} />
+          <ApplicationInfoForm applicationId={app.id} type={app.applicantType} initial={initial} />
         </Panel>
       </>
     );

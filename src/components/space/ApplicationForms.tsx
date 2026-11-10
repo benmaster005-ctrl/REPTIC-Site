@@ -7,10 +7,8 @@ import { ArrowLeft, ArrowRight, FileText, Loader2, Upload } from "lucide-react";
 import { registerDocument, saveApplicationInfo, submitApplication } from "@/app/actions/membership";
 import { createClient } from "@/lib/supabase/client";
 import { type FormState } from "@/lib/forms";
-import { MAX_FILE_BYTES, countries, formatBytes, legalForms, safeFileName, type ApplicantType } from "@/lib/membership";
+import { MAX_FILE_BYTES, OTHER, activityDomains, activitySectors, countries, formatBytes, legalForms, safeFileName, type ApplicantType } from "@/lib/membership";
 import { Checkbox, Field, FormMessage, SelectField, SubmitButton } from "@/components/ui/form";
-
-type Option = { value: string; label: string };
 
 function Fieldset({ legend, children }: { legend: string; children: React.ReactNode }) {
   return (
@@ -21,14 +19,30 @@ function Fieldset({ legend, children }: { legend: string; children: React.ReactN
   );
 }
 
+/** Liste avec « Autre » : le champ « Précisez » apparaît quand il est choisi. */
+function SelectWithOther({ name, label, options, state, placeholder }: {
+  name: string;
+  label: string;
+  options: string[];
+  state: FormState;
+  placeholder: string;
+}) {
+  const [value, setValue] = useState(state.values?.[name] ?? "");
+  return (
+    <>
+      <SelectField name={name} label={label} state={state} required options={options.map((o) => ({ value: o, label: o }))} onValueChange={setValue} />
+      {value === OTHER && <Field name={`${name}_other`} label="Précisez" state={state} required placeholder={placeholder} />}
+    </>
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Étape 2 : informations
 // ---------------------------------------------------------------------------
-export function ApplicationInfoForm({ applicationId, type, initial, categories }: {
+export function ApplicationInfoForm({ applicationId, type, initial }: {
   applicationId: string;
   type: ApplicantType;
   initial: Record<string, string>;
-  categories: Option[];
 }) {
   const [state, action] = useActionState(saveApplicationInfo, { status: "idle", values: initial } as FormState);
   const countryOptions = countries.map((c) => ({ value: c, label: c }));
@@ -53,8 +67,11 @@ export function ApplicationInfoForm({ applicationId, type, initial, categories }
           <Fieldset legend="Activité professionnelle">
             <Field name="profession" label="Profession" state={s} required placeholder="Ex. architecte réseau, consultant cybersécurité" />
             <Field name="organization" label="Organisation" state={s} hint="Facultatif : employeur ou structure" />
-            <SelectField name="activity_category" label="Domaine d'activité" state={s} required options={categories} />
             <Field name="experience_years" label="Années d'expérience" type="number" state={s} required />
+          </Fieldset>
+          <Fieldset legend="Domaine et secteur d'activité">
+            <SelectWithOther name="domain" label="Domaine d'activité" options={activityDomains} state={s} placeholder="Votre domaine" />
+            <SelectWithOther name="sector" label="Secteur d'activité" options={activitySectors} state={s} placeholder="Votre secteur" />
           </Fieldset>
         </>
       ) : (
@@ -62,10 +79,13 @@ export function ApplicationInfoForm({ applicationId, type, initial, categories }
           <Fieldset legend="Entreprise">
             <Field name="legal_name" label="Dénomination sociale" state={s} required autoComplete="organization" />
             <SelectField name="legal_form" label="Forme juridique" state={s} required options={legalForms.map((f) => ({ value: f, label: f }))} />
-            <SelectField name="sector" label="Secteur d'activité" state={s} required options={categories} />
             <Field name="website" label="Site web" type="url" state={s} hint="Facultatif" placeholder="www.exemple.cm" />
             <Field name="registration_number" label="Numéro RCCM" state={s} required placeholder="RC/YAO/2020/B/1234" />
             <Field name="tax_id" label="NIU" state={s} required />
+          </Fieldset>
+          <Fieldset legend="Domaine et secteur d'activité">
+            <SelectWithOther name="domain" label="Domaine d'activité" options={activityDomains} state={s} placeholder="Votre domaine" />
+            <SelectWithOther name="sector" label="Secteur d'activité" options={activitySectors} state={s} placeholder="Votre secteur" />
           </Fieldset>
           <Fieldset legend="Siège">
             <Field name="address" label="Adresse du siège" state={s} required autoComplete="street-address" />
