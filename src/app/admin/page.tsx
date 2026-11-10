@@ -24,7 +24,7 @@ function Kpi({ label, value, href, hint }: { label: string; value: number | stri
   const body = (
     <>
       <p className="label">{label}</p>
-      <p className="mt-3 font-display text-[2.6rem] leading-none font-extrabold tracking-[-0.04em] text-navy tabular-nums">{value}</p>
+      <p className="mt-3 font-display text-[2.6rem] leading-none font-extrabold tracking-[-0.025em] text-navy tabular-nums">{value}</p>
       {hint && <p className="mt-2 text-[0.8rem] text-muted">{hint}</p>}
     </>
   );

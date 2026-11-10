@@ -67,7 +67,7 @@ export default async function HomePage() {
                   className={`py-8 sm:py-10 ${i % 2 === 1 ? "border-l border-line pl-6 sm:pl-10" : ""} ${i >= 2 ? "border-t border-line lg:border-t-0" : ""} ${i === 2 ? "lg:border-l lg:pl-10" : ""}`}
                 >
                   <dt className="label">{f.label}</dt>
-                  <dd className="mt-3 font-display text-[2.6rem] leading-none font-extrabold tracking-[-0.04em] text-navy sm:text-[3.4rem]">
+                  <dd className="mt-3 font-display text-[2.6rem] leading-none font-extrabold tracking-[-0.025em] text-navy sm:text-[3.4rem]">
                     <CountUp value={f.value} />
                   </dd>
                 </div>

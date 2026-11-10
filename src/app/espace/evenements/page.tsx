@@ -39,7 +39,7 @@ async function MemberEvents({ searchParams }: Pick<PageProps<"/espace/evenements
               return (
                 <li key={e.id} id={`evenement-${e.id}`} className="grid scroll-mt-8 gap-5 border-b border-line px-6 py-6 last:border-b-0 sm:grid-cols-[5rem_1fr_auto] sm:items-center sm:px-8">
                   <p className="leading-none">
-                    <span className="block font-display text-[2.2rem] font-extrabold tracking-[-0.04em] text-navy">{formatDate(e.startsAt, { day: "2-digit" })}</span>
+                    <span className="block font-display text-[2.2rem] font-extrabold tracking-[-0.025em] text-navy">{formatDate(e.startsAt, { day: "2-digit" })}</span>
                     <span className="mt-1 block font-mono text-[0.72rem] text-muted uppercase">{formatDate(e.startsAt, { month: "short", year: "numeric" })}</span>
                   </p>
                   <div>

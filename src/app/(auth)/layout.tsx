@@ -24,7 +24,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
         <div className="mx-auto w-full max-w-2xl bg-white p-8">
           <NetworkDiagram categories={categories} />
         </div>
-        <p className="max-w-lg font-display text-[1.9rem] leading-[1.1] font-extrabold tracking-[-0.03em] text-navy">
+        <p className="max-w-lg font-display text-[1.9rem] leading-[1.1] font-extrabold tracking-[-0.02em] text-navy">
           Suivez votre adhésion, accédez aux ressources réservées et retrouvez les membres du réseau.
         </p>
       </aside>

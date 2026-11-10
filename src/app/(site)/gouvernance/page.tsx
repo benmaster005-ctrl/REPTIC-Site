@@ -32,7 +32,7 @@ export default async function GovernancePage() {
                     {m.photoUrl ? (
                       <Image src={m.photoUrl} alt={`Portrait de ${m.fullName}`} fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover grayscale-[20%]" />
                     ) : (
-                      <span aria-hidden className="absolute inset-0 grid place-items-center font-display text-6xl font-extrabold tracking-[-0.04em] text-line-strong">
+                      <span aria-hidden className="absolute inset-0 grid place-items-center font-display text-6xl font-extrabold tracking-[-0.025em] text-line-strong">
                         {initials(pending ? m.positionTitle : m.fullName)}
                       </span>
                     )}

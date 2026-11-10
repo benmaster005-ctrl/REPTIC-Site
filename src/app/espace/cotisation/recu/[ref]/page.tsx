@@ -55,7 +55,7 @@ async function Receipt({ params }: Pick<PageProps<"/espace/cotisation/recu/[ref]
       <article className="mx-auto max-w-2xl border-t-4 border-navy bg-white p-8 sm:p-12 print:max-w-none print:border-0 print:p-0">
         <header className="flex flex-wrap items-start justify-between gap-6 border-b border-line pb-6">
           <div>
-            <p className="font-display text-2xl font-black tracking-tight text-navy">
+            <p className="font-display text-2xl font-extrabold tracking-tight text-navy">
               REPTIC<span className="text-cyan">.cm</span>
             </p>
             <p className="mt-1 max-w-xs text-[0.72rem] leading-snug text-muted">Réseau des Entreprises &amp; Professionnels du Secteur des Télécoms et du Numérique au Cameroun</p>

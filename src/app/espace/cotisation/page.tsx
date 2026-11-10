@@ -61,7 +61,7 @@ async function Fee({ searchParams }: Pick<PageProps<"/espace/cotisation">, "sear
             <p className="mt-4 text-muted">Le montant de la cotisation n&apos;est pas encore fixé. Le secrétariat vous informera dès l&apos;ouverture des paiements.</p>
           ) : (
             <>
-              <p className="mt-3 font-display text-[2.6rem] leading-none font-extrabold tracking-[-0.03em] text-navy">{formatAmount(amount, overview.fee?.currency)}</p>
+              <p className="mt-3 font-display text-[2.6rem] leading-none font-extrabold tracking-[-0.02em] text-navy">{formatAmount(amount, overview.fee?.currency)}</p>
               <p className="mt-2 text-[0.92rem] text-muted">par année civile</p>
               <div className="mt-8 space-y-4">
                 {years.map((y) =>

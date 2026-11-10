@@ -154,7 +154,7 @@ export function EventRow({ item }: { item: EventItem }) {
   return (
     <li className="group relative isolate grid grid-cols-[4.5rem_1fr] gap-x-6 gap-y-2 border-t border-line py-7 before:absolute before:inset-y-0 before:-right-4 before:-left-4 before:-z-10 before:origin-left before:scale-x-0 before:bg-paper before:transition-transform before:duration-500 before:ease-[cubic-bezier(0.16,1,0.3,1)] hover:before:scale-x-100 sm:grid-cols-[6rem_1fr_auto] sm:items-center">
       <p className="leading-none">
-        <span className="block font-display text-[2.6rem] font-extrabold tracking-[-0.04em] text-navy">{day}</span>
+        <span className="block font-display text-[2.6rem] font-extrabold tracking-[-0.025em] text-navy">{day}</span>
         <span className="mt-1 block font-mono text-[0.75rem] text-muted uppercase">
           {month} {year}
         </span>
@@ -182,7 +182,7 @@ export function JoinBand() {
       <Reveal className="container-site grid gap-10 py-16 sm:py-20 lg:grid-cols-12 lg:items-end">
         <div className="lg:col-span-7">
           <SectionLabel tone="inverse">Adhésion</SectionLabel>
-          <p className="mt-5 font-display text-[2rem] leading-[1.08] font-extrabold tracking-[-0.03em] text-balance sm:text-[2.8rem]">
+          <p className="mt-5 font-display text-[2rem] leading-[1.08] font-extrabold tracking-[-0.02em] text-balance sm:text-[2.8rem]">
             Votre entreprise fait le numérique camerounais. Faites-la entendre.
           </p>
         </div>

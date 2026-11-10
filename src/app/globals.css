@@ -2,7 +2,7 @@
 
 /* =============================================================================
    Identité REPTIC.CM
-   - Couleurs issues du logo : marine #232D57, cyan #209AD7.
+   - Couleurs issues du logo : marine #232D57, cyan #209AD7. Police unique : Poppins.
    - Motif : la trace de circuit (ligne + nœud annulaire) du nuage « .cm ».
    - Grille stricte, filets de 1px, angles nets (rayon 2px), pas d'ombres portées
      décoratives ni de dégradés. Le cyan est un accent : il ne remplit jamais
@@ -10,9 +10,10 @@
    ========================================================================== */
 
 @theme {
-  --font-sans: var(--font-plex), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-archivo), var(--font-plex), ui-sans-serif, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  /* Police unique : Poppins, pour les titres, le texte et les libellés techniques. */
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
 
   --color-navy: #232d57;
   --color-navy-deep: #161d3d;
@@ -64,20 +65,21 @@ body {
   font-stretch: 100%;
 }
 
-/* Titres : Archivo serré, comme le « REPTIC » du logo */
+/* Titres : Poppins gras. Lettre plus large qu'une police condensée : tailles et
+   approche légèrement réduites, interlignage un peu plus ouvert. */
 @utility heading-xl {
-  @apply font-display text-[2.6rem] leading-[1.02] font-extrabold tracking-[-0.035em] text-navy sm:text-[4.2rem] lg:text-[5.2rem];
+  @apply font-display text-[2.35rem] leading-[1.08] font-bold tracking-[-0.025em] text-navy sm:text-[3.7rem] lg:text-[4.5rem];
 }
 @utility heading-lg {
-  @apply font-display text-[2rem] leading-[1.05] font-extrabold tracking-[-0.03em] text-navy sm:text-5xl;
+  @apply font-display text-[1.85rem] leading-[1.12] font-bold tracking-[-0.02em] text-navy sm:text-[2.75rem];
 }
 @utility heading-md {
-  @apply font-display text-2xl leading-tight font-bold tracking-[-0.02em] text-navy sm:text-3xl;
+  @apply font-display text-[1.45rem] leading-tight font-semibold tracking-[-0.01em] text-navy sm:text-[1.75rem];
 }
 
-/* Libellé technique : mono, discret */
+/* Libellé technique : petites capitales espacées, discret */
 @utility label {
-  @apply font-mono text-[0.72rem] font-medium tracking-[0.08em] text-muted uppercase;
+  @apply font-mono text-[0.7rem] font-medium tracking-[0.1em] text-muted uppercase;
 }
 
 /* Boutons : rectangles nets, flèche en fin */

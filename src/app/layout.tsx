@@ -1,11 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { Poppins } from "next/font/google";
 import { SITE_URL } from "@/lib/env";
 import "./globals.css";
 
-const archivo = Archivo({ variable: "--font-archivo", subsets: ["latin"], weight: "variable", display: "swap" });
-const plex = IBM_Plex_Sans({ variable: "--font-plex", subsets: ["latin"], weight: ["400", "500", "600", "700"], display: "swap" });
-const plexMono = IBM_Plex_Mono({ variable: "--font-plex-mono", subsets: ["latin"], weight: ["400", "500"], display: "swap" });
+// Police unique du site : Poppins (graisses utilisées : 400 à 800).
+const poppins = Poppins({ variable: "--font-poppins", subsets: ["latin", "latin-ext"], weight: ["400", "500", "600", "700", "800"], display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -23,7 +22,7 @@ export const viewport: Viewport = { themeColor: "#232d57" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="fr" className={`${archivo.variable} ${plex.variable} ${plexMono.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="fr" className={`${poppins.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         {/* Active les animations d'apparition seulement si JS tourne : sans JS, tout reste visible. */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
