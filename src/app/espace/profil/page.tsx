@@ -31,7 +31,7 @@ async function Profile() {
         <h2 className="font-display text-xl font-bold text-navy">Compte</h2>
         <dl className="mt-4 mb-8 grid gap-x-8 gap-y-1 text-[0.92rem] sm:grid-cols-[auto_1fr]">
           <dt className="text-muted">Identifiant</dt>
-          <dd className="font-semibold text-navy">{user.email}</dd>
+          <dd className="font-semibold break-all text-navy">{user.email}</dd>
         </dl>
         <AccountForm initial={{ first_name: user.firstName ?? "", last_name: user.lastName ?? "", phone: user.phone ?? "" }} />
       </Panel>

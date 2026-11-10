@@ -87,8 +87,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </header>
 
-      <div className="container-site grid gap-8 py-8 lg:grid-cols-12 lg:gap-6 lg:py-10">
-        <aside className="lg:col-span-2 lg:pr-4">
+      <div className="container-site grid grid-cols-1 gap-6 py-6 lg:grid-cols-12 lg:gap-6 lg:py-10">
+        <aside className="min-w-0 lg:col-span-2 lg:pr-4">
           <div className="lg:sticky lg:top-8">
             <Suspense fallback={<AdminNavList sections={strip(sections)} pathname={null} />}>
               <NavForStaff />

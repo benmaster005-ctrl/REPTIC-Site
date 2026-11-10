@@ -43,13 +43,13 @@ export default function SpaceLayout({ children }: { children: React.ReactNode })
         Aller au contenu
       </a>
       <header className="border-b border-line bg-white print:hidden">
-        <div className="container-site flex h-[4.5rem] items-center justify-between gap-4">
+        <div className="container-site flex h-16 items-center justify-between gap-3 sm:h-[4.5rem] sm:gap-4">
           <div className="flex items-center gap-5">
-            <Logo className="h-10 w-auto" />
+            <Logo className="h-8 w-auto sm:h-10" />
             <span aria-hidden className="hidden h-6 w-px bg-line sm:block" />
             <span className="label hidden sm:inline">Espace membre</span>
           </div>
-          <div className="flex items-center gap-5">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-5">
             <Suspense fallback={null}>
               <UserName />
               <AdminLink />
@@ -66,8 +66,8 @@ export default function SpaceLayout({ children }: { children: React.ReactNode })
         </div>
       </header>
 
-      <div className="container-site grid gap-8 py-8 lg:grid-cols-12 lg:gap-6 lg:py-12">
-        <aside className="lg:col-span-3 lg:pr-8 print:hidden">
+      <div className="container-site grid grid-cols-1 gap-6 py-6 lg:grid-cols-12 lg:gap-6 lg:py-12">
+        <aside className="min-w-0 lg:col-span-3 lg:pr-8 print:hidden">
           <div className="lg:sticky lg:top-8">
             <Suspense fallback={<SpaceNavList items={candidateNav} pathname={null} />}>
               <NavForUser />
@@ -94,7 +94,8 @@ async function AdminLink() {
   if (user.status !== "active" || !["editor", "manager", "admin"].includes(user.role)) return null;
   return (
     <Link href="/admin" className="text-sm font-semibold text-cyan-dark hover:text-navy">
-      Administration
+      <span className="sm:hidden">Admin</span>
+      <span className="hidden sm:inline">Administration</span>
     </Link>
   );
 }
