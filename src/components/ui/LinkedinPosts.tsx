@@ -25,7 +25,7 @@ export async function LinkedinPosts({ limit = 3 }: { limit?: number }) {
           {posts.map((p) => (
             <li
               key={p.id}
-              className="group relative flex w-[85%] shrink-0 snap-start flex-col overflow-hidden rounded-3xl border border-line bg-white transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_22px_48px_-24px_rgb(35_45_87/0.4)] sm:w-[60%] md:w-auto"
+              className="group relative flex w-[85%] shrink-0 snap-start flex-col overflow-hidden rounded-xl border border-line bg-white transition-[transform,border-color] hover:border-navy duration-300 hover:-translate-y-1 sm:w-[60%] md:w-auto"
             >
               {p.image && (
                 <div className="relative aspect-[16/10] overflow-hidden bg-line/40">

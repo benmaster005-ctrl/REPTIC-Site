@@ -28,7 +28,7 @@ export default async function GovernancePage() {
             {members.map((m) => {
               const pending = m.fullName === "À renseigner";
               return (
-                <li key={m.id} className="group overflow-hidden rounded-3xl border border-line bg-white transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-cyan/40 hover:shadow-[0_22px_48px_-24px_rgb(35_45_87/0.4)]">
+                <li key={m.id} className="group overflow-hidden rounded-xl border border-line bg-white transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-navy">
                   <div className="relative aspect-square overflow-hidden bg-paper">
                     {m.photoUrl ? (
                       <Image src={m.photoUrl} alt={`Portrait de ${m.fullName}`} fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover grayscale-[35%] transition-[filter,transform] duration-700 group-hover:scale-105 group-hover:grayscale-0" />

@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { heroBanners, missions } from "@/content/site";
 import { getActorCategories, getEvents, getKeyFigures, getLatestNews } from "@/lib/data/public";
 import { EmptyState, EventRow, JoinBand, NewsCard, SectionHeader } from "@/components/ui/content";
-import { ActorMarquee, KeyFigureCards, MissionBento } from "@/components/ui/modern";
+import { ActorMarquee, KeyFigures, MissionBento } from "@/components/ui/modern";
 import { NetworkDiagram } from "@/components/brand/NetworkDiagram";
 import { SectionLabel } from "@/components/brand/Trace";
 import { RevealGroup } from "@/components/motion/Reveal";
@@ -67,13 +67,11 @@ export default async function HomePage() {
 
       {/* Chiffres clés */}
       {figures.length > 0 && (
-        <section className="relative isolate overflow-hidden bg-navy py-16 sm:py-20">
-          <span aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_1px_1px,rgb(255_255_255/0.08)_1px,transparent_0)] [background-size:22px_22px]" />
-          <span aria-hidden className="glow absolute -bottom-32 -left-24 -z-10 size-96 rounded-full bg-cyan/30 blur-3xl" />
+        <section className="border-y border-line bg-paper py-16 sm:py-20">
           <div className="container-site">
-            <SectionLabel tone="inverse">Le réseau en chiffres</SectionLabel>
-            <div className="mt-8">
-              <KeyFigureCards figures={figures} />
+            <SectionLabel>Le réseau en chiffres</SectionLabel>
+            <div className="mt-12">
+              <KeyFigures figures={figures} />
             </div>
           </div>
         </section>
@@ -103,7 +101,7 @@ export default async function HomePage() {
           />
           <RevealGroup className="mt-12 grid gap-4 lg:ml-[calc(25%+0.375rem)] lg:grid-cols-2">
             {profiles.map((p) => (
-              <Link key={p.anchor} href={`/adhesion#${p.anchor}`} className="group flex flex-col rounded-3xl border border-line bg-white p-8 transition-[background-color,transform,box-shadow] duration-300 hover:-translate-y-1 hover:bg-navy hover:shadow-[0_22px_48px_-24px_rgb(35_45_87/0.5)] sm:p-10">
+              <Link key={p.anchor} href={`/adhesion#${p.anchor}`} className="group flex flex-col rounded-xl border border-line bg-white p-8 transition-[background-color,transform] duration-300 hover:-translate-y-1 hover:bg-navy sm:p-10">
                 <span className="label text-cyan-dark group-hover:text-cyan">{p.kind}</span>
                 <span className="mt-4 font-display text-[1.6rem] leading-tight font-bold tracking-[-0.02em] text-navy group-hover:text-white">{p.title}</span>
                 <span className="mt-3 text-[0.98rem] leading-relaxed text-muted group-hover:text-white/70">{p.text}</span>

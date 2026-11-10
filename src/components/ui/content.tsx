@@ -6,7 +6,7 @@ import { ArrowRight, ArrowUpRight } from "lucide-react";
 import type { EventItem, NewsItem } from "@/lib/types";
 import { formatDate } from "@/lib/format";
 import { isDemo } from "@/lib/data/public";
-import { Node, SectionLabel } from "@/components/brand/Trace";
+import { Node, SectionLabel, TraceRule } from "@/components/brand/Trace";
 import { Reveal, RevealGroup } from "@/components/motion/Reveal";
 import { heroBanners } from "@/content/site";
 
@@ -31,9 +31,8 @@ export function PageHero({ title, summary, crumbs = [], eyebrow, image, imageAlt
   return (
     <section className="relative isolate overflow-hidden bg-navy text-white">
       <Image src={banner} alt={imageAlt} fill priority sizes="100vw" className="hero-zoom -z-20 object-cover" />
-      {/* Voile : marine dense à gauche (texte), plus léger à droite (photo) */}
-      <span aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-navy-deep/95 via-navy/85 to-navy/55" />
-      <span aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-24 bg-gradient-to-t from-navy-deep/60 to-transparent" />
+      {/* Voile marine uni : lisibilité du texte blanc */}
+      <span aria-hidden className="absolute inset-0 -z-10 bg-navy/85" />
       <div className="container-site pt-8 pb-14 sm:pb-20 lg:min-h-[24rem]">
         <nav aria-label="Fil d'Ariane">
           <ol className="flex flex-wrap items-center gap-2 font-mono text-[0.75rem] text-white/65">
@@ -145,13 +144,13 @@ export function RuledList({ items, columns = 1 }: { items: { title: string; desc
   );
 }
 
-/** Visuel de repli des cartes sans photo : dégradé marine et motif de nœuds. */
+/** Visuel de repli des cartes sans photo : aplat marine et trace de circuit du logo. */
 function CardPlaceholder() {
   return (
-    <span aria-hidden className="absolute inset-0 bg-gradient-to-br from-navy via-navy-soft to-cyan-dark">
-      <span className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgb(255_255_255/0.18)_1px,transparent_0)] [background-size:18px_18px]" />
-      <span className="absolute right-6 bottom-6 size-10 rounded-full border-2 border-white/40" />
-      <span className="absolute right-[2.15rem] bottom-[2.15rem] size-3.5 rounded-full bg-cyan" />
+    <span aria-hidden className="absolute inset-0 bg-navy">
+      <span className="absolute top-1/2 right-[18%] left-0 h-[2px] bg-white/25" />
+      <span className="absolute top-1/2 right-[18%] h-[2px] w-[22%] bg-cyan" />
+      <span className="absolute top-1/2 right-[calc(18%-0.6rem)] size-5 -translate-y-1/2 rounded-full border-[3px] border-cyan bg-navy" />
     </span>
   );
 }
@@ -169,7 +168,7 @@ export function NewsCard({ item, size = "default", delay = 0 }: { item: NewsItem
     <Reveal
       as="article"
       delay={delay}
-      className={`group relative flex overflow-hidden rounded-3xl border border-line bg-white transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-cyan/40 hover:shadow-[0_22px_48px_-24px_rgb(35_45_87/0.4)] ${
+      className={`group relative flex overflow-hidden rounded-xl border border-line bg-white transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-navy ${
         compact ? "flex-row items-stretch" : "h-full flex-col"
       }`}
     >
@@ -186,7 +185,7 @@ export function NewsCard({ item, size = "default", delay = 0 }: { item: NewsItem
           <CardPlaceholder />
         )}
         {item.category && !compact && (
-          <span className="absolute top-4 left-4 rounded-full bg-white/90 px-3 py-1 text-[0.72rem] font-semibold text-navy shadow-sm backdrop-blur-sm">{item.category}</span>
+          <span className="absolute top-4 left-4 rounded-full bg-white px-3 py-1 text-[0.72rem] font-semibold text-navy">{item.category}</span>
         )}
       </div>
       <div className={`flex flex-1 flex-col ${compact ? "p-5" : feature ? "p-7 sm:p-9" : "p-6"}`}>
@@ -229,8 +228,8 @@ export function EventRow({ item }: { item: EventItem }) {
   const year = formatDate(item.startsAt, { year: "numeric" });
   const time = formatDate(item.startsAt, { hour: "2-digit", minute: "2-digit" });
   return (
-    <li className="group relative grid grid-cols-[4.75rem_1fr] items-center gap-5 rounded-3xl border border-line bg-white p-4 transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-0.5 hover:border-cyan/40 hover:shadow-[0_18px_40px_-22px_rgb(35_45_87/0.4)] sm:grid-cols-[6rem_1fr_auto] sm:gap-7 sm:p-5">
-      <p className="grid aspect-square place-content-center rounded-2xl bg-navy text-center leading-none text-white transition-colors duration-300 group-hover:bg-cyan-dark">
+    <li className="group relative grid grid-cols-[4.75rem_1fr] items-center gap-5 rounded-xl border border-line bg-white p-4 transition-[transform,border-color] duration-300 hover:-translate-y-0.5 hover:border-navy sm:grid-cols-[6rem_1fr_auto] sm:gap-7 sm:p-5">
+      <p className="grid aspect-square place-content-center rounded-lg bg-navy text-center leading-none text-white transition-colors duration-300 group-hover:bg-cyan-dark">
         <span className="block font-display text-[2rem] font-extrabold tracking-[-0.025em] sm:text-[2.4rem]">{day}</span>
         <span className="mt-1 block text-[0.7rem] font-semibold tracking-wide text-white/75 uppercase">
           {month} {year}
@@ -255,32 +254,29 @@ export function EventRow({ item }: { item: EventItem }) {
   );
 }
 
-/** Appel à l'adhésion en bas des pages : carte marine sur photo, halo cyan. */
+/** Appel à l'adhésion en bas des pages : aplat marine, photo nette, trace du logo. */
 export function JoinBand() {
   return (
-    <section className="py-16 sm:py-20">
-      <div className="container-site">
-        <Reveal className="relative isolate overflow-hidden rounded-[2rem] bg-navy px-7 py-14 text-white sm:px-14 sm:py-20">
-          <Image src="/images/reptic/pages/adhesion-reseau.webp" alt="" fill sizes="(min-width: 1280px) 80rem, 100vw" className="-z-30 object-cover opacity-40" />
-          <span aria-hidden className="absolute inset-0 -z-20 bg-gradient-to-r from-navy-deep via-navy/90 to-navy/40" />
-          <span aria-hidden className="glow absolute -top-24 -right-16 -z-10 size-80 rounded-full bg-cyan/40 blur-3xl" />
-          <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
-            <div className="lg:col-span-7">
-              <SectionLabel tone="inverse">Adhésion</SectionLabel>
-              <p className="mt-5 font-display text-[2rem] leading-[1.08] font-extrabold tracking-[-0.02em] text-balance sm:text-[2.8rem]">
-                Votre entreprise fait le numérique camerounais. Faites-la entendre.
-              </p>
-            </div>
-            <div className="flex flex-col gap-3 sm:flex-row lg:col-span-5 lg:justify-end">
-              <Link href="/adhesion" className="btn-inverse">
-                Conditions d&apos;adhésion <ArrowRight aria-hidden className="size-4" />
-              </Link>
-              <Link href="/contact" className="btn-inverse-outline">
-                Nous contacter
-              </Link>
-            </div>
+    <section className="overflow-hidden bg-navy text-white">
+      <div className="container-site grid lg:grid-cols-12">
+        <Reveal className="py-16 sm:py-20 lg:col-span-7 lg:pr-12">
+          <SectionLabel tone="inverse">Adhésion</SectionLabel>
+          <p className="mt-5 font-display text-[2rem] leading-[1.08] font-extrabold tracking-[-0.02em] text-balance sm:text-[2.8rem]">
+            Votre entreprise fait le numérique camerounais. Faites-la entendre.
+          </p>
+          <TraceRule className="mt-10 max-w-md" />
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <Link href="/adhesion" className="btn-inverse">
+              Conditions d&apos;adhésion <ArrowRight aria-hidden className="size-4" />
+            </Link>
+            <Link href="/contact" className="btn-inverse-outline">
+              Nous contacter
+            </Link>
           </div>
         </Reveal>
+        <div className="relative hidden lg:col-span-5 lg:-mr-[max(1.5rem,calc((100vw-84rem)/2+1.5rem))] lg:block">
+          <Image src="/images/reptic/pages/adhesion-reseau.webp" alt="" fill sizes="40vw" className="object-cover" />
+        </div>
       </div>
     </section>
   );
@@ -299,7 +295,7 @@ export function DemoNotice() {
 
 export function EmptyState({ title, description }: { title: string; description?: string }) {
   return (
-    <div className="rounded-3xl border border-dashed border-line-strong bg-white p-10">
+    <div className="rounded-xl border border-dashed border-line-strong bg-white p-10">
       <p className="font-semibold text-navy">{title}</p>
       {description && <p className="mt-1 text-sm text-muted">{description}</p>}
     </div>
