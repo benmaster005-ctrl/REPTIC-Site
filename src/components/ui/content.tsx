@@ -16,8 +16,12 @@ export type Crumb = { label: string; href?: string };
  * En-tête des pages internes : bannière photo pleine largeur sous un voile
  * marine (lisibilité du texte blanc), fil d'Ariane, titre et chapeau.
  * Sans image fournie, la bannière par défaut du site est utilisée.
+ *
+ * Avec `cover` (article, événement) : la couverture sert de bannière et
+ * s'affiche aussi entière à droite, sans recadrage ni voile, pour que le
+ * texte d'une affiche reste lisible. Un clic l'ouvre en grand.
  */
-export function PageHero({ title, summary, crumbs = [], eyebrow, image, imageAlt = "" }: {
+export function PageHero({ title, summary, crumbs = [], eyebrow, image, imageAlt = "", cover }: {
   title: string;
   summary?: string | null;
   crumbs?: Crumb[];
@@ -25,14 +29,16 @@ export function PageHero({ title, summary, crumbs = [], eyebrow, image, imageAlt
   /** Photo de la bannière (chemin /images/… ou URL). */
   image?: string | null;
   imageAlt?: string;
+  /** Couverture d'un contenu : bannière + image entière lisible. */
+  cover?: { src: string; alt: string } | null;
 }) {
   const trail: Crumb[] = [{ label: "Accueil", href: "/" }, ...crumbs, { label: title }];
-  const banner = image || heroBanners.default;
+  const banner = cover?.src || image || heroBanners.default;
   return (
     <section className="relative isolate overflow-hidden bg-navy text-white">
-      <Image src={banner} alt={imageAlt} fill priority sizes="100vw" className="hero-zoom -z-20 object-cover" />
-      {/* Voile marine uni : lisibilité du texte blanc */}
-      <span aria-hidden className="absolute inset-0 -z-10 bg-navy/85" />
+      <Image src={banner} alt={cover ? "" : imageAlt} fill priority sizes="100vw" className={`hero-zoom -z-20 object-cover ${cover ? "hidden lg:block" : ""}`} />
+      {/* Voile marine uni : lisibilité du texte blanc (sur mobile en mode couverture, aplat seul : l’affiche nette suit le titre) */}
+      <span aria-hidden className={`absolute inset-0 -z-10 ${cover ? "bg-navy/95" : "bg-navy/85"}`} />
       <div className="container-site pt-8 pb-14 sm:pb-20 lg:min-h-[24rem]">
         <nav aria-label="Fil d'Ariane">
           <ol className="flex flex-wrap items-center gap-2 font-mono text-[0.75rem] text-white/65">
@@ -52,15 +58,44 @@ export function PageHero({ title, summary, crumbs = [], eyebrow, image, imageAlt
             ))}
           </ol>
         </nav>
-        <div className="mt-14 grid gap-8 lg:mt-20 lg:grid-cols-12 lg:items-end">
-          <div className="intro lg:col-span-8">
-            {eyebrow && <SectionLabel tone="inverse">{eyebrow}</SectionLabel>}
-            <h1 className={`heading-lg ${eyebrow ? "mt-5" : ""} max-w-4xl text-balance !text-white`}>{title}</h1>
+        {cover ? (
+          <div className="mt-12 grid gap-10 lg:mt-16 lg:grid-cols-12 lg:items-center lg:gap-12">
+            <div className="intro lg:col-span-7">
+              {eyebrow && <SectionLabel tone="inverse">{eyebrow}</SectionLabel>}
+              <h1 className={`heading-lg ${eyebrow ? "mt-5" : ""} text-balance !text-white`}>{title}</h1>
+              {summary && <p className="mt-6 max-w-2xl text-[1.05rem] leading-relaxed text-white/80">{summary}</p>}
+            </div>
+            <figure className="intro [--intro-delay:150ms] lg:col-span-5 lg:justify-self-end">
+              <a href={cover.src} target="_blank" rel="noopener noreferrer" className="group block w-fit overflow-hidden rounded-xl border border-white/15 bg-navy-deep">
+                <Image
+                  src={cover.src}
+                  alt={cover.alt}
+                  // Dimensions indicatives : le CSS (largeur et hauteur auto) rend les proportions réelles.
+                  width={1600}
+                  height={1600}
+                  priority
+                  sizes="(min-width: 1024px) 40vw, 100vw"
+                  className="block h-auto max-h-[70vh] w-auto max-w-full transition-transform duration-500 group-hover:scale-[1.01] lg:max-h-[32rem]"
+                />
+              </a>
+              <figcaption className="mt-3">
+                <a href={cover.src} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-[0.85rem] font-semibold text-white/80 hover:text-white">
+                  Voir l&apos;image en grand <ArrowUpRight aria-hidden className="size-3.5" />
+                </a>
+              </figcaption>
+            </figure>
           </div>
-          {summary && (
-            <p className="intro text-[1.05rem] leading-relaxed text-white/80 [--intro-delay:150ms] lg:col-span-4 lg:pb-2">{summary}</p>
-          )}
-        </div>
+        ) : (
+          <div className="mt-14 grid gap-8 lg:mt-20 lg:grid-cols-12 lg:items-end">
+            <div className="intro lg:col-span-8">
+              {eyebrow && <SectionLabel tone="inverse">{eyebrow}</SectionLabel>}
+              <h1 className={`heading-lg ${eyebrow ? "mt-5" : ""} max-w-4xl text-balance !text-white`}>{title}</h1>
+            </div>
+            {summary && (
+              <p className="intro text-[1.05rem] leading-relaxed text-white/80 [--intro-delay:150ms] lg:col-span-4 lg:pb-2">{summary}</p>
+            )}
+          </div>
+        )}
       </div>
       <span aria-hidden className="hero-bar absolute bottom-0 left-0 h-[3px] w-[max(4rem,calc((100vw-84rem)/2+3rem))] bg-cyan" />
     </section>
@@ -227,18 +262,31 @@ export function EventRow({ item }: { item: EventItem }) {
   const month = formatDate(item.startsAt, { month: "short" }).replace(".", "");
   const year = formatDate(item.startsAt, { year: "numeric" });
   const time = formatDate(item.startsAt, { hour: "2-digit", minute: "2-digit" });
+  const shortDate = formatDate(item.startsAt, { day: "numeric", month: "short", year: "numeric" });
   return (
     <li className="group relative grid grid-cols-[4.75rem_1fr] items-center gap-5 rounded-xl border border-line bg-white p-4 transition-[transform,border-color] duration-300 hover:-translate-y-0.5 hover:border-navy sm:grid-cols-[6rem_1fr_auto] sm:gap-7 sm:p-5">
-      <p className="grid aspect-square place-content-center rounded-lg bg-navy text-center leading-none text-white transition-colors duration-300 group-hover:bg-cyan-dark">
-        <span className="block font-display text-[2rem] font-extrabold tracking-[-0.025em] sm:text-[2.4rem]">{day}</span>
-        <span className="mt-1 block text-[0.7rem] font-semibold tracking-wide text-white/75 uppercase">
-          {month} {year}
+      {item.coverUrl ? (
+        // Miniature de la couverture (le haut de l'affiche, là où se trouve le titre)
+        <span className="relative block aspect-square overflow-hidden rounded-lg border border-line bg-paper">
+          <Image src={item.coverUrl} alt="" fill sizes="96px" className="object-cover object-top transition-transform duration-500 group-hover:scale-105" />
         </span>
-      </p>
+      ) : (
+        <p className="grid aspect-square place-content-center rounded-lg bg-navy text-center leading-none text-white transition-colors duration-300 group-hover:bg-cyan-dark">
+          <span className="block font-display text-[2rem] font-extrabold tracking-[-0.025em] sm:text-[2.4rem]">{day}</span>
+          <span className="mt-1 block text-[0.7rem] font-semibold tracking-wide text-white/75 uppercase">
+            {month} {year}
+          </span>
+        </p>
+      )}
       <div className="min-w-0">
         <p className="flex flex-wrap items-center gap-2">
           {item.category && <span className="rounded-full bg-cyan-tint px-2.5 py-0.5 text-[0.72rem] font-semibold text-cyan-dark">{item.category}</span>}
-          {time !== "00:00" && <span className="text-[0.8rem] text-muted">{time}</span>}
+          <span className="text-[0.8rem] text-muted">
+            {/* La date quitte le pavé quand la miniature la remplace : elle passe ici */}
+            {item.coverUrl && <time dateTime={item.startsAt}>{shortDate}</time>}
+            {item.coverUrl && time !== "00:00" && " · "}
+            {time !== "00:00" && time}
+          </span>
         </p>
         <h3 className="mt-2 font-display text-[1.12rem] leading-snug font-bold tracking-[-0.01em] text-navy transition-colors group-hover:text-cyan-dark sm:text-[1.25rem]">
           <Link href={`/evenements/${item.slug}`} className="after:absolute after:inset-0">

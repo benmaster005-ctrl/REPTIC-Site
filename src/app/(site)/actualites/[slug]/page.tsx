@@ -7,6 +7,7 @@ import { getNewsBySlug } from "@/lib/data/public";
 import { SITE_URL } from "@/lib/env";
 import { formatDate } from "@/lib/format";
 import { PageHero, RichText } from "@/components/ui/content";
+import { heroBanners } from "@/content/site";
 import { ReadingColumn } from "@/components/ui/editorial";
 import { ShareLinks } from "@/components/ui/ShareLinks";
 
@@ -37,7 +38,7 @@ async function Article({ params }: Pick<PageProps<"/actualites/[slug]">, "params
 
   return (
     <article>
-      <PageHero image={item.coverUrl} title={item.title} summary={item.excerpt} crumbs={[{ label: "Actualités", href: "/actualites" }]} eyebrow={item.category ?? "Actualité"} />
+      <PageHero image={heroBanners.actualites} cover={item.coverUrl ? { src: item.coverUrl, alt: item.title } : null} title={item.title} summary={item.excerpt} crumbs={[{ label: "Actualités", href: "/actualites" }]} eyebrow={item.category ?? "Actualité"} />
       <ReadingColumn
         aside={
           <div className="space-y-8 lg:sticky lg:top-36">
