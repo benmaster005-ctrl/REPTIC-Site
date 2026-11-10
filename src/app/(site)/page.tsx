@@ -8,6 +8,7 @@ import { SectionLabel } from "@/components/brand/Trace";
 import { RevealGroup } from "@/components/motion/Reveal";
 import { RiseWords } from "@/components/motion/RiseWords";
 import { CountUp } from "@/components/motion/CountUp";
+import { LinkedinPosts } from "@/components/ui/LinkedinPosts";
 
 const profiles = [
   {
@@ -154,6 +155,8 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <LinkedinPosts />
 
       <JoinBand />
     </>

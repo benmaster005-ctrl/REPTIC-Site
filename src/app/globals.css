@@ -200,6 +200,18 @@ body {
   transform-origin: left;
   animation: draw-x 1.2s var(--ease-in-out) 0.2s both;
 }
+/* Photo des bannières : léger recul à l'arrivée */
+.hero-zoom {
+  animation: hero-zoom 1.6s var(--ease-in-out) both;
+}
+@keyframes hero-zoom {
+  from {
+    transform: scale(1.06);
+  }
+  to {
+    transform: scale(1);
+  }
+}
 @keyframes draw-x {
   from {
     transform: scaleX(0);
@@ -403,6 +415,21 @@ body {
 }
 .prose-site strong {
   @apply font-semibold text-navy;
+}
+.prose-site table {
+  @apply w-full min-w-[30rem] border-collapse text-[0.95rem];
+}
+.prose-site thead th {
+  @apply border-b-2 border-navy py-2.5 pr-4 text-left text-[0.78rem] font-semibold tracking-[0.04em] text-navy uppercase;
+}
+.prose-site tbody td {
+  @apply border-b border-line py-2.5 pr-4 align-top;
+}
+.prose-site tbody tr:hover {
+  @apply bg-paper;
+}
+.prose-site img {
+  @apply my-8 h-auto w-full bg-paper;
 }
 .prose-site blockquote {
   @apply border-l-2 border-cyan pl-5 text-muted;

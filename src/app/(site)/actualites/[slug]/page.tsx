@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -38,7 +37,7 @@ async function Article({ params }: Pick<PageProps<"/actualites/[slug]">, "params
 
   return (
     <article>
-      <PageHero title={item.title} summary={item.excerpt} crumbs={[{ label: "Actualités", href: "/actualites" }]} eyebrow={item.category ?? "Actualité"} />
+      <PageHero image={item.coverUrl} title={item.title} summary={item.excerpt} crumbs={[{ label: "Actualités", href: "/actualites" }]} eyebrow={item.category ?? "Actualité"} />
       <ReadingColumn
         aside={
           <div className="space-y-8 lg:sticky lg:top-36">
@@ -52,11 +51,6 @@ async function Article({ params }: Pick<PageProps<"/actualites/[slug]">, "params
           </div>
         }
       >
-        {item.coverUrl && (
-          <div className="relative mb-12 aspect-[16/9] overflow-hidden bg-paper">
-            <Image src={item.coverUrl} alt="" fill priority sizes="(min-width: 1024px) 66vw, 100vw" className="object-cover" />
-          </div>
-        )}
         <RichText>{item.body}</RichText>
         <Link href="/actualites" className="link-arrow mt-16">
           <ArrowLeft aria-hidden className="size-4" /> Toutes les actualités

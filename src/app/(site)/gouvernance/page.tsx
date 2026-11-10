@@ -4,6 +4,7 @@ import { getGovernance } from "@/lib/data/public";
 import { initials } from "@/lib/format";
 import { EmptyState, PageHero } from "@/components/ui/content";
 import { RevealGroup } from "@/components/motion/Reveal";
+import { heroBanners } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Bureau exécutif",
@@ -15,7 +16,7 @@ export default async function GovernancePage() {
   const members = await getGovernance();
   return (
     <>
-      <PageHero
+      <PageHero image={heroBanners.gouvernance}
         title="Bureau exécutif"
         eyebrow="Gouvernance"
         summary="Les membres élus qui pilotent l'association et mettent en œuvre ses orientations stratégiques."
@@ -28,7 +29,7 @@ export default async function GovernancePage() {
               const pending = m.fullName === "À renseigner";
               return (
                 <li key={m.id}>
-                  <div className="relative aspect-[4/5] overflow-hidden bg-paper">
+                  <div className="relative aspect-square overflow-hidden bg-paper">
                     {m.photoUrl ? (
                       <Image src={m.photoUrl} alt={`Portrait de ${m.fullName}`} fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover grayscale-[20%]" />
                     ) : (

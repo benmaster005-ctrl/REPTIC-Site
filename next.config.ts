@@ -22,7 +22,11 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    remotePatterns: supabaseHost ? [{ protocol: "https", hostname: supabaseHost, pathname: "/storage/v1/object/public/**" }] : [],
+    remotePatterns: [
+      ...(supabaseHost ? [{ protocol: "https" as const, hostname: supabaseHost, pathname: "/storage/v1/object/public/**" }] : []),
+      // Images des posts LinkedIn
+      { protocol: "https" as const, hostname: "media.licdn.com" },
+    ],
   },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];

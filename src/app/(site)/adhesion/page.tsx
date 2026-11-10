@@ -6,6 +6,7 @@ import { getPage } from "@/lib/data/public";
 import { PageHero, RichText, RuledList, SectionHeader } from "@/components/ui/content";
 import { Node } from "@/components/brand/Trace";
 import { RevealGroup } from "@/components/motion/Reveal";
+import { heroBanners } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Adhésion",
@@ -22,7 +23,7 @@ export default async function MembershipPage() {
   const conditions = await getPage("conditions-adhesion");
   return (
     <>
-      <PageHero
+      <PageHero image={heroBanners.adhesion}
         title="Adhérer au REPTIC"
         eyebrow="Adhésion"
         summary="Rejoignez le réseau des entreprises et professionnels du numérique au Cameroun. La demande se fait entièrement en ligne."

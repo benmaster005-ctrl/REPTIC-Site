@@ -33,6 +33,7 @@ const sections: { title: string; items: Item[] }[] = [
       { href: "/admin/pages", label: "Pages", perm: "content.manage" },
       { href: "/admin/institution", label: "Bureau et chiffres", perm: "content.manage" },
       { href: "/admin/documents", label: "Documents", perm: "documents.manage" },
+      { href: "/admin/linkedin", label: "LinkedIn", perm: "content.manage" },
     ],
   },
   {
@@ -63,9 +64,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <header className="border-b border-navy-deep bg-navy text-white">
         <div className="container-site flex h-16 items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <span className="bg-white px-2.5 py-1.5">
-              <Logo className="h-7 w-auto" />
-            </span>
+            <Logo tone="white" className="h-8 w-auto" />
             <span className="font-mono text-[0.72rem] tracking-[0.08em] text-white/70 uppercase">Administration</span>
           </div>
           <div className="flex items-center gap-5 text-sm">

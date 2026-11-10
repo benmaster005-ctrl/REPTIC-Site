@@ -46,46 +46,48 @@ export const mainNav: NavItem[] = [
 export type Mission = { title: string; description: string; icon: MissionIcon };
 export type MissionIcon = "graduation" | "award" | "megaphone" | "trending" | "radar" | "cpu";
 
+/** Les six objectifs stratégiques publiés sur reptic.cm (descriptions reformulées). */
 export const missions: Mission[] = [
   {
     icon: "graduation",
-    title: "Formation, recherche et compétences",
-    description: "Soutenir l'innovation, la R&D et l'entrepreneuriat numérique en lien avec les universités et centres de formation.",
+    title: "Formation, Recherche & Compétences",
+    description: "Soutenir l'innovation, la recherche, le développement des compétences et l'entrepreneuriat numérique, en lien avec les universités.",
   },
   {
     icon: "award",
-    title: "Qualité et excellence",
-    description: "Promouvoir un label national qui valorise les PME du numérique compétitives et la qualité de leurs services.",
+    title: "Excellence & Qualité nationale",
+    description: "Créer un label national qui distingue l'excellence et la compétitivité des PME Tech camerounaises.",
   },
   {
     icon: "megaphone",
-    title: "Plaidoyer",
-    description: "Porter la voix du secteur privé auprès des pouvoirs publics pour un cadre réglementaire favorable.",
+    title: "Plaidoyer & Défense des intérêts",
+    description: "Être l'interlocuteur du secteur privé du numérique auprès des pouvoirs publics.",
   },
   {
     icon: "trending",
-    title: "Développement stratégique",
-    description: "Attirer les investissements nationaux et internationaux vers l'écosystème numérique camerounais.",
+    title: "Développement & Investissements",
+    description: "Encourager les investissements nationaux et internationaux dans l'économie numérique.",
   },
   {
     icon: "radar",
-    title: "Veille et gouvernance",
-    description: "Suivre les évolutions juridiques et technologiques et participer à l'élaboration des politiques sectorielles.",
+    title: "Veille, Régulation & Gouvernance",
+    description: "Assurer une veille juridique et technique, et prendre part à l'élaboration des politiques sectorielles.",
   },
   {
     icon: "cpu",
     title: "Transformation numérique",
-    description: "Faire connaître l'offre des membres auprès des administrations et des entreprises.",
+    description: "Faire valoir l'offre des membres auprès des administrations et des entreprises publiques engagées dans leur transformation numérique.",
   },
 ];
 
+/** Avantages de l'adhésion, d'après les conditions publiées sur reptic.cm. */
 export const memberBenefits = [
-  { title: "Représentation", description: "Une voix collective auprès des institutions et des régulateurs." },
-  { title: "Réseau d'affaires", description: "Mises en relation, partenariats et opportunités entre membres." },
+  { title: "Réseau et visibilité", description: "Mises en relation entre acteurs du secteur et valorisation de votre activité." },
+  { title: "Représentation collective", description: "Une voix commune auprès des pouvoirs publics et des régulateurs." },
   { title: "Accompagnement", description: "Appui sur les questions juridiques, fiscales et sociales." },
-  { title: "Veille", description: "Informations réglementaires et technologiques réservées aux membres." },
-  { title: "Visibilité", description: "Présence dans l'annuaire et valorisation lors des événements." },
-  { title: "Formation", description: "Ateliers, forums et programmes de montée en compétences." },
+  { title: "Veille sectorielle", description: "Suivi de l'actualité réglementaire et technologique du numérique." },
+  { title: "Forums africains", description: "Participation aux rencontres et forums du numérique sur le continent." },
+  { title: "Label national", description: "Accès au futur label de qualité « Cameroon Tech Excellence »." },
 ];
 
 export const applicationSteps = [
@@ -97,8 +99,8 @@ export const applicationSteps = [
 ];
 
 export const requiredDocuments = {
-  physical: ["Pièce d'identité en cours de validité", "Curriculum vitae", "Photo d'identité (selon règlement)", "Justificatif d'activité professionnelle"],
-  legal: ["Registre du commerce (RCCM)", "Numéro d'identifiant unique (NIU)", "Statuts de l'entreprise", "Pièce d'identité du représentant légal", "Logo (format image)"],
+  physical: ["Justificatif d'immatriculation fiscale", "Photo d'identité récente", "Curriculum vitae (facultatif)"],
+  legal: ["Registre du commerce (RCCM) à jour", "Attestation de conformité fiscale (quitus)", "Tout autre document légal exigé pour l'activité", "Logo (facultatif)"],
 };
 
 // ---------------------------------------------------------------------------
@@ -109,11 +111,14 @@ export const fallbackContact: SiteContact = {
   address: "Yaoundé, Cameroun",
   phone: "+237 242 233 000",
   email: "contact@reptic.cm",
+  hours: "Du lundi au vendredi, de 8 h 00 à 17 h 30",
+  dpo: "dpo@reptic.cm",
 };
 
 export const fallbackSocial: SiteSocial = {
   facebook: "https://web.facebook.com/reptic.cm",
   twitter: "https://twitter.com/Reptic_Cameroun",
+  linkedin: "https://www.linkedin.com/company/reptic-cm/",
 };
 
 export const fallbackKeyFigures: KeyFigure[] = [
@@ -124,13 +129,13 @@ export const fallbackKeyFigures: KeyFigure[] = [
 ];
 
 export const fallbackActorCategories: Category[] = [
-  { slug: "operateurs-telecoms", name: "Opérateurs télécoms", description: "Opérateurs de réseaux et de services de communications électroniques." },
-  { slug: "fournisseurs-infrastructures", name: "Fournisseurs d'infrastructures", description: "Fibre, tours, datacenters, énergie et équipements réseau." },
-  { slug: "editeurs-logiciels", name: "Éditeurs de logiciels", description: "Conception et commercialisation de solutions logicielles." },
-  { slug: "esn", name: "Entreprises de services numériques", description: "Intégration, infogérance, développement et maintenance." },
-  { slug: "agences-digitales", name: "Agences digitales", description: "Communication numérique, web, marketing et contenus." },
-  { slug: "cabinets-conseil", name: "Cabinets de conseil", description: "Conseil en stratégie, transformation numérique et cybersécurité." },
-  { slug: "organismes-formation", name: "Organismes de formation", description: "Formation initiale et continue aux métiers du numérique." },
+  // Les six familles de la nomenclature officielle des acteurs (reptic.cm).
+  { slug: "operateur-reseau", name: "Opérateur de réseau de communication électronique", description: "Construit et exploite un réseau ouvert au public pour fournir des services de téléphonie ou d'accès à Internet." },
+  { slug: "operateur-infrastructure", name: "Opérateur d'infrastructure ou d'interconnexion", description: "Met à disposition des infrastructures support ou des services d'interconnexion, sans service de communication au public." },
+  { slug: "fournisseur-services-communication", name: "Fournisseur de services de communication électronique", description: "Commercialise des services de communication au public en s'appuyant sur le réseau d'un tiers." },
+  { slug: "fournisseur-sva", name: "Fournisseur de services à valeur ajoutée", description: "Propose des services applicatifs ou de contenus diffusés par les réseaux publics." },
+  { slug: "operateur-plateforme", name: "Opérateur de plateforme numérique", description: "Conçoit ou exploite une solution numérique (SaaS, sur site ou cloud) dédiée à un domaine applicatif." },
+  { slug: "services-conseil", name: "Services & Conseil", description: "Accompagne les acteurs de l'écosystème : intégration, distribution, conseil, formation, cybersécurité." },
 ];
 
 export const fallbackGovernance: GovernanceMember[] = ["Président", "Vice-président", "Secrétaire général", "Trésorier"].map(
@@ -248,3 +253,24 @@ export const fallbackPages: Record<string, Page> = {
     seoDescription: null,
   },
 };
+
+// ---------------------------------------------------------------------------
+// Bannières des en-têtes de page (photos reprises de reptic.cm, public/images/reptic)
+// ---------------------------------------------------------------------------
+const IMG = "/images/reptic";
+export const heroBanners = {
+  default: `${IMG}/pages/assemblee-generale.webp`,
+  presentation: `${IMG}/pages/assemblee-generale.webp`,
+  "objectifs-missions": `${IMG}/actualites/convention-universites-yaounde.webp`,
+  "mot-du-president": `${IMG}/pages/assemblee-generale.webp`,
+  gouvernance: `${IMG}/pages/adhesion-reseau.webp`,
+  acteurs: `${IMG}/actualites/forum-economie-numerique-afrique-centrale.webp`,
+  adhesion: `${IMG}/pages/adhesion-reseau.webp`,
+  actualites: `${IMG}/actualites/forum-economie-numerique-afrique-centrale.webp`,
+  evenements: `${IMG}/actualites/label-cameroon-tech-excellence.webp`,
+  ressources: `${IMG}/actualites/convention-universites-yaounde.webp`,
+  contact: `${IMG}/pages/adhesion-reseau.webp`,
+  "mentions-legales": `${IMG}/pages/assemblee-generale.webp`,
+  confidentialite: `${IMG}/pages/assemblee-generale.webp`,
+} as const;
+export type HeroBannerKey = keyof typeof heroBanners;

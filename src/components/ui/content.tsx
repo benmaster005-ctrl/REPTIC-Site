@@ -1,32 +1,51 @@
 import Link from "next/link";
 import Image from "next/image";
 import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import type { EventItem, NewsItem } from "@/lib/types";
 import { formatDate } from "@/lib/format";
 import { isDemo } from "@/lib/data/public";
 import { Node, SectionLabel } from "@/components/brand/Trace";
 import { Reveal, RevealGroup } from "@/components/motion/Reveal";
+import { heroBanners } from "@/content/site";
 
 export type Crumb = { label: string; href?: string };
 
-/** En-tête des pages internes : blanc, typographique, fil d'Ariane technique. */
-export function PageHero({ title, summary, crumbs = [], eyebrow }: { title: string; summary?: string | null; crumbs?: Crumb[]; eyebrow?: string }) {
+/**
+ * En-tête des pages internes : bannière photo pleine largeur sous un voile
+ * marine (lisibilité du texte blanc), fil d'Ariane, titre et chapeau.
+ * Sans image fournie, la bannière par défaut du site est utilisée.
+ */
+export function PageHero({ title, summary, crumbs = [], eyebrow, image, imageAlt = "" }: {
+  title: string;
+  summary?: string | null;
+  crumbs?: Crumb[];
+  eyebrow?: string;
+  /** Photo de la bannière (chemin /images/… ou URL). */
+  image?: string | null;
+  imageAlt?: string;
+}) {
   const trail: Crumb[] = [{ label: "Accueil", href: "/" }, ...crumbs, { label: title }];
+  const banner = image || heroBanners.default;
   return (
-    <section className="relative border-b border-line">
-      <div className="container-site pt-8 pb-14 sm:pb-20">
+    <section className="relative isolate overflow-hidden bg-navy text-white">
+      <Image src={banner} alt={imageAlt} fill priority sizes="100vw" className="hero-zoom -z-20 object-cover" />
+      {/* Voile : marine dense à gauche (texte), plus léger à droite (photo) */}
+      <span aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-navy-deep/95 via-navy/85 to-navy/55" />
+      <span aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-24 bg-gradient-to-t from-navy-deep/60 to-transparent" />
+      <div className="container-site pt-8 pb-14 sm:pb-20 lg:min-h-[24rem]">
         <nav aria-label="Fil d'Ariane">
-          <ol className="flex flex-wrap items-center gap-2 font-mono text-[0.75rem] text-muted">
+          <ol className="flex flex-wrap items-center gap-2 font-mono text-[0.75rem] text-white/65">
             {trail.map((c, i) => (
               <li key={i} className="flex items-center gap-2">
-                {i > 0 && <span aria-hidden className="text-line-strong">/</span>}
+                {i > 0 && <span aria-hidden className="text-white/35">/</span>}
                 {c.href ? (
-                  <Link href={c.href} className="hover:text-navy">
+                  <Link href={c.href} className="hover:text-white">
                     {c.label}
                   </Link>
                 ) : (
-                  <span aria-current={i === trail.length - 1 ? "page" : undefined} className={i === trail.length - 1 ? "text-navy" : ""}>
+                  <span aria-current={i === trail.length - 1 ? "page" : undefined} className={i === trail.length - 1 ? "text-white" : ""}>
                     {c.label}
                   </span>
                 )}
@@ -36,15 +55,15 @@ export function PageHero({ title, summary, crumbs = [], eyebrow }: { title: stri
         </nav>
         <div className="mt-14 grid gap-8 lg:mt-20 lg:grid-cols-12 lg:items-end">
           <div className="intro lg:col-span-8">
-            {eyebrow && <SectionLabel>{eyebrow}</SectionLabel>}
-            <h1 className={`heading-lg ${eyebrow ? "mt-5" : ""} max-w-4xl text-balance`}>{title}</h1>
+            {eyebrow && <SectionLabel tone="inverse">{eyebrow}</SectionLabel>}
+            <h1 className={`heading-lg ${eyebrow ? "mt-5" : ""} max-w-4xl text-balance !text-white`}>{title}</h1>
           </div>
           {summary && (
-            <p className="intro text-[1.05rem] leading-relaxed text-muted [--intro-delay:150ms] lg:col-span-4 lg:pb-2">{summary}</p>
+            <p className="intro text-[1.05rem] leading-relaxed text-white/80 [--intro-delay:150ms] lg:col-span-4 lg:pb-2">{summary}</p>
           )}
         </div>
       </div>
-      <span aria-hidden className="hero-bar absolute bottom-[-1.5px] left-0 h-[3px] w-[max(4rem,calc((100vw-84rem)/2+3rem))] bg-cyan" />
+      <span aria-hidden className="hero-bar absolute bottom-0 left-0 h-[3px] w-[max(4rem,calc((100vw-84rem)/2+3rem))] bg-cyan" />
     </section>
   );
 }
@@ -87,8 +106,15 @@ export function RichText({ children }: { children: string | null }) {
   return (
     <div className="prose-site">
       <Markdown
+        remarkPlugins={[remarkGfm]}
         components={{
           h1: ({ children }) => <h2>{children}</h2>,
+          // Les tableaux défilent horizontalement sur mobile au lieu d'élargir la page.
+          table: ({ children }) => (
+            <div className="-mx-1 overflow-x-auto px-1">
+              <table>{children}</table>
+            </div>
+          ),
           a: ({ href, children }) => (
             <a href={href} {...(href?.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
               {children}

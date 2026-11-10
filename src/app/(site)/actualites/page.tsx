@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { getNewsPage } from "@/lib/data/public";
 import { EmptyState, NewsCard, PageHero } from "@/components/ui/content";
+import { LinkedinPosts } from "@/components/ui/LinkedinPosts";
+import { heroBanners } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Actualités",
@@ -15,12 +17,13 @@ const PAGE_SIZE = 9;
 export default function NewsListPage({ searchParams }: PageProps<"/actualites">) {
   return (
     <>
-      <PageHero title="Actualités" eyebrow="Informations" summary="Communiqués, vie du réseau et actualités du secteur numérique." />
+      <PageHero image={heroBanners.actualites} title="Actualités" eyebrow="Informations" summary="Communiqués, vie du réseau et actualités du secteur numérique." />
       <section className="container-site py-16 sm:py-24">
         <Suspense fallback={<NewsGridSkeleton />}>
           <NewsGrid searchParams={searchParams} />
         </Suspense>
       </section>
+      <LinkedinPosts limit={6} />
     </>
   );
 }

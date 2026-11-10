@@ -3,6 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 import { getSiteSettings } from "@/lib/data/public";
 import { PageHero } from "@/components/ui/content";
 import { ContactForm } from "@/components/forms/ContactForm";
+import { heroBanners } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -20,7 +21,7 @@ export default async function ContactPage() {
 
   return (
     <>
-      <PageHero title="Contact" eyebrow="Nous écrire" summary="Une question sur l'association, l'adhésion ou un partenariat ? Le secrétariat vous répond." />
+      <PageHero image={heroBanners.contact} title="Contact" eyebrow="Nous écrire" summary="Une question sur l'association, l'adhésion ou un partenariat ? Le secrétariat vous répond." />
       <section className="container-site grid gap-14 py-16 sm:py-24 lg:grid-cols-12 lg:gap-6">
         <aside className="lg:col-span-3">
           <dl className="border-t-2 border-navy">
@@ -44,6 +45,22 @@ export default async function ContactPage() {
                 </a>
               </dd>
             </div>
+            {contact.hours && (
+              <div className="border-b border-line py-5">
+                <dt className="label">Horaires</dt>
+                <dd className="mt-1.5 font-semibold text-navy">{contact.hours}</dd>
+              </div>
+            )}
+            {contact.dpo && (
+              <div className="border-b border-line py-5">
+                <dt className="label">Données personnelles</dt>
+                <dd className="mt-1.5">
+                  <a href={`mailto:${contact.dpo}`} className="font-semibold break-all text-navy hover:text-cyan-dark">
+                    {contact.dpo}
+                  </a>
+                </dd>
+              </div>
+            )}
             {socials.length > 0 && (
               <div className="border-b border-line py-5">
                 <dt className="label">Réseaux officiels</dt>

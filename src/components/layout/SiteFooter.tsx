@@ -51,6 +51,7 @@ export async function SiteFooter() {
           <Logo className="h-14 w-auto" />
           <address className="mt-8 space-y-1.5 text-[0.92rem] text-muted not-italic">
             <p>{contact.address}</p>
+            {contact.hours && <p>{contact.hours}</p>}
             <p>
               <a href={`tel:${contact.phone.replace(/\s/g, "")}`} className="text-navy hover:text-cyan-dark">
                 {contact.phone}

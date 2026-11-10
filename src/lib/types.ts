@@ -43,5 +43,5 @@ export type GovernanceMember = {
 export type Category = { slug: string; name: string; description: string | null };
 export type KeyFigure = { label: string; value: string };
 
-export type SiteContact = { address: string; phone: string; email: string };
+export type SiteContact = { address: string; phone: string; email: string; hours?: string; dpo?: string };
 export type SiteSocial = { facebook?: string; twitter?: string; linkedin?: string };

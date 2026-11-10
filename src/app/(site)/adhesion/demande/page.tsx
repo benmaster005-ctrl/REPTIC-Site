@@ -7,6 +7,7 @@ import { getSessionUserId } from "@/lib/auth";
 import { applicationSteps } from "@/content/site";
 import { PageHero } from "@/components/ui/content";
 import { ReadingColumn } from "@/components/ui/editorial";
+import { heroBanners } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Demande d'adhésion",
@@ -20,7 +21,7 @@ export default function ApplicationGatewayPage() {
       <Suspense>
         <RedirectIfSignedIn />
       </Suspense>
-      <PageHero
+      <PageHero image={heroBanners.adhesion}
         title="Déposer une demande"
         eyebrow="Adhésion"
         crumbs={[{ label: "Adhésion", href: "/adhesion" }]}

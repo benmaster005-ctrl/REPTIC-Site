@@ -3,6 +3,7 @@ import { getActorCategories } from "@/lib/data/public";
 import { JoinBand, PageHero } from "@/components/ui/content";
 import { NetworkDiagram } from "@/components/brand/NetworkDiagram";
 import { RevealGroup } from "@/components/motion/Reveal";
+import { heroBanners } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Nomenclature des acteurs",
@@ -14,7 +15,7 @@ export default async function ActorsPage() {
   const categories = await getActorCategories();
   return (
     <>
-      <PageHero
+      <PageHero image={heroBanners.acteurs}
         title="Nomenclature des acteurs"
         eyebrow="Membres"
         summary="Les familles de professionnels qui composent l'écosystème numérique représenté par le réseau."

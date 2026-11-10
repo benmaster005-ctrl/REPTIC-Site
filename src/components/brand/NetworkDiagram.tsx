@@ -34,7 +34,20 @@ const HUB = { x: 290, y: 228, w: 140, h: 64 };
 const LEFT_NODE_X = 202;
 const RIGHT_NODE_X = 518;
 
-const slots: { side: "left" | "right"; port: number; elbow: number; y: number }[] = [
+type Slot = { side: "left" | "right"; port: number; elbow: number; y: number };
+
+/** 6 familles (nomenclature officielle) : 3 de chaque côté, en miroir. */
+const SLOTS_6: Slot[] = [
+  { side: "left", port: 244, elbow: 250, y: 112 },
+  { side: "left", port: 260, elbow: 250, y: 260 },
+  { side: "left", port: 276, elbow: 250, y: 408 },
+  { side: "right", port: 244, elbow: 470, y: 112 },
+  { side: "right", port: 260, elbow: 470, y: 260 },
+  { side: "right", port: 276, elbow: 470, y: 408 },
+];
+
+/** 7 familles : 3 à gauche, 4 à droite. */
+const SLOTS_7: Slot[] = [
   { side: "left", port: 244, elbow: 250, y: 112 },
   { side: "left", port: 260, elbow: 250, y: 260 },
   { side: "left", port: 276, elbow: 250, y: 408 },
@@ -43,6 +56,16 @@ const slots: { side: "left" | "right"; port: number; elbow: number; y: number }[
   { side: "right", port: 267, elbow: 490, y: 316 },
   { side: "right", port: 280, elbow: 465, y: 436 },
 ];
+
+/** Libellés courts pour le schéma (le nom complet figure sur la page Acteurs). */
+const SHORT_LABELS: Record<string, string> = {
+  "operateur-reseau": "Opérateurs de réseau",
+  "operateur-infrastructure": "Infrastructures & interconnexion",
+  "fournisseur-services-communication": "Services de communication",
+  "fournisseur-sva": "Services à valeur ajoutée",
+  "operateur-plateforme": "Plateformes numériques",
+  "services-conseil": "Services & Conseil",
+};
 
 function splitLabel(label: string) {
   if (label.length <= 24) return [label];
@@ -55,13 +78,14 @@ function splitLabel(label: string) {
 }
 
 export function NetworkDiagram({ categories }: { categories: Category[] }) {
-  const items = categories.slice(0, slots.length).map((c, i) => ({ ...c, ...slots[i] }));
+  const slots = categories.length <= 6 ? SLOTS_6 : SLOTS_7;
+  const items = categories.slice(0, slots.length).map((c, i) => ({ ...c, name: SHORT_LABELS[c.slug] ?? c.name, fullName: c.name, ...slots[i] }));
 
   return (
     <svg viewBox="0 0 720 520" className="h-auto w-full" role="img" aria-labelledby="schema-titre schema-desc">
       <title id="schema-titre">Le réseau REPTIC.CM</title>
       <desc id="schema-desc">
-        Le REPTIC relie les familles d&apos;acteurs du numérique : {items.map((i) => i.name).join(", ")}.
+        Le REPTIC relie les familles d&apos;acteurs du numérique : {items.map((i) => i.fullName).join(", ")}.
       </desc>
 
       {items.map((it, i) => {

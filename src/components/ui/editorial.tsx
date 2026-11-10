@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getPage } from "@/lib/data/public";
+import { heroBanners } from "@/content/site";
 import { PageHero, RichText, type Crumb } from "./content";
 
 /** Métadonnées SEO d'une page institutionnelle administrable. */
@@ -30,7 +31,7 @@ export async function EditorialPage({ slug, crumbs, eyebrow, children }: { slug:
   if (!page) notFound();
   return (
     <>
-      <PageHero title={page.title} summary={page.summary} crumbs={crumbs} eyebrow={eyebrow} />
+      <PageHero image={heroBanners[slug as keyof typeof heroBanners] ?? heroBanners.default} title={page.title} summary={page.summary} crumbs={crumbs} eyebrow={eyebrow} />
       {page.body && (
         <ReadingColumn>
           <RichText>{page.body}</RichText>

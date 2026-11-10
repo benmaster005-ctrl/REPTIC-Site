@@ -38,13 +38,15 @@ export const tags = {
   figures: "key-figures",
   settings: "site-settings",
   documents: "documents",
+  linkedin: "linkedin",
 } as const;
 
 export const isDemo = !isSupabaseConfigured;
 
 export function publicMediaUrl(path: string | null | undefined) {
   if (!path) return null;
-  if (/^https?:\/\//.test(path)) return path;
+  // URL complète, ou image livrée avec le site (dossier public/, ex. /images/reptic/…)
+  if (/^https?:\/\//.test(path) || path.startsWith("/")) return path;
   return `${SUPABASE_URL}/storage/v1/object/public/public-media/${path}`;
 }
 
@@ -291,4 +293,39 @@ function toResource(r: Row): PublicResource {
     sizeBytes: Number(r.size_bytes),
     createdAt: r.created_at as string,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Posts LinkedIn (synchronisés par Bright Data, voir src/lib/linkedin.ts)
+// ---------------------------------------------------------------------------
+export type LinkedinPost = {
+  id: string;
+  url: string;
+  text: string | null;
+  postedAt: string | null;
+  image: string | null;
+  likes: number | null;
+  comments: number | null;
+};
+
+export async function getLinkedinPosts(limit = 3): Promise<LinkedinPost[]> {
+  "use cache";
+  cacheTag(tags.linkedin);
+  cacheLife("hours");
+  if (isDemo) return [];
+  const { data, error } = await createPublicClient()
+    .from("linkedin_posts")
+    .select("id,url,text,posted_at,images,video_thumbnail,document_cover,num_likes,num_comments")
+    .order("posted_at", { ascending: false, nullsFirst: false })
+    .limit(limit);
+  if (error) return []; // table absente tant que la migration 12 n'est pas appliquée
+  return (data ?? []).map((r: Row) => ({
+    id: r.id as string,
+    url: r.url as string,
+    text: str(r.text),
+    postedAt: str(r.posted_at),
+    image: ((r.images as string[] | null) ?? [])[0] ?? str(r.video_thumbnail) ?? str(r.document_cover),
+    likes: (r.num_likes as number | null) ?? null,
+    comments: (r.num_comments as number | null) ?? null,
+  }));
 }

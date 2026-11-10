@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -47,7 +46,7 @@ async function EventDetail({ params }: Pick<PageProps<"/evenements/[slug]">, "pa
 
   return (
     <article>
-      <PageHero title={item.title} summary={item.excerpt} crumbs={[{ label: "Événements", href: "/evenements" }]} eyebrow={item.category ?? "Événement"} />
+      <PageHero image={item.coverUrl} title={item.title} summary={item.excerpt} crumbs={[{ label: "Événements", href: "/evenements" }]} eyebrow={item.category ?? "Événement"} />
       <ReadingColumn
         aside={
           <div className="space-y-8 lg:sticky lg:top-36">
@@ -70,11 +69,6 @@ async function EventDetail({ params }: Pick<PageProps<"/evenements/[slug]">, "pa
           </div>
         }
       >
-        {item.coverUrl && (
-          <div className="relative mb-12 aspect-[16/9] overflow-hidden bg-paper">
-            <Image src={item.coverUrl} alt="" fill priority sizes="(min-width: 1024px) 66vw, 100vw" className="object-cover" />
-          </div>
-        )}
         <RichText>{item.body}</RichText>
         <Link href="/evenements" className="link-arrow mt-16">
           <ArrowLeft aria-hidden className="size-4" /> Tous les événements

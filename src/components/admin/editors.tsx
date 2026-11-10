@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { ImagePlus, Loader2, Upload, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { MAX_FILE_BYTES, formatBytes, safeFileName } from "@/lib/membership";
@@ -11,7 +12,7 @@ import { registerAssociationDocument } from "@/app/actions/admin-content";
 import { type FormState } from "@/lib/forms";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
-const mediaUrl = (path: string) => (/^https?:\/\//.test(path) ? path : `${SUPABASE_URL}/storage/v1/object/public/public-media/${path}`);
+const mediaUrl = (path: string) => (/^https?:\/\//.test(path) || path.startsWith("/") ? path : `${SUPABASE_URL}/storage/v1/object/public/public-media/${path}`);
 
 /** Champ Markdown avec onglet d'aperçu (rendu identique au site public). */
 export function MarkdownField({ name, label, state, rows = 14, hint }: { name: string; label: string; state: FormState; rows?: number; hint?: string }) {
@@ -45,7 +46,7 @@ export function MarkdownField({ name, label, state, rows = 14, hint }: { name: s
         <div className="min-h-48 border border-line-strong bg-white px-5 py-4">
           {value.trim() ? (
             <div className="prose-site">
-              <Markdown components={{ h1: ({ children }) => <h2>{children}</h2> }}>{value}</Markdown>
+              <Markdown remarkPlugins={[remarkGfm]} components={{ h1: ({ children }) => <h2>{children}</h2> }}>{value}</Markdown>
             </div>
           ) : (
             <p className="text-muted">Rien à afficher.</p>

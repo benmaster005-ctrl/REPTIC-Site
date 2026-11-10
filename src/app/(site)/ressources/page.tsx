@@ -6,6 +6,7 @@ import { formatBytes } from "@/lib/membership";
 import { formatDate } from "@/lib/format";
 import { EmptyState, PageHero } from "@/components/ui/content";
 import { RevealGroup } from "@/components/motion/Reveal";
+import { heroBanners } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Ressources",
@@ -19,7 +20,7 @@ export default async function ResourcesPage() {
   const resources = await getPublicResources();
   return (
     <>
-      <PageHero
+      <PageHero image={heroBanners.ressources}
         title="Ressources"
         eyebrow="Le REPTIC"
         summary="Documents de l'association en libre accès. Les membres retrouvent des ressources supplémentaires dans leur espace."
