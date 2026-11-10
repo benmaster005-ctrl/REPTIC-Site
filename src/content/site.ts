@@ -274,3 +274,36 @@ export const heroBanners = {
   confidentialite: `${IMG}/pages/assemblee-generale.webp`,
 } as const;
 export type HeroBannerKey = keyof typeof heroBanners;
+
+// ---------------------------------------------------------------------------
+// Questions fréquentes sur l'adhésion (d'après les conditions publiées sur reptic.cm)
+// ---------------------------------------------------------------------------
+export const membershipFaq = [
+  {
+    question: "Qui peut adhérer au REPTIC.CM ?",
+    answer:
+      "Les entreprises et établissements camerounais des télécoms, des TIC ou du numérique, qui relèvent d'au moins une des six familles de la nomenclature des acteurs, ainsi que les professionnels justifiant d'une expertise ou d'une expérience reconnue dans le secteur.",
+  },
+  {
+    question: "Combien de temps prend l'examen de mon dossier ?",
+    answer: "Le Bureau exécutif examine chaque dossier complet et rend sa décision dans un délai d'un mois. Vous suivez l'avancement depuis votre espace membre.",
+  },
+  {
+    question: "Combien coûte l'adhésion ?",
+    answer:
+      "Un droit d'entrée, égal à 50 % de la cotisation annuelle et payé une seule fois, puis une cotisation annuelle. Pour les entreprises, la cotisation dépend du chiffre d'affaires ; elle est de 100 000 FCFA pour un membre associé. Le barème complet figure dans les conditions d'adhésion ci-dessus.",
+  },
+  {
+    question: "Comment payer la cotisation ?",
+    answer: "Une fois votre adhésion validée, la cotisation se règle en ligne depuis votre espace membre. La période couverte est l'année civile.",
+  },
+  {
+    question: "Je vis hors du Cameroun : puis-je adhérer ?",
+    answer:
+      "Oui. Les entreprises de la diaspora ayant un lien économique et juridique avec le Cameroun bénéficient d'un tarif dédié. Une personne étrangère peut être admise comme membre associé sur décision spéciale du Conseil.",
+  },
+  {
+    question: "Puis-je compléter mon dossier plus tard ?",
+    answer: "Oui. Votre demande est enregistrée au fil de la saisie : vous pouvez la reprendre depuis votre espace et ajouter les justificatifs manquants avant l'envoi.",
+  },
+];

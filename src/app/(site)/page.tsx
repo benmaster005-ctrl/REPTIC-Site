@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { missions } from "@/content/site";
+import { heroBanners, missions } from "@/content/site";
 import { getActorCategories, getEvents, getKeyFigures, getLatestNews } from "@/lib/data/public";
-import { EmptyState, EventRow, JoinBand, NewsCard, RuledList, SectionHeader } from "@/components/ui/content";
+import { EmptyState, EventRow, JoinBand, NewsCard, SectionHeader } from "@/components/ui/content";
+import { ActorMarquee, KeyFigureCards, MissionBento } from "@/components/ui/modern";
 import { NetworkDiagram } from "@/components/brand/NetworkDiagram";
 import { SectionLabel } from "@/components/brand/Trace";
 import { RevealGroup } from "@/components/motion/Reveal";
 import { RiseWords } from "@/components/motion/RiseWords";
-import { CountUp } from "@/components/motion/CountUp";
 import { LinkedinPosts } from "@/components/ui/LinkedinPosts";
 
 const profiles = [
@@ -59,24 +59,25 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {figures.length > 0 && (
-          <div className="border-y border-line">
-            <RevealGroup as="dl" className="container-site grid grid-cols-2 lg:grid-cols-4">
-              {figures.map((f, i) => (
-                <div
-                  key={f.label}
-                  className={`py-8 sm:py-10 ${i % 2 === 1 ? "border-l border-line pl-6 sm:pl-10" : ""} ${i >= 2 ? "border-t border-line lg:border-t-0" : ""} ${i === 2 ? "lg:border-l lg:pl-10" : ""}`}
-                >
-                  <dt className="label">{f.label}</dt>
-                  <dd className="mt-3 font-display text-[2.6rem] leading-none font-extrabold tracking-[-0.025em] text-navy sm:text-[3.4rem]">
-                    <CountUp value={f.value} />
-                  </dd>
-                </div>
-              ))}
-            </RevealGroup>
-          </div>
-        )}
+        <div className="container-site pb-14 sm:pb-16">
+          <p className="label mb-4">Les familles d&apos;acteurs du réseau</p>
+          <ActorMarquee categories={actors} />
+        </div>
       </section>
+
+      {/* Chiffres clés */}
+      {figures.length > 0 && (
+        <section className="relative isolate overflow-hidden bg-navy py-16 sm:py-20">
+          <span aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_1px_1px,rgb(255_255_255/0.08)_1px,transparent_0)] [background-size:22px_22px]" />
+          <span aria-hidden className="glow absolute -bottom-32 -left-24 -z-10 size-96 rounded-full bg-cyan/30 blur-3xl" />
+          <div className="container-site">
+            <SectionLabel tone="inverse">Le réseau en chiffres</SectionLabel>
+            <div className="mt-8">
+              <KeyFigureCards figures={figures} />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Missions */}
       <section className="py-20 sm:py-28">
@@ -86,8 +87,8 @@ export default async function HomePage() {
             title="Six chantiers pour structurer le secteur"
             action={{ label: "Objectifs & missions", href: "/objectifs-missions" }}
           />
-          <div className="mt-12 lg:ml-[calc(25%+0.375rem)]">
-            <RuledList items={missions} />
+          <div className="mt-12">
+            <MissionBento missions={missions} image={heroBanners.presentation} href="/objectifs-missions" />
           </div>
         </div>
       </section>
@@ -100,14 +101,17 @@ export default async function HomePage() {
             title="Deux portes d'entrée dans le réseau"
             description="La demande se fait en ligne : vous déposez vos justificatifs et suivez l'instruction de votre dossier depuis votre espace."
           />
-          <RevealGroup className="mt-12 grid gap-px bg-line-strong lg:ml-[calc(25%+0.375rem)] lg:grid-cols-2">
+          <RevealGroup className="mt-12 grid gap-4 lg:ml-[calc(25%+0.375rem)] lg:grid-cols-2">
             {profiles.map((p) => (
-              <Link key={p.anchor} href={`/adhesion#${p.anchor}`} className="group flex flex-col bg-white p-8 transition-colors hover:bg-navy sm:p-10">
+              <Link key={p.anchor} href={`/adhesion#${p.anchor}`} className="group flex flex-col rounded-3xl border border-line bg-white p-8 transition-[background-color,transform,box-shadow] duration-300 hover:-translate-y-1 hover:bg-navy hover:shadow-[0_22px_48px_-24px_rgb(35_45_87/0.5)] sm:p-10">
                 <span className="label text-cyan-dark group-hover:text-cyan">{p.kind}</span>
                 <span className="mt-4 font-display text-[1.6rem] leading-tight font-bold tracking-[-0.02em] text-navy group-hover:text-white">{p.title}</span>
                 <span className="mt-3 text-[0.98rem] leading-relaxed text-muted group-hover:text-white/70">{p.text}</span>
-                <span className="mt-10 inline-flex items-center gap-2 text-sm font-semibold text-navy group-hover:text-white">
-                  Conditions et pièces à fournir <ArrowRight aria-hidden className="size-4 transition-transform group-hover:translate-x-1" />
+                <span className="mt-10 inline-flex items-center gap-3 text-sm font-semibold text-navy group-hover:text-white">
+                  Conditions et pièces à fournir
+                  <span className="grid size-9 place-items-center rounded-full bg-cyan-tint text-cyan-dark transition-[transform,background-color,color] duration-300 group-hover:translate-x-1 group-hover:bg-cyan group-hover:text-white">
+                    <ArrowRight aria-hidden className="size-4" />
+                  </span>
                 </span>
               </Link>
             ))}
@@ -121,13 +125,13 @@ export default async function HomePage() {
           <SectionHeader label="Actualités" title="Ce qui se passe dans le réseau" action={{ label: "Toutes les actualités", href: "/actualites" }} />
           <div className="mt-12">
             {featured ? (
-              <div className="grid gap-12 lg:grid-cols-12 lg:gap-8">
+              <div className="grid gap-4 lg:grid-cols-12 lg:gap-6">
                 <div className="lg:col-span-7">
                   <NewsCard item={featured} size="feature" />
                 </div>
-                <div className="grid content-start gap-10 lg:col-span-5">
+                <div className="grid content-start gap-4 lg:col-span-5">
                   {others.map((n, i) => (
-                    <NewsCard key={n.slug} item={n} delay={120 + i * 100} />
+                    <NewsCard key={n.slug} item={n} size="compact" delay={120 + i * 100} />
                   ))}
                 </div>
               </div>
@@ -144,7 +148,7 @@ export default async function HomePage() {
           <SectionHeader label="Agenda" title="Prochains rendez-vous" action={{ label: "Tous les événements", href: "/evenements" }} />
           <div className="mt-12 lg:ml-[calc(25%+0.375rem)]">
             {upcoming.length ? (
-              <RevealGroup as="ul" className="border-b border-line">
+              <RevealGroup as="ul" className="grid gap-3">
                 {upcoming.slice(0, 3).map((e) => (
                   <EventRow key={e.slug} item={e} />
                 ))}

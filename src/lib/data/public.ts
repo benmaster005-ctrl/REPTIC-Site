@@ -85,7 +85,7 @@ function toEvent(row: Row): EventItem {
 // ---------------------------------------------------------------------------
 // Actualités
 // ---------------------------------------------------------------------------
-const NEWS_COLUMNS = "slug,title,excerpt,body,cover_path,published_at,category:categories(name)";
+const NEWS_COLUMNS = "slug,title,excerpt,body,cover_path,published_at,category:categories(name,slug)";
 
 export async function getLatestNews(limit = 3): Promise<NewsItem[]> {
   "use cache";
@@ -101,19 +101,22 @@ export async function getLatestNews(limit = 3): Promise<NewsItem[]> {
   return (data ?? []).map(toNews);
 }
 
-export async function getNewsPage(page: number, pageSize = 9): Promise<{ items: NewsItem[]; total: number }> {
+export async function getNewsPage(page: number, pageSize = 9, category?: string | null): Promise<{ items: NewsItem[]; total: number }> {
   "use cache";
   cacheTag(tags.news);
   cacheLife("hours");
-  if (isDemo) return { items: fallbackNews, total: fallbackNews.length };
+  if (isDemo) {
+    const items = category ? fallbackNews.filter((n) => slugify(n.category ?? "") === category) : fallbackNews;
+    return { items, total: items.length };
+  }
   const from = (page - 1) * pageSize;
-  const { data, count, error } = await createPublicClient()
+  let query = createPublicClient()
     .from("news")
-    .select(NEWS_COLUMNS, { count: "exact" })
-    .order("published_at", { ascending: false })
-    .range(from, from + pageSize - 1);
+    .select(category ? NEWS_COLUMNS.replace("categories(", "categories!inner(") : NEWS_COLUMNS, { count: "exact" });
+  if (category) query = query.eq("category.slug", category);
+  const { data, count, error } = await query.order("published_at", { ascending: false }).range(from, from + pageSize - 1);
   if (error) console.error("getNewsPage", error.message);
-  return { items: (data ?? []).map(toNews), total: count ?? 0 };
+  return { items: ((data ?? []) as unknown as Row[]).map(toNews), total: count ?? 0 };
 }
 
 export async function getNewsBySlug(slug: string): Promise<NewsItem | null> {
@@ -138,7 +141,7 @@ export async function getAllNewsSlugs(): Promise<{ slug: string; publishedAt: st
 // Événements
 // ---------------------------------------------------------------------------
 const EVENT_COLUMNS =
-  "slug,title,excerpt,body,cover_path,starts_at,ends_at,location_name,city,registration_enabled,category:categories(name)";
+  "slug,title,excerpt,body,cover_path,starts_at,ends_at,location_name,city,registration_enabled,category:categories(name,slug)";
 
 export async function getEvents(): Promise<{ upcoming: EventItem[]; past: EventItem[] }> {
   "use cache";
@@ -218,6 +221,26 @@ export async function getGovernance(): Promise<GovernanceMember[]> {
     bio: str(r.bio),
   }));
 }
+
+/** Catégories d'actualités qui comptent au moins un article publié (filtres de la page Actualités). */
+export async function getNewsCategories(): Promise<{ slug: string; name: string }[]> {
+  "use cache";
+  cacheTag(tags.news, tags.categories);
+  cacheLife("hours");
+  if (isDemo) {
+    const names = [...new Set(fallbackNews.map((n) => n.category).filter((c): c is string => Boolean(c)))];
+    return names.map((name) => ({ slug: slugify(name), name }));
+  }
+  const { data } = await createPublicClient().from("news").select("category:categories!inner(slug,name,position)").limit(500);
+  const seen = new Map<string, { slug: string; name: string; position: number }>();
+  for (const r of (data ?? []) as Row[]) {
+    const c = r.category as { slug: string; name: string; position: number } | null;
+    if (c && !seen.has(c.slug)) seen.set(c.slug, c);
+  }
+  return [...seen.values()].sort((a, b) => a.position - b.position).map(({ slug, name }) => ({ slug, name }));
+}
+
+const slugify = (v: string) => v.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 export async function getActorCategories(): Promise<Category[]> {
   "use cache";

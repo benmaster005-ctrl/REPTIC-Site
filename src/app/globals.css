@@ -84,7 +84,7 @@ body {
 
 /* Boutons : rectangles nets, flèche en fin */
 @utility btn {
-  @apply inline-flex items-center justify-center gap-3 rounded-sm px-5 py-3 text-[0.9rem] font-semibold transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60;
+  @apply inline-flex items-center justify-center gap-3 rounded-full px-6 py-3 text-[0.9rem] font-semibold transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60;
 }
 @utility btn-primary {
   @apply btn bg-navy text-white hover:bg-cyan-dark;
@@ -200,6 +200,45 @@ body {
   transform-origin: left;
   animation: draw-x 1.2s var(--ease-in-out) 0.2s both;
 }
+/* Bandeau défilant : bords fondus, boucle sur la moitié (liste doublée) */
+.marquee {
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.marquee-track {
+  animation: marquee 40s linear infinite;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(calc(-50% - 0.5rem));
+  }
+}
+
+/* Accordéon : la réponse se déplie en douceur (navigateurs récents) */
+.faq {
+  interpolate-size: allow-keywords;
+}
+.faq::details-content {
+  block-size: 0;
+  overflow: hidden;
+  transition:
+    block-size 0.35s var(--ease-in-out),
+    content-visibility 0.35s allow-discrete;
+}
+.faq[open]::details-content {
+  block-size: auto;
+}
+
+/* Halo lumineux des sections marine : respiration lente */
+.glow {
+  animation: glow 9s ease-in-out infinite alternate;
+}
+@keyframes glow {
+  to {
+    transform: translate3d(2.5rem, -1.5rem, 0) scale(1.15);
+    opacity: 0.7;
+  }
+}
+
 /* Photo des bannières : léger recul à l'arrivée */
 .hero-zoom {
   animation: hero-zoom 1.6s var(--ease-in-out) both;
@@ -375,6 +414,18 @@ body {
     transition-delay: 0ms !important;
   }
   .trace-signal {
+    display: none;
+  }
+  /* Sans mouvement : les familles s'affichent à la ligne, sans la copie */
+  .marquee {
+    mask-image: none;
+  }
+  .marquee-track {
+    width: auto;
+    flex-wrap: wrap;
+    animation: none !important;
+  }
+  .marquee-track > [aria-hidden="true"] {
     display: none;
   }
   .js [data-reveal],

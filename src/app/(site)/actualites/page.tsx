@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { getNewsPage } from "@/lib/data/public";
+import { getNewsCategories, getNewsPage } from "@/lib/data/public";
 import { EmptyState, NewsCard, PageHero } from "@/components/ui/content";
 import { LinkedinPosts } from "@/components/ui/LinkedinPosts";
+import { FilterChips } from "@/components/ui/modern";
 import { heroBanners } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -29,16 +30,34 @@ export default function NewsListPage({ searchParams }: PageProps<"/actualites">)
 }
 
 async function NewsGrid({ searchParams }: Pick<PageProps<"/actualites">, "searchParams">) {
-  const { page: raw } = await searchParams;
+  const { page: raw, categorie } = await searchParams;
   const page = Math.max(1, Number.parseInt(typeof raw === "string" ? raw : "1", 10) || 1);
-  const { items, total } = await getNewsPage(page, PAGE_SIZE);
+  const categories = await getNewsCategories();
+  // Seules les catégories connues sont acceptées (pas de requête sur une valeur arbitraire)
+  const category = typeof categorie === "string" && categories.some((c) => c.slug === categorie) ? categorie : null;
+  const { items, total } = await getNewsPage(page, PAGE_SIZE, category);
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-
-  if (!items.length) return <EmptyState title="Aucune actualité publiée pour le moment." />;
+  const href = (p: number, c: string | null) => {
+    const q = new URLSearchParams();
+    if (c) q.set("categorie", c);
+    if (p > 1) q.set("page", String(p));
+    const qs = q.toString();
+    return qs ? `/actualites?${qs}` : "/actualites";
+  };
 
   return (
     <>
-      <div className="grid gap-x-8 gap-y-14 md:grid-cols-2 lg:grid-cols-3">
+      {categories.length > 1 && (
+        <div className="mb-10">
+          <FilterChips
+            label="Filtrer par catégorie"
+            current={category}
+            options={[{ label: "Toutes", value: null, href: href(1, null) }, ...categories.map((c) => ({ label: c.name, value: c.slug, href: href(1, c.slug) }))]}
+          />
+        </div>
+      )}
+      {!items.length && <EmptyState title={category ? "Aucune actualité dans cette catégorie." : "Aucune actualité publiée pour le moment."} />}
+      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {items.map((n, i) => (
           <NewsCard key={n.slug} item={n} delay={(i % 3) * 100} />
         ))}
@@ -48,9 +67,9 @@ async function NewsGrid({ searchParams }: Pick<PageProps<"/actualites">, "search
           {Array.from({ length: pages }, (_, i) => i + 1).map((p) => (
             <Link
               key={p}
-              href={p === 1 ? "/actualites" : `/actualites?page=${p}`}
+              href={href(p, category)}
               aria-current={p === page ? "page" : undefined}
-              className={`grid size-11 place-items-center font-mono text-sm ${p === page ? "bg-navy text-white" : "border border-line text-navy hover:border-navy"}`}
+              className={`grid size-11 place-items-center rounded-full font-mono text-sm ${p === page ? "bg-navy text-white" : "border border-line text-navy hover:border-navy"}`}
             >
               {p}
             </Link>
@@ -65,7 +84,7 @@ function NewsGridSkeleton() {
   return (
     <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3" aria-busy>
       {Array.from({ length: 3 }, (_, i) => (
-        <div key={i} className="h-56 animate-pulse border-t-2 border-navy bg-paper" />
+        <div key={i} className="h-80 animate-pulse rounded-3xl bg-paper" />
       ))}
     </div>
   );

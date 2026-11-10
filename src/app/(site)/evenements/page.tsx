@@ -19,7 +19,7 @@ export default async function EventsPage() {
         <SectionHeader label="À venir" title="Prochains rendez-vous" />
         <div className="mt-12 lg:ml-[calc(25%+0.375rem)]">
           {upcoming.length ? (
-            <RevealGroup as="ul" className="border-b border-line">
+            <RevealGroup as="ul" className="grid gap-3">
               {upcoming.map((e) => (
                 <EventRow key={e.slug} item={e} />
               ))}
@@ -33,7 +33,7 @@ export default async function EventsPage() {
         <section className="border-t border-line bg-paper py-16 sm:py-24">
           <div className="container-site">
             <SectionHeader label="Archives" title="Événements passés" />
-            <RevealGroup as="ul" className="mt-12 border-b border-line lg:ml-[calc(25%+0.375rem)]">
+            <RevealGroup as="ul" className="mt-12 grid gap-3 lg:ml-[calc(25%+0.375rem)]">
               {past.slice(0, 10).map((e) => (
                 <EventRow key={e.slug} item={e} />
               ))}
