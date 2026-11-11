@@ -6,7 +6,7 @@ import { ArrowRight, ArrowUpRight } from "lucide-react";
 import type { EventItem, NewsItem } from "@/lib/types";
 import { formatDate } from "@/lib/format";
 import { isDemo } from "@/lib/data/public";
-import { Node, SectionLabel, TraceRule } from "@/components/brand/Trace";
+import { Node, SectionLabel } from "@/components/brand/Trace";
 import { Reveal, RevealGroup } from "@/components/motion/Reveal";
 import { heroBanners } from "@/content/site";
 
@@ -179,13 +179,14 @@ export function RuledList({ items, columns = 1 }: { items: { title: string; desc
   );
 }
 
-/** Visuel de repli des cartes sans photo : aplat marine et trace de circuit du logo. */
+/** Visuel de repli des cartes sans photo : aplat marine et nom du réseau. */
 function CardPlaceholder() {
   return (
-    <span aria-hidden className="absolute inset-0 bg-navy">
-      <span className="absolute top-1/2 right-[18%] left-0 h-[2px] bg-white/25" />
-      <span className="absolute top-1/2 right-[18%] h-[2px] w-[22%] bg-cyan" />
-      <span className="absolute top-1/2 right-[calc(18%-0.6rem)] size-5 -translate-y-1/2 rounded-full border-[3px] border-cyan bg-navy" />
+    <span aria-hidden className="absolute inset-0 grid place-items-center bg-navy font-display text-[1.4rem] font-extrabold tracking-[-0.02em]">
+      <span>
+        <span className="text-white/90">REPTIC</span>
+        <span className="text-cyan">.cm</span>
+      </span>
     </span>
   );
 }
@@ -302,7 +303,7 @@ export function EventRow({ item }: { item: EventItem }) {
   );
 }
 
-/** Appel à l'adhésion en bas des pages : aplat marine, photo nette, trace du logo. */
+/** Appel à l'adhésion en bas des pages : aplat marine et photo nette. */
 export function JoinBand() {
   return (
     <section className="overflow-hidden bg-navy text-white">
@@ -312,7 +313,6 @@ export function JoinBand() {
           <p className="mt-5 font-display text-[2rem] leading-[1.08] font-extrabold tracking-[-0.02em] text-balance sm:text-[2.8rem]">
             Votre entreprise fait le numérique camerounais. Faites-la entendre.
           </p>
-          <TraceRule className="mt-10 max-w-md" />
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
             <Link href="/adhesion" className="btn-inverse">
               Conditions d&apos;adhésion <ArrowRight aria-hidden className="size-4" />

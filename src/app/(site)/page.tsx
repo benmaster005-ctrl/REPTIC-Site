@@ -3,8 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { heroBanners, missions } from "@/content/site";
 import { getActorCategories, getEvents, getKeyFigures, getLatestNews } from "@/lib/data/public";
 import { EmptyState, EventRow, JoinBand, NewsCard, SectionHeader } from "@/components/ui/content";
-import { ActorMarquee, KeyFigures, MissionBento } from "@/components/ui/modern";
-import { NetworkDiagram } from "@/components/brand/NetworkDiagram";
+import { ActorMarquee, HeroMosaic, MissionBento } from "@/components/ui/modern";
 import { SectionLabel } from "@/components/brand/Trace";
 import { RevealGroup } from "@/components/motion/Reveal";
 import { RiseWords } from "@/components/motion/RiseWords";
@@ -54,8 +53,8 @@ export default async function HomePage() {
               </Link>
             </div>
           </div>
-          <div className="hidden sm:block lg:col-span-6 lg:-mr-6">
-            <NetworkDiagram categories={actors} />
+          <div className="lg:col-span-6">
+            <HeroMosaic figures={figures} />
           </div>
         </div>
 
@@ -64,18 +63,6 @@ export default async function HomePage() {
           <ActorMarquee categories={actors} />
         </div>
       </section>
-
-      {/* Chiffres clés */}
-      {figures.length > 0 && (
-        <section className="border-y border-line bg-paper py-16 sm:py-20">
-          <div className="container-site">
-            <SectionLabel>Le réseau en chiffres</SectionLabel>
-            <div className="mt-12">
-              <KeyFigures figures={figures} />
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Missions */}
       <section className="py-20 sm:py-28">

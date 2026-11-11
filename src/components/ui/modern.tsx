@@ -77,29 +77,6 @@ export function MissionBento({ missions, image, href }: { missions: Mission[]; i
 }
 
 /**
- * Chiffres clés posés sur une trace de circuit (le motif du logo) : un filet
- * marine court sous les chiffres, chaque chiffre est un nœud du réseau.
- */
-export function KeyFigures({ figures }: { figures: KeyFigure[] }) {
-  return (
-    <RevealGroup as="dl" className="grid grid-cols-2 gap-y-12 lg:grid-cols-4">
-      {figures.map((f, i) => (
-        <div key={f.label} className={`relative pt-9 pr-4 ${i % 2 === 1 ? "pl-5 sm:pl-8" : ""} ${i >= 1 ? "lg:pl-8" : ""}`}>
-          {/* segment de trace + nœud annulaire */}
-          <span aria-hidden className="absolute top-0 right-0 left-0 h-[2px] bg-navy" />
-          <span aria-hidden className={`absolute -top-[5px] size-3 rounded-full border-2 border-cyan bg-white ${i % 2 === 1 ? "left-5 sm:left-8" : "left-0"} ${i >= 1 ? "lg:left-8" : ""}`} />
-          <span className="font-mono text-[0.72rem] text-cyan-dark">{String(i + 1).padStart(2, "0")}</span>
-          <dd className="mt-3 font-display text-[2.8rem] leading-none font-extrabold tracking-[-0.035em] text-navy sm:text-[4rem]">
-            <CountUp value={f.value} />
-          </dd>
-          <dt className="mt-3 max-w-[14rem] text-[0.95rem] leading-snug text-muted">{f.label}</dt>
-        </div>
-      ))}
-    </RevealGroup>
-  );
-}
-
-/**
  * Bandeau défilant des familles d'acteurs. La liste est doublée pour boucler
  * sans à-coup ; la copie est masquée aux lecteurs d'écran. Pause au survol.
  */
@@ -166,5 +143,58 @@ export function FilterChips({ label, options, current }: { label: string; option
         })}
       </ul>
     </nav>
+  );
+}
+
+/** Photos de la mosaïque du héro (vraies photos du réseau). */
+const heroPhotos = {
+  main: { src: "/images/reptic/pages/assemblee-generale.webp", alt: "Assemblée générale du REPTIC.CM" },
+  side: { src: "/images/reptic/actualites/forum-economie-numerique-afrique-centrale.webp", alt: "Forum de l'économie numérique en Afrique centrale" },
+  small: { src: "/images/reptic/actualites/convention-universites-yaounde.webp", alt: "Signature d'une convention avec les universités à Yaoundé" },
+};
+
+/**
+ * Illustration du héro de l'accueil : mosaïque asymétrique de photos du réseau
+ * et de deux tuiles de chiffres clés (marine et cyan), avec la pastille de
+ * l'année de création. Couleurs unies, coins arrondis.
+ */
+export function HeroMosaic({ figures }: { figures: KeyFigure[] }) {
+  const isYear = (f: KeyFigure) => /création|fondation/i.test(f.label);
+  const year = figures.find(isYear);
+  const [first, second] = figures.filter((f) => !isYear(f));
+  const tile = "intro relative overflow-hidden rounded-xl";
+  return (
+    <div className="grid h-[24rem] grid-cols-12 grid-rows-6 gap-3 sm:h-[32rem]">
+      <figure className={`${tile} col-span-7 row-span-4 bg-paper [--intro-delay:200ms]`}>
+        <Image src={heroPhotos.main.src} alt={heroPhotos.main.alt} fill priority sizes="(min-width: 1024px) 28vw, 58vw" className="object-cover" />
+        {year && (
+          <span className="absolute top-3 left-3 rounded-full bg-white px-3.5 py-1.5 text-[0.8rem] font-semibold text-navy">
+            Depuis {year.value}
+          </span>
+        )}
+      </figure>
+      {first && (
+        <div className={`${tile} col-span-5 row-span-3 flex flex-col justify-between bg-navy p-5 text-white [--intro-delay:350ms] sm:p-6`}>
+          <p className="font-display text-[2.6rem] leading-none font-extrabold tracking-[-0.03em] sm:text-[3.4rem]">
+            <CountUp value={first.value} />
+          </p>
+          <p className="text-[0.95rem] leading-snug text-white/80">{first.label}</p>
+        </div>
+      )}
+      <figure className={`${tile} col-span-5 row-span-3 bg-paper [--intro-delay:500ms]`}>
+        <Image src={heroPhotos.side.src} alt={heroPhotos.side.alt} fill sizes="(min-width: 1024px) 20vw, 42vw" className="object-cover" />
+      </figure>
+      {second && (
+        <div className={`${tile} col-span-4 row-span-2 flex flex-col justify-between bg-cyan p-4 sm:col-span-3 text-white [--intro-delay:650ms] sm:p-5`}>
+          <p className="font-display text-[2rem] leading-none font-extrabold tracking-[-0.03em] sm:text-[2.6rem]">
+            <CountUp value={second.value} />
+          </p>
+          <p className="text-[0.8rem] leading-snug sm:text-[0.88rem]">{second.label}</p>
+        </div>
+      )}
+      <figure className={`${tile} ${second ? "col-span-3 sm:col-span-4" : "col-span-7"} row-span-2 bg-paper [--intro-delay:800ms]`}>
+        <Image src={heroPhotos.small.src} alt={heroPhotos.small.alt} fill sizes="(min-width: 1024px) 16vw, 33vw" className="object-cover" />
+      </figure>
+    </div>
   );
 }

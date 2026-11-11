@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getActorCategories } from "@/lib/data/public";
 import { JoinBand, PageHero } from "@/components/ui/content";
-import { NetworkDiagram } from "@/components/brand/NetworkDiagram";
 import { RevealGroup } from "@/components/motion/Reveal";
 import { heroBanners } from "@/content/site";
 
@@ -21,13 +20,6 @@ export default async function ActorsPage() {
         summary="Les familles de professionnels qui composent l'écosystème numérique représenté par le réseau."
         crumbs={[{ label: "Membres" }]}
       />
-      <section className="hidden border-b border-line bg-paper sm:block">
-        <div className="container-site py-14">
-          <div className="mx-auto max-w-4xl bg-white px-6 py-8">
-            <NetworkDiagram categories={categories} />
-          </div>
-        </div>
-      </section>
       <section className="container-site py-16 sm:py-24">
         <RevealGroup as="ol" className="grid border-b border-line md:grid-cols-2 md:gap-x-12">
           {categories.map((c, i) => (
