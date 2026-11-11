@@ -35,7 +35,7 @@ export default async function HomePage() {
         <div className="container-site grid gap-12 pt-14 pb-16 sm:pt-20 lg:grid-cols-12 lg:items-center lg:gap-8 lg:pt-24 lg:pb-24">
           <div className="lg:col-span-6">
             <div className="intro">
-              <SectionLabel>Télécoms · TIC · Numérique</SectionLabel>
+              <SectionLabel>Télécoms, TIC et numérique</SectionLabel>
             </div>
             <h1 className="heading-xl mt-6 text-balance">
               <RiseWords text="Le réseau qui fédère le numérique camerounais" accent="." start={120} />

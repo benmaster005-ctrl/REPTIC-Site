@@ -112,14 +112,11 @@ export function SectionHeader({ label, title, description, action, tone = "defau
 }) {
   const inverse = tone === "inverse";
   return (
-    <Reveal className="grid gap-6 lg:grid-cols-12">
-      <div className="lg:col-span-3 lg:pt-3">
-        <SectionLabel tone={inverse ? "inverse" : "default"}>{label}</SectionLabel>
-        <Reveal variant="line" delay={250} className={`mt-4 hidden h-[2px] w-20 lg:block ${inverse ? "bg-white/40" : "bg-cyan"}`} />
-      </div>
-      <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between lg:col-span-9">
+    <Reveal>
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div className="max-w-3xl">
-          <h2 className={`heading-lg text-balance ${inverse ? "text-white" : ""}`}>{title}</h2>
+          <SectionLabel tone={inverse ? "inverse" : "default"}>{label}</SectionLabel>
+          <h2 className={`mt-3 heading-lg text-balance ${inverse ? "text-white" : ""}`}>{title}</h2>
           {description && <p className={`mt-4 max-w-2xl text-[1.05rem] leading-relaxed ${inverse ? "text-white/70" : "text-muted"}`}>{description}</p>}
         </div>
         {action && (
