@@ -474,3 +474,24 @@ body {
 .prose-site blockquote {
   @apply border-l-2 border-cyan pl-5 text-muted;
 }
+
+/* =============================================================================
+   Espaces de travail (espace membre, administration) : police Inter, plus
+   compacte que Poppins, et titres un cran plus petits que sur le site public.
+   ========================================================================== */
+.app-ui {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-sans);
+  font-feature-settings: "cv11", "tnum";
+}
+.app-ui .heading-md {
+  font-size: 1.4rem;
+  letter-spacing: -0.015em;
+}
+@media (min-width: 40rem) {
+  .app-ui .heading-md {
+    font-size: 1.5rem;
+  }
+}

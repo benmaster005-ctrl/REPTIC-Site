@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { LogOut } from "lucide-react";
 import { signOut } from "@/app/actions/auth";
 import { Logo } from "@/components/layout/Logo";
+import { appFont } from "@/lib/fonts";
 import { SpaceNav, SpaceNavList, type SpaceNavItem } from "@/components/space/SpaceNav";
 import { getSpaceContext, displayName } from "@/lib/space";
 import { getUnreadCount } from "@/lib/data/member";
@@ -38,7 +39,7 @@ const memberNav: SpaceNavItem[] = [
 
 export default function SpaceLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-paper">
+    <div className={`${appFont.variable} app-ui min-h-screen bg-paper`}>
       <a href="#contenu" className="sr-only z-[60] bg-navy px-4 py-2 font-semibold text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3">
         Aller au contenu
       </a>

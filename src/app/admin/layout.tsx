@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { LogOut } from "lucide-react";
 import { signOut } from "@/app/actions/auth";
 import { Logo } from "@/components/layout/Logo";
+import { appFont } from "@/lib/fonts";
 import { AdminNav, AdminNavList, type AdminNavSection } from "@/components/admin/AdminNav";
 import { getStaffContext, roleLabels, type Permission } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -57,7 +58,7 @@ const strip = (s: typeof sections): AdminNavSection[] => s.map((sec) => ({ title
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-paper">
+    <div className={`${appFont.variable} app-ui min-h-screen bg-paper`}>
       <a href="#contenu" className="sr-only z-[60] bg-navy px-4 py-2 font-semibold text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3">
         Aller au contenu
       </a>
