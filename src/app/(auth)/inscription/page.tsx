@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { SignUpForm } from "@/components/forms/AuthForms";
+import { SignUpForm, SocialSignIn } from "@/components/forms/AuthForms";
 
 export const metadata: Metadata = {
   title: "Créer un compte candidat",
@@ -32,5 +32,22 @@ export default function SignUpPage({ searchParams }: PageProps<"/inscription">) 
 
 async function SignUpWithNext({ searchParams }: Pick<PageProps<"/inscription">, "searchParams">) {
   const { suite } = await searchParams;
-  return <SignUpForm next={typeof suite === "string" ? suite : undefined} />;
+  const next = typeof suite === "string" ? suite : undefined;
+  return (
+    <>
+      <SocialSignIn
+        next={next ?? "/espace/adhesion"}
+        note={
+          <>
+            En continuant avec Google ou LinkedIn, vous acceptez la{" "}
+            <Link href="/confidentialite" className="font-semibold text-navy underline underline-offset-2">
+              politique de confidentialité
+            </Link>
+            .
+          </>
+        }
+      />
+      <SignUpForm next={next} />
+    </>
+  );
 }

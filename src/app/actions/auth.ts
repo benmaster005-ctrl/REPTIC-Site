@@ -48,6 +48,35 @@ export async function signIn(_prev: FormState, formData: FormData): Promise<Form
   redirect(safeNext(formData.get("suite")));
 }
 
+/** Fournisseurs de connexion acceptés : clé du site → fournisseur Supabase. */
+const oauthProviders = {
+  google: { provider: "google", queryParams: { prompt: "select_account" } },
+  linkedin: { provider: "linkedin_oidc", queryParams: undefined },
+} as const;
+
+/**
+ * Connexion (ou création de compte) avec Google ou LinkedIn, via Supabase.
+ * Le fournisseur renvoie sur /auth/callback, qui ouvre la session puis redirige vers « suite ».
+ */
+export async function signInWithOAuthProvider(formData: FormData) {
+  const key = String(formData.get("fournisseur") ?? "");
+  if (!(key in oauthProviders)) redirect("/connexion");
+  const via = key as keyof typeof oauthProviders;
+  const next = safeNext(formData.get("suite"));
+  if (!isSupabaseConfigured) redirect(`/connexion?erreur=${via}`);
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: oauthProviders[via].provider,
+    options: {
+      redirectTo: `${await siteOrigin()}/auth/callback?via=${via}&suite=${encodeURIComponent(next)}`,
+      queryParams: oauthProviders[via].queryParams,
+    },
+  });
+  if (error || !data.url) redirect(`/connexion?erreur=${via}`);
+  redirect(data.url);
+}
+
 export async function signOut() {
   if (isSupabaseConfigured) {
     const supabase = await createClient();
