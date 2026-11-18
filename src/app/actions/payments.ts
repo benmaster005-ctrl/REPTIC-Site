@@ -47,7 +47,7 @@ export async function simulateDemoPayment(formData: FormData) {
   const user = await requireUser(BASE);
   const ref = String(formData.get("ref") ?? "");
   const outcome = formData.get("outcome") === "paid" ? "paid" : "failed";
-  if (!isDemoPayment || !/^COT-\d{4}-[A-F0-9]{8}$/.test(ref)) redirect(BASE);
+  if (!isDemoPayment || !isPaymentEnabled || !/^COT-\d{4}-[A-F0-9]{8}$/.test(ref)) redirect(BASE);
   // Le paiement doit appartenir au membre connecté
   const { data } = await createPublicClient().rpc("payment_for_confirmation", { p_secret: process.env.PAYMENT_CONFIRM_SECRET ?? "", p_reference: ref });
   const pay = (Array.isArray(data) ? data[0] : data) as { email: string } | undefined;

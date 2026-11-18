@@ -33,7 +33,14 @@ if (choice === "demo" && !demoAllowed) console.error("PAYMENT_PROVIDER=demo igno
 export const provider: PaymentProvider | null =
   choice === "cinetpay" && isCinetPayConfigured ? cinetpay : choice === "demo" && demoAllowed ? demo : null;
 export const isDemoPayment = provider?.id === "demo";
-export const isPaymentEnabled = Boolean(provider && SECRET && isSupabaseConfigured);
+/**
+ * Interrupteur d'ouverture des paiements : PAYMENTS_OPEN=true pour ouvrir.
+ * Fermé par défaut (lancement du site avant la mise en service de CinetPay) :
+ * la page de cotisation annonce alors « bientôt disponible ».
+ */
+export const arePaymentsOpen = process.env.PAYMENTS_OPEN === "true";
+export const isPaymentConfigured = Boolean(provider && SECRET && isSupabaseConfigured);
+export const isPaymentEnabled = arePaymentsOpen && isPaymentConfigured;
 export { formatAmount };
 
 /**

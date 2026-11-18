@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { Download } from "lucide-react";
 import { requirePermission } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
-import { formatAmount, isDemoPayment, isPaymentEnabled, provider } from "@/lib/payments";
+import { arePaymentsOpen, formatAmount, isDemoPayment, isPaymentConfigured, isPaymentEnabled, provider } from "@/lib/payments";
 import { formatDateTime } from "@/lib/format";
 import { AdminHeader, DataTable, FilterBar, Flash, Panel, StatusTag, listHref, str } from "@/components/admin/ui";
 import { FeesForm } from "@/components/admin/FeesForm";
@@ -67,10 +67,26 @@ async function FeesAdmin({ searchParams }: Pick<PageProps<"/admin/cotisations">,
         label="Adhésions"
         title="Cotisations"
         description="Tarifs annuels et paiements en ligne des membres (année civile)."
-        action={<StatusTag tone={isPaymentEnabled ? (isDemoPayment ? "warning" : "success") : "neutral"}>{isPaymentEnabled ? (isDemoPayment ? "Mode démonstration" : `Paiement actif · ${provider?.label}`) : "Paiement non configuré"}</StatusTag>}
+        action={
+          <StatusTag tone={isPaymentEnabled ? (isDemoPayment ? "warning" : "success") : "neutral"}>
+            {isPaymentEnabled
+              ? isDemoPayment
+                ? "Mode démonstration"
+                : `Paiement actif · ${provider?.label}`
+              : !arePaymentsOpen
+                ? "Paiements fermés (bientôt)"
+                : "Paiement non configuré"}
+          </StatusTag>
+        }
       />
       {(feesError || error) && <Flash tone="error">Exécutez la migration 20261115000009_cotisations.sql dans Supabase pour activer les cotisations.</Flash>}
-      {!isPaymentEnabled && !feesError && (
+      {!arePaymentsOpen && !feesError && (
+        <Flash tone="error">
+          Les paiements en ligne sont fermés : les membres voient « bientôt disponible ». Pour les ouvrir, ajoutez la variable PAYMENTS_OPEN=true
+          {isPaymentConfigured ? "" : " et renseignez les clés CinetPay et PAYMENT_CONFIRM_SECRET"}.
+        </Flash>
+      )}
+      {arePaymentsOpen && !isPaymentConfigured && !feesError && (
         <Flash tone="error">Le paiement en ligne n&apos;est pas actif : renseignez les clés CinetPay (ou PAYMENT_PROVIDER=demo pour tester) et PAYMENT_CONFIRM_SECRET.</Flash>
       )}
 

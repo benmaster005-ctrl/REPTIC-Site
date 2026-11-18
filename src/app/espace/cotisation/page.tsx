@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { CreditCard, Smartphone } from "lucide-react";
+import { Clock, CreditCard, Smartphone } from "lucide-react";
 import { getSpaceContext } from "@/lib/space";
 import { getFeeOverview, getMyMember, payableYears } from "@/lib/data/member";
 import { formatAmount, isDemoPayment, isPaymentEnabled } from "@/lib/payments";
@@ -50,7 +50,25 @@ async function Fee({ searchParams }: Pick<PageProps<"/espace/cotisation">, "sear
                 : String(erreur)}
         </SpaceFlash>
       )}
-      {isDemoPayment && <SpaceFlash tone="error">Mode démonstration : aucun paiement réel n&apos;est effectué.</SpaceFlash>}
+      {isDemoPayment && isPaymentEnabled && <SpaceFlash tone="error">Mode démonstration : aucun paiement réel n&apos;est effectué.</SpaceFlash>}
+
+      {!isPaymentEnabled && (
+        <div role="status" className="mt-8 flex gap-4 rounded-xl border border-cyan/30 bg-cyan-tint p-5 sm:p-6">
+          <span className="grid size-11 shrink-0 place-content-center rounded-full bg-white text-cyan-dark">
+            <Clock aria-hidden className="size-5" />
+          </span>
+          <div>
+            <p className="font-display text-[1.1rem] font-bold text-navy">Le paiement en ligne arrive bientôt</p>
+            <p className="mt-1.5 text-[0.95rem] leading-relaxed text-ink/80">
+              Vous pourrez très prochainement régler votre cotisation directement depuis cet espace, par Mobile Money ou carte bancaire. Nous vous
+              préviendrons dès l&apos;ouverture. En attendant, le secrétariat reste à votre disposition pour toute question sur votre cotisation.
+            </p>
+            <Link href="/contact" className="mt-3 inline-block text-sm font-semibold text-navy underline underline-offset-4 hover:text-cyan-dark">
+              Contacter le secrétariat
+            </Link>
+          </div>
+        </div>
+      )}
 
       <div className="mt-8 grid gap-6 xl:grid-cols-12">
         <Panel className="xl:col-span-7">
