@@ -26,8 +26,12 @@ const demo: PaymentProvider = {
 
 const choice = process.env.PAYMENT_PROVIDER || (isCinetPayConfigured ? "cinetpay" : "");
 const SECRET = process.env.PAYMENT_CONFIRM_SECRET ?? "";
+/** Le simulateur permet à un membre de valider lui-même son paiement : jamais en production. */
+const demoAllowed = process.env.VERCEL_ENV !== "production";
+if (choice === "demo" && !demoAllowed) console.error("PAYMENT_PROVIDER=demo ignoré en production");
 
-export const provider: PaymentProvider | null = choice === "cinetpay" && isCinetPayConfigured ? cinetpay : choice === "demo" ? demo : null;
+export const provider: PaymentProvider | null =
+  choice === "cinetpay" && isCinetPayConfigured ? cinetpay : choice === "demo" && demoAllowed ? demo : null;
 export const isDemoPayment = provider?.id === "demo";
 export const isPaymentEnabled = Boolean(provider && SECRET && isSupabaseConfigured);
 export { formatAmount };
@@ -74,15 +78,22 @@ export async function verifyAndRecord(reference: string) {
   if (!provider || !SECRET) return { status: "unknown" as const };
   const supabase = createPublicClient();
   const { data } = await supabase.rpc("payment_for_confirmation", { p_secret: SECRET, p_reference: reference });
-  const pay = (Array.isArray(data) ? data[0] : data) as { status: string; provider: string; provider_transaction_id: string | null; amount: number } | undefined;
+  const pay = (Array.isArray(data) ? data[0] : data) as
+    | { status: string; provider: string; provider_transaction_id: string | null; amount: number; currency: string }
+    | undefined;
   if (!pay) return { status: "unknown" as const };
   if (pay.status === "paid" || pay.provider === "demo") return { status: pay.status as PaymentStatus | "cancelled" };
   try {
     const result = await provider.getStatus(reference, pay.provider_transaction_id);
-    // Un montant différent de celui attendu n'est jamais accepté.
-    if (result.status === "paid" && result.amount != null && result.amount < pay.amount) {
-      console.error("Montant payé inférieur au montant attendu", reference, result.amount, pay.amount);
-      return { status: "pending" as const };
+    // Un paiement n'est accepté que si le montant ET la devise sont ceux attendus.
+    // Champ absent = refus (le paiement reste en attente, à vérifier à la main).
+    if (result.status === "paid") {
+      const sameAmount = result.amount === pay.amount;
+      const sameCurrency = (result.currency ?? "").toUpperCase() === (pay.currency ?? "XAF").toUpperCase();
+      if (!sameAmount || !sameCurrency) {
+        console.error("Paiement non conforme", reference, { recu: [result.amount, result.currency], attendu: [pay.amount, pay.currency] });
+        return { status: "pending" as const };
+      }
     }
     return recordPaymentResult(reference, result);
   } catch (e) {

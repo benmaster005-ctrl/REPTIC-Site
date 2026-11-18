@@ -95,15 +95,20 @@ export const cinetpay: PaymentProvider = {
     const t = await token();
     const r = await call(`/v1/payment/${encodeURIComponent(transactionId || reference)}`, { method: "GET", token: t });
     if (!r.ok) return { status: "pending", raw: r.body };
-    // Le paiement interrogé doit bien être le nôtre.
+    // Le paiement interrogé doit bien être le nôtre : sans référence marchand
+    // identique, rien n'est conclu (le paiement reste « en attente »).
     const merchantRef = r.data.merchant_transaction_id as string | undefined;
-    if (merchantRef && merchantRef !== reference) return { status: "pending", raw: r.body };
+    if (merchantRef !== reference) {
+      console.error("CinetPay : référence marchand absente ou différente", reference, merchantRef);
+      return { status: "pending", raw: r.body };
+    }
     const status = String(r.data.status ?? "").toUpperCase();
     return {
       status: status === "SUCCESS" || status === "ACCEPTED" ? "paid" : FAILED.has(status) ? "failed" : "pending",
       transactionId: (r.data.transaction_id as string) ?? transactionId ?? null,
       method: (r.data.payment_method ?? r.data.channel ?? r.data.operator) as string | null,
       amount: r.data.amount != null ? Number(r.data.amount) : null,
+      currency: r.data.currency != null ? String(r.data.currency) : null,
       raw: r.data,
     };
   },

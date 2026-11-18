@@ -1,13 +1,18 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
 import { subscribeNewsletter } from "@/app/actions/public";
 import { initialFormState } from "@/lib/forms";
 import { FormMessage, SpamGuard, SubmitButton } from "@/components/ui/form";
+import { preloadRecaptcha, withRecaptcha } from "./recaptcha";
+import { RecaptchaNotice } from "./RecaptchaNotice";
+
+const newsletterAction = withRecaptcha(subscribeNewsletter, "newsletter");
 
 export function NewsletterForm() {
-  const [state, action] = useActionState(subscribeNewsletter, initialFormState);
+  const [state, action] = useActionState(newsletterAction, initialFormState);
+  useEffect(preloadRecaptcha, []);
   const emailError = state.fieldErrors?.email?.[0];
   const consentError = state.fieldErrors?.consent?.[0];
 
@@ -43,6 +48,7 @@ export function NewsletterForm() {
       </label>
       {consentError && <p className="field-error">{consentError}</p>}
       {state.status === "error" && state.message && <p className="field-error">{state.message}</p>}
+      <RecaptchaNotice />
     </form>
   );
 }

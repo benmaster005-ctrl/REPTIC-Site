@@ -1,13 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { sendContactMessage } from "@/app/actions/public";
 import { initialFormState } from "@/lib/forms";
 import { Checkbox, Field, FormMessage, SpamGuard, SubmitButton } from "@/components/ui/form";
+import { preloadRecaptcha, withRecaptcha } from "./recaptcha";
+import { RecaptchaNotice } from "./RecaptchaNotice";
+
+const contactAction = withRecaptcha(sendContactMessage, "contact");
 
 export function ContactForm() {
-  const [state, action] = useActionState(sendContactMessage, initialFormState);
+  const [state, action] = useActionState(contactAction, initialFormState);
+  useEffect(preloadRecaptcha, []);
 
   if (state.status === "success") {
     return (
@@ -36,6 +41,7 @@ export function ContactForm() {
         .
       </Checkbox>
       <SubmitButton>Envoyer le message</SubmitButton>
+      <RecaptchaNotice />
     </form>
   );
 }

@@ -1,6 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { safeInternalPath } from "@/lib/safe-redirect";
+import { RECOVERY_COOKIE, RECOVERY_MAX_AGE, RECOVERY_PATH } from "@/lib/recovery";
 
 /**
  * Point de retour des liens e-mail Supabase (confirmation, réinitialisation)
@@ -9,10 +11,9 @@ import { createClient } from "@/lib/supabase/server";
  */
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
-  const rawNext = searchParams.get("suite") ?? "/espace";
   const via = searchParams.get("via");
   const oauth = via === "google" || via === "linkedin" ? via : null;
-  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/espace";
+  const next = safeInternalPath(searchParams.get("suite"));
 
   // Connexion annulée ou refusée chez le fournisseur : il renvoie ?error=
   if (searchParams.get("error")) {
@@ -33,5 +34,16 @@ export async function GET(request: NextRequest) {
   if (error) {
     return NextResponse.redirect(new URL(`/connexion?erreur=${oauth ?? "lien"}`, origin));
   }
-  return NextResponse.redirect(new URL(next, origin));
+  const response = NextResponse.redirect(new URL(next, origin));
+  // Lien « mot de passe oublié » utilisé : autorise un changement de mot de passe
+  if (!oauth && next === RECOVERY_PATH && (code || type === "recovery")) {
+    response.cookies.set(RECOVERY_COOKIE, "1", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: RECOVERY_MAX_AGE,
+    });
+  }
+  return response;
 }

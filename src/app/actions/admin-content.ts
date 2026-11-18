@@ -1,6 +1,6 @@
 "use server";
 
-import { redirect } from "next/navigation";
+import { redirect, unstable_rethrow } from "next/navigation";
 import { refresh, updateTag } from "next/cache";
 import { z } from "zod";
 import { assertPermission, slugify, type Permission } from "@/lib/admin";
@@ -31,6 +31,7 @@ async function guard(p: Permission): Promise<FormState | null> {
     await assertPermission(p);
     return null;
   } catch (e) {
+    unstable_rethrow(e);
     return { status: "error", message: (e as Error).message };
   }
 }
@@ -352,6 +353,7 @@ export async function registerAssociationDocument(input: z.infer<typeof assocDoc
   try {
     await assertPermission("documents.manage");
   } catch (e) {
+    unstable_rethrow(e);
     return { ok: false, error: (e as Error).message };
   }
   const parsed = assocDocSchema.safeParse(input);

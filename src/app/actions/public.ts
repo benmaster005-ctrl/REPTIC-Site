@@ -7,6 +7,15 @@ import { after } from "next/server";
 import { redirect } from "next/navigation";
 import { emailSchema, fieldErrors, formValues, isLikelySpam, type FormState } from "@/lib/forms";
 import { internalRecipient, sendTemplated } from "@/lib/email/send";
+import { RECAPTCHA_ERROR, verifyRecaptcha } from "@/lib/recaptcha";
+
+/**
+ * Secret partagé avec la base (migration 15) : seules les fonctions
+ * newsletter_subscribe et submit_contact_message écrivent dans ces tables,
+ * et elles exigent ce secret, que seul le serveur du site connaît.
+ */
+const FORMS_SECRET = process.env.PUBLIC_FORMS_SECRET ?? "";
+const UNAVAILABLE = "Une erreur est survenue. Réessayez plus tard.";
 
 const NEWSLETTER_CONSENT =
   "J'accepte de recevoir la lettre d'information de REPTIC.CM. Je peux me désinscrire à tout moment.";
@@ -23,19 +32,22 @@ export async function subscribeNewsletter(_prev: FormState, formData: FormData):
   if (!parsed.success) {
     return { status: "error", fieldErrors: fieldErrors(parsed.error), values: formValues(formData, ["email"]) };
   }
+  if (!(await verifyRecaptcha(formData, "newsletter"))) {
+    return { status: "error", message: RECAPTCHA_ERROR, values: formValues(formData, ["email"]) };
+  }
   if (!isSupabaseConfigured) return { status: "error", message: "Service indisponible (base non connectée)." };
+
+  if (!FORMS_SECRET) {
+    console.error("subscribeNewsletter : PUBLIC_FORMS_SECRET manquant");
+    return { status: "error", message: UNAVAILABLE, values: formValues(formData, ["email"]) };
+  }
 
   const supabase = await createClient();
   // Crée l'abonné ou réactive un abonné désinscrit, sans révéler si l'adresse existait.
-  let { error } = await supabase.rpc("newsletter_subscribe", { p_email: parsed.data.email, p_consent: NEWSLETTER_CONSENT });
-  if (error?.code === "PGRST202") {
-    // Migration 7 pas encore appliquée : ancienne méthode.
-    ({ error } = await supabase.from("newsletter_subscribers").insert({ email: parsed.data.email, consent_text: NEWSLETTER_CONSENT }));
-    if (error?.code === "23505") error = null;
-  }
+  const { error } = await supabase.rpc("newsletter_subscribe", { p_secret: FORMS_SECRET, p_email: parsed.data.email, p_consent: NEWSLETTER_CONSENT });
   if (error) {
     console.error("subscribeNewsletter", error.message);
-    return { status: "error", message: "Une erreur est survenue. Réessayez plus tard." };
+    return { status: "error", message: UNAVAILABLE, values: formValues(formData, ["email"]) };
   }
   return { status: "success", message: "Merci, votre inscription est enregistrée." };
 }
@@ -85,17 +97,34 @@ export async function sendContactMessage(_prev: FormState, formData: FormData): 
       values: formValues(formData, CONTACT_FIELDS),
     };
   }
+  if (!(await verifyRecaptcha(formData, "contact"))) {
+    return { status: "error", message: RECAPTCHA_ERROR, values: formValues(formData, CONTACT_FIELDS) };
+  }
   if (!isSupabaseConfigured) {
     return { status: "error", message: "Service indisponible (base non connectée).", values: formValues(formData, CONTACT_FIELDS) };
+  }
+
+  if (!FORMS_SECRET) {
+    console.error("sendContactMessage : PUBLIC_FORMS_SECRET manquant");
+    return { status: "error", message: UNAVAILABLE, values: formValues(formData, CONTACT_FIELDS) };
   }
 
   const { full_name, email, phone, subject, message } = parsed.data;
   const row = { full_name, email, phone, subject, message };
   const supabase = await createClient();
-  const { error } = await supabase.from("contact_messages").insert({ ...row, phone: row.phone || null });
+  const { error } = await supabase.rpc("submit_contact_message", {
+    p_secret: FORMS_SECRET,
+    p_full_name: row.full_name,
+    p_email: row.email,
+    p_phone: row.phone || null,
+    p_subject: row.subject,
+    p_message: row.message,
+  });
   if (error) {
     console.error("sendContactMessage", error.message);
-    return { status: "error", message: "Une erreur est survenue. Réessayez plus tard.", values: formValues(formData, CONTACT_FIELDS) };
+    // Limite de 5 messages par heure et par adresse : message explicite
+    const message = error.code === "P0001" ? error.message : UNAVAILABLE;
+    return { status: "error", message, values: formValues(formData, CONTACT_FIELDS) };
   }
   after(async () =>
     sendTemplated(

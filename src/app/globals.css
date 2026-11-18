@@ -495,3 +495,9 @@ body {
     font-size: 1.5rem;
   }
 }
+
+/* Badge reCAPTCHA masqué : la mention exigée par Google figure sous chaque
+   formulaire protégé (composant RecaptchaNotice). */
+.grecaptcha-badge {
+  visibility: hidden;
+}

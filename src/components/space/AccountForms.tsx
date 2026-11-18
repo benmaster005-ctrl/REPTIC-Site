@@ -53,7 +53,7 @@ export function PasswordForm() {
     <form action={action} noValidate className="max-w-md space-y-5" key={state.status === "success" ? "ok" : "form"}>
       <FormMessage state={state} />
       <Field name="current" label="Mot de passe actuel" type="password" state={state} required autoComplete="current-password" />
-      <Field name="password" label="Nouveau mot de passe" type="password" state={state} required autoComplete="new-password" hint="10 caractères minimum, avec au moins une lettre et un chiffre." />
+      <Field name="password" label="Nouveau mot de passe" type="password" state={state} required autoComplete="new-password" hint="8 caractères minimum, avec au moins une lettre et un chiffre." />
       <Field name="confirm" label="Confirmer le nouveau mot de passe" type="password" state={state} required autoComplete="new-password" />
       <SubmitButton pendingLabel="Modification…">Modifier le mot de passe</SubmitButton>
     </form>

@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { fieldErrors, formValues, type FormState } from "@/lib/forms";
 import { queueEmail } from "@/lib/email/send";
 import { formatDate } from "@/lib/format";
+import { safeInternalPath } from "@/lib/safe-redirect";
 
 // ---------------------------------------------------------------------------
 // Profil
@@ -66,7 +67,7 @@ const passwordSchema = z
     current: z.string().min(1, { error: "Saisissez votre mot de passe actuel." }),
     password: z
       .string()
-      .min(10, { error: "10 caractères minimum." })
+      .min(8, { error: "8 caractères minimum." })
       .regex(/[A-Za-z]/, { error: "Au moins une lettre." })
       .regex(/\d/, { error: "Au moins un chiffre." }),
     confirm: z.string(),
@@ -120,7 +121,7 @@ export async function openNotification(formData: FormData) {
     const supabase = await createClient();
     await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("id", id.data).eq("user_id", user.id).is("read_at", null);
   }
-  redirect(link.startsWith("/") && !link.startsWith("//") ? link : "/espace/notifications");
+  redirect(safeInternalPath(link, "/espace/notifications"));
 }
 
 // ---------------------------------------------------------------------------

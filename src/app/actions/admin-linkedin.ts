@@ -1,5 +1,6 @@
 "use server";
 
+import { unstable_rethrow } from "next/navigation";
 import { refresh, updateTag } from "next/cache";
 import { z } from "zod";
 import { assertPermission } from "@/lib/admin";
@@ -14,6 +15,7 @@ export async function syncLinkedinNow(): Promise<FormState> {
   try {
     ctx = await assertPermission("content.manage");
   } catch (e) {
+    unstable_rethrow(e);
     return { status: "error", message: (e as Error).message };
   }
   const result = await syncLinkedin(ctx.user.id);

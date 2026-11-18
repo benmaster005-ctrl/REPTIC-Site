@@ -1,20 +1,24 @@
 "use server";
 
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { SITE_URL, isSupabaseConfigured } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import { emailSchema, fieldErrors, type FormState } from "@/lib/forms";
+import { RECAPTCHA_ERROR, verifyRecaptcha } from "@/lib/recaptcha";
+import { safeInternalPath } from "@/lib/safe-redirect";
+import { RECOVERY_COOKIE } from "@/lib/recovery";
 
 /** N'accepte que des chemins internes pour éviter les redirections ouvertes. */
-function safeNext(value: FormDataEntryValue | null) {
-  const next = typeof value === "string" ? value : "";
-  return next.startsWith("/") && !next.startsWith("//") ? next : "/espace";
-}
+const safeNext = (value: FormDataEntryValue | null) => safeInternalPath(value);
 
-/** Origine réelle de la requête (aperçu Vercel, production, local), à défaut NEXT_PUBLIC_SITE_URL. */
+/**
+ * Origine des liens envoyés par e-mail. En production : l'adresse officielle
+ * (NEXT_PUBLIC_SITE_URL). Ailleurs (aperçu Vercel, local) : l'origine réelle.
+ */
 async function siteOrigin() {
+  if (process.env.VERCEL_ENV === "production") return SITE_URL;
   const h = await headers();
   const origin = h.get("origin");
   return origin && /^https?:\/\/[^/]+$/.test(origin) ? origin : SITE_URL;
@@ -31,6 +35,7 @@ export async function signIn(_prev: FormState, formData: FormData): Promise<Form
   const parsed = loginSchema.safeParse({ email: formData.get("email"), password: formData.get("password") });
   const values = { email: String(formData.get("email") ?? "") };
   if (!parsed.success) return { status: "error", fieldErrors: fieldErrors(parsed.error), values };
+  if (!(await verifyRecaptcha(formData, "connexion"))) return { status: "error", message: RECAPTCHA_ERROR, values };
   if (!isSupabaseConfigured) return { ...NOT_CONFIGURED, values };
 
   const supabase = await createClient();
@@ -92,9 +97,9 @@ const signUpSchema = z
     email: emailSchema,
     password: z
       .string()
-      .min(10, { error: "10 caractères minimum." })
+      .min(8, { error: "8 caractères minimum." })
       .regex(/[A-Za-z]/, { error: "Au moins une lettre." })
-      .regex(/d/, { error: "Au moins un chiffre." }),
+      .regex(/\d/, { error: "Au moins un chiffre." }),
     confirm: z.string(),
     privacy: z.literal("on", { error: "Votre accord est nécessaire pour créer le compte." }),
   })
@@ -109,6 +114,7 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
   };
   const parsed = signUpSchema.safeParse({ ...values, password: formData.get("password"), confirm: formData.get("confirm"), privacy: formData.get("privacy") ?? undefined });
   if (!parsed.success) return { status: "error", message: "Merci de corriger les champs signalés.", fieldErrors: fieldErrors(parsed.error), values };
+  if (!(await verifyRecaptcha(formData, "inscription"))) return { status: "error", message: RECAPTCHA_ERROR, values };
   if (!isSupabaseConfigured) return { ...NOT_CONFIGURED, values };
 
   const next = safeNext(formData.get("suite") ?? "/espace/adhesion");
@@ -142,6 +148,7 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
 export async function requestPasswordReset(_prev: FormState, formData: FormData): Promise<FormState> {
   const parsed = emailSchema.safeParse(formData.get("email"));
   if (!parsed.success) return { status: "error", fieldErrors: { email: ["Adresse e-mail invalide."] } };
+  if (!(await verifyRecaptcha(formData, "mot_de_passe_oublie"))) return { status: "error", message: RECAPTCHA_ERROR };
   if (!isSupabaseConfigured) return NOT_CONFIGURED;
 
   const supabase = await createClient();
@@ -159,25 +166,34 @@ const newPasswordSchema = z
   .object({
     password: z
       .string()
-      .min(10, { error: "10 caractères minimum." })
+      .min(8, { error: "8 caractères minimum." })
       .regex(/[A-Za-z]/, { error: "Le mot de passe doit contenir au moins une lettre." })
       .regex(/\d/, { error: "Le mot de passe doit contenir au moins un chiffre." }),
     confirm: z.string(),
   })
   .refine((v) => v.password === v.confirm, { path: ["confirm"], error: "Les mots de passe ne correspondent pas." });
 
+/**
+ * Nouveau mot de passe après un lien « mot de passe oublié ». Le témoin posé
+ * par /auth/callback prouve que le lien a été utilisé : sans lui, une session
+ * volée ne peut pas changer le mot de passe sans connaître l'ancien (voir
+ * changePassword dans l'espace membre).
+ */
 export async function updatePassword(_prev: FormState, formData: FormData): Promise<FormState> {
   const parsed = newPasswordSchema.safeParse({ password: formData.get("password"), confirm: formData.get("confirm") });
   if (!parsed.success) return { status: "error", fieldErrors: fieldErrors(parsed.error) };
   if (!isSupabaseConfigured) return NOT_CONFIGURED;
 
+  const linkExpired: FormState = {
+    status: "error",
+    message: "Le lien a expiré ou le mot de passe n'a pas pu être modifié. Refaites une demande de réinitialisation.",
+  };
+  const jar = await cookies();
+  if (!jar.get(RECOVERY_COOKIE)) return linkExpired;
+
   const supabase = await createClient();
   const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
-  if (error) {
-    return {
-      status: "error",
-      message: "Le lien a expiré ou le mot de passe n'a pas pu être modifié. Refaites une demande de réinitialisation.",
-    };
-  }
+  if (error) return linkExpired;
+  jar.delete(RECOVERY_COOKIE);
   redirect("/espace?mdp=ok");
 }

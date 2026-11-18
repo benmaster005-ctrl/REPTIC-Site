@@ -1,5 +1,6 @@
 "use server";
 
+import { unstable_rethrow } from "next/navigation";
 import { refresh } from "next/cache";
 import { z } from "zod";
 import { assertPermission } from "@/lib/admin";
@@ -24,6 +25,7 @@ export async function saveEmailTemplate(_prev: FormState, formData: FormData): P
   try {
     ctx = await assertPermission("settings.manage");
   } catch (e) {
+    unstable_rethrow(e);
     return { status: "error", message: (e as Error).message };
   }
   const values = formValues(formData, ["subject", "body", "is_enabled"]);
@@ -45,6 +47,7 @@ export async function sendTestEmail(_prev: FormState, formData: FormData): Promi
   try {
     ctx = await assertPermission("settings.manage");
   } catch (e) {
+    unstable_rethrow(e);
     return { status: "error", message: (e as Error).message };
   }
   const key = keySchema.safeParse(formData.get("key"));

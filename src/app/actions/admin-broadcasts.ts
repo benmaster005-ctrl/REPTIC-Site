@@ -1,5 +1,6 @@
 "use server";
 
+import { unstable_rethrow } from "next/navigation";
 import { refresh } from "next/cache";
 import { z } from "zod";
 import { assertPermission, sqlMessage } from "@/lib/admin";
@@ -25,6 +26,7 @@ export async function sendBroadcast(_prev: FormState, formData: FormData): Promi
   try {
     await assertPermission("broadcasts.send");
   } catch (e) {
+    unstable_rethrow(e);
     return { status: "error", message: (e as Error).message };
   }
   const values = formValues(formData, ["title", "body", "audience", "category_id", "send_email"]);

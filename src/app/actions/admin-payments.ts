@@ -1,5 +1,6 @@
 "use server";
 
+import { unstable_rethrow } from "next/navigation";
 import { refresh } from "next/cache";
 import { z } from "zod";
 import { assertPermission } from "@/lib/admin";
@@ -27,6 +28,7 @@ export async function updateFees(_prev: FormState, formData: FormData): Promise<
   try {
     ctx = await assertPermission("members.manage");
   } catch (e) {
+    unstable_rethrow(e);
     return { status: "error", message: (e as Error).message };
   }
   const values = { physical: String(formData.get("physical") ?? ""), legal: String(formData.get("legal") ?? "") };

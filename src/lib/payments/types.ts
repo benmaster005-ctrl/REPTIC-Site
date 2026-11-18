@@ -15,6 +15,8 @@ export type ProviderStatus = {
   transactionId?: string | null;
   method?: string | null;
   amount?: number | null;
+  /** Devise renvoyée par le prestataire (ex. XAF). */
+  currency?: string | null;
   raw?: unknown;
 };
 

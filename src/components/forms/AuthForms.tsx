@@ -1,10 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { requestPasswordReset, signIn, signInWithOAuthProvider, signUp, updatePassword } from "@/app/actions/auth";
 import { initialFormState } from "@/lib/forms";
 import { Checkbox, Field, FormMessage, SubmitButton } from "@/components/ui/form";
+import { preloadRecaptcha, withRecaptcha } from "./recaptcha";
+import { RecaptchaNotice } from "./RecaptchaNotice";
+
+// Actions protégées par reCAPTCHA (jeton demandé au moment de l'envoi)
+const signInAction = withRecaptcha(signIn, "connexion");
+const signUpAction = withRecaptcha(signUp, "inscription");
+const resetAction = withRecaptcha(requestPasswordReset, "mot_de_passe_oublie");
 
 /** Logo Google officiel (quatre couleurs), exigé par les règles de marque de Google. */
 function GoogleLogo() {
@@ -61,7 +68,8 @@ export function SocialSignIn({ next, note }: { next: string; note?: React.ReactN
 }
 
 export function LoginForm({ next }: { next?: string }) {
-  const [state, action] = useActionState(signIn, initialFormState);
+  const [state, action] = useActionState(signInAction, initialFormState);
+  useEffect(preloadRecaptcha, []);
   return (
     <form action={action} noValidate className="space-y-5">
       <FormMessage state={state} />
@@ -76,12 +84,14 @@ export function LoginForm({ next }: { next?: string }) {
       <SubmitButton className="btn-primary w-full py-3" pendingLabel="Connexion…">
         Se connecter
       </SubmitButton>
+      <RecaptchaNotice className="text-center" />
     </form>
   );
 }
 
 export function SignUpForm({ next }: { next?: string }) {
-  const [state, action] = useActionState(signUp, initialFormState);
+  const [state, action] = useActionState(signUpAction, initialFormState);
+  useEffect(preloadRecaptcha, []);
   if (state.status === "success") {
     return (
       <div className="space-y-6">
@@ -105,7 +115,7 @@ export function SignUpForm({ next }: { next?: string }) {
         <Field name="last_name" label="Nom" state={state} required autoComplete="family-name" />
       </div>
       <Field name="email" label="Adresse e-mail" type="email" state={state} required autoComplete="email" hint="Elle servira d'identifiant et recevra le suivi de votre dossier." />
-      <Field name="password" label="Mot de passe" type="password" state={state} required autoComplete="new-password" hint="10 caractères minimum, avec au moins une lettre et un chiffre." />
+      <Field name="password" label="Mot de passe" type="password" state={state} required autoComplete="new-password" hint="8 caractères minimum, avec au moins une lettre et un chiffre." />
       <Field name="confirm" label="Confirmer le mot de passe" type="password" state={state} required autoComplete="new-password" />
       <Checkbox name="privacy" state={state} required>
         J&apos;accepte que mes données soient traitées pour l&apos;instruction de ma demande, conformément à la{" "}
@@ -117,18 +127,21 @@ export function SignUpForm({ next }: { next?: string }) {
       <SubmitButton className="btn-primary w-full py-3" pendingLabel="Création du compte…">
         Créer mon compte
       </SubmitButton>
+      <RecaptchaNotice className="text-center" />
     </form>
   );
 }
 
 export function ForgotPasswordForm() {
-  const [state, action] = useActionState(requestPasswordReset, initialFormState);
+  const [state, action] = useActionState(resetAction, initialFormState);
+  useEffect(preloadRecaptcha, []);
   if (state.status === "success") return <FormMessage state={state} />;
   return (
     <form action={action} noValidate className="space-y-5">
       <FormMessage state={state} />
       <Field name="email" label="Adresse e-mail" type="email" state={state} required autoComplete="email" />
       <SubmitButton className="btn-primary w-full py-3">Recevoir un lien</SubmitButton>
+      <RecaptchaNotice className="text-center" />
     </form>
   );
 }
@@ -145,7 +158,7 @@ export function ResetPasswordForm() {
         state={state}
         required
         autoComplete="new-password"
-        hint="10 caractères minimum, avec au moins une lettre et un chiffre."
+        hint="8 caractères minimum, avec au moins une lettre et un chiffre."
       />
       <Field name="confirm" label="Confirmer le mot de passe" type="password" state={state} required autoComplete="new-password" />
       <SubmitButton className="btn-primary w-full py-3">Enregistrer</SubmitButton>

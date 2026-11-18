@@ -1,5 +1,6 @@
 "use server";
 
+import { unstable_rethrow } from "next/navigation";
 import { refresh } from "next/cache";
 import { z } from "zod";
 import { assertPermission, sqlMessage } from "@/lib/admin";
@@ -12,6 +13,7 @@ async function guard(): Promise<FormState | null> {
     await assertPermission("members.manage");
     return null;
   } catch (e) {
+    unstable_rethrow(e);
     return { status: "error", message: (e as Error).message };
   }
 }
