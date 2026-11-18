@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { Download } from "lucide-react";
+import { Clock, Download } from "lucide-react";
 import { requirePermission } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
 import { arePaymentsOpen, formatAmount, isDemoPayment, isPaymentConfigured, isPaymentEnabled, provider } from "@/lib/payments";
@@ -74,17 +74,25 @@ async function FeesAdmin({ searchParams }: Pick<PageProps<"/admin/cotisations">,
                 ? "Mode démonstration"
                 : `Paiement actif · ${provider?.label}`
               : !arePaymentsOpen
-                ? "Paiements fermés (bientôt)"
+                ? "Paiement en ligne : bientôt"
                 : "Paiement non configuré"}
           </StatusTag>
         }
       />
       {(feesError || error) && <Flash tone="error">Exécutez la migration 20261115000009_cotisations.sql dans Supabase pour activer les cotisations.</Flash>}
       {!arePaymentsOpen && !feesError && (
-        <Flash tone="error">
-          Les paiements en ligne sont fermés : les membres voient « bientôt disponible ». Pour les ouvrir, ajoutez la variable PAYMENTS_OPEN=true
-          {isPaymentConfigured ? "" : " et renseignez les clés CinetPay et PAYMENT_CONFIRM_SECRET"}.
-        </Flash>
+        <div role="status" className="mt-6 flex gap-4 rounded-xl border border-cyan/30 bg-cyan-tint p-5 sm:p-6">
+          <span className="grid size-11 shrink-0 place-content-center rounded-full bg-white text-cyan-dark">
+            <Clock aria-hidden className="size-5" />
+          </span>
+          <div>
+            <p className="font-display text-[1.1rem] font-bold text-navy">Le paiement en ligne arrive bientôt</p>
+            <p className="mt-1.5 text-[0.95rem] leading-relaxed text-ink/80">
+              Les membres voient ce même message dans leur espace : aucun paiement en ligne n&apos;est possible pour l&apos;instant. Vous pouvez déjà fixer les
+              tarifs annuels ci-dessous, ils s&apos;afficheront à l&apos;ouverture.
+            </p>
+          </div>
+        </div>
       )}
       {arePaymentsOpen && !isPaymentConfigured && !feesError && (
         <Flash tone="error">Le paiement en ligne n&apos;est pas actif : renseignez les clés CinetPay (ou PAYMENT_PROVIDER=demo pour tester) et PAYMENT_CONFIRM_SECRET.</Flash>
