@@ -281,6 +281,13 @@ const governanceSchema = z.object({
   organization: opt(160),
   bio: opt(600),
   photo_path: opt(400),
+  linkedin_url: z
+    .string()
+    .trim()
+    .max(300)
+    .optional()
+    .transform((v) => v || null)
+    .refine((v) => !v || /^https:\/\/([a-z]{2,3}\.)?linkedin\.com\//i.test(v), { error: "Collez l'adresse complète du profil (https://www.linkedin.com/in/…)." }),
   sort_order: z.coerce.number().int().min(0).max(999),
   is_published: z.string().optional().transform((v) => v === "on"),
 });
@@ -289,7 +296,7 @@ export async function saveGovernanceMember(_prev: FormState, formData: FormData)
   const denied = await guard("content.manage");
   if (denied) return denied;
   const id = String(formData.get("id") ?? "");
-  const values = formValues(formData, ["full_name", "position_title", "organization", "bio", "photo_path", "sort_order", "is_published"]);
+  const values = formValues(formData, ["full_name", "position_title", "organization", "bio", "photo_path", "linkedin_url", "sort_order", "is_published"]);
   const parsed = governanceSchema.safeParse(values);
   if (!parsed.success) return { status: "error", fieldErrors: fieldErrors(parsed.error), values };
   const supabase = await createClient();

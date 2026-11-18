@@ -173,6 +173,7 @@ export function GovernanceForm({ id, initial }: { id?: string; initial: Record<s
             <Field name="full_name" label="Nom complet" state={s} required />
             <Field name="position_title" label="Fonction" state={s} required />
             <Field name="organization" label="Entreprise" state={s} />
+            <Field name="linkedin_url" label="Profil LinkedIn" type="url" state={s} placeholder="https://www.linkedin.com/in/…" />
             <Field name="sort_order" label="Ordre d'affichage" type="number" state={s} required />
             <div className="sm:col-span-2">
               <Field name="bio" label="Courte présentation" state={s} textarea rows={2} />

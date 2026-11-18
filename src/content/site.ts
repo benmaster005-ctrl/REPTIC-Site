@@ -139,7 +139,7 @@ export const fallbackActorCategories: Category[] = [
 ];
 
 export const fallbackGovernance: GovernanceMember[] = ["Président", "Vice-président", "Secrétaire général", "Trésorier"].map(
-  (positionTitle, i) => ({ id: `demo-${i}`, fullName: "À renseigner", positionTitle, organization: null, photoUrl: null, bio: null }),
+  (positionTitle, i) => ({ id: `demo-${i}`, fullName: "À renseigner", positionTitle, organization: null, photoUrl: null, bio: null, linkedinUrl: null }),
 );
 
 const daysFromNow = (d: number) => new Date(Date.UTC(2026, 10, 9 + d, 8)).toISOString();

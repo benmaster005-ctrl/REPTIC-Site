@@ -33,7 +33,7 @@ async function Institution() {
             <li key={v(g.id)} className="border-t-2 border-navy pt-6">
               <GovernanceForm
                 id={v(g.id)}
-                initial={{ ...Object.fromEntries(["full_name", "position_title", "organization", "bio", "photo_path", "sort_order"].map((k) => [k, v(g[k])])), is_published: g.is_published ? "on" : "" }}
+                initial={{ ...Object.fromEntries(["full_name", "position_title", "organization", "bio", "photo_path", "linkedin_url", "sort_order"].map((k) => [k, v(g[k])])), is_published: g.is_published ? "on" : "" }}
               />
               <form action={deleteGovernanceMember} className="mt-3">
                 <input type="hidden" name="id" value={v(g.id)} />

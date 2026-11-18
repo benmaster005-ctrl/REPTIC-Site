@@ -38,6 +38,7 @@ export type GovernanceMember = {
   organization: string | null;
   photoUrl: string | null;
   bio: string | null;
+  linkedinUrl: string | null;
 };
 
 export type Category = { slug: string; name: string; description: string | null };

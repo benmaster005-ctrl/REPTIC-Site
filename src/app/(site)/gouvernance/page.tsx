@@ -24,25 +24,48 @@ export default async function GovernancePage() {
       />
       <section className="container-site py-16 sm:py-24">
         {members.length ? (
-          <RevealGroup as="ul" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <RevealGroup as="ul" className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {members.map((m) => {
               const pending = m.fullName === "À renseigner";
               return (
-                <li key={m.id} className="group overflow-hidden rounded-xl border border-line bg-white transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-navy">
-                  <div className="relative aspect-square overflow-hidden bg-paper">
+                <li
+                  key={m.id}
+                  className="group flex flex-col items-center rounded-xl border border-line bg-white px-6 pt-8 pb-6 text-center transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-navy"
+                >
+                  {/* Portrait rond, cerclé de cyan au survol */}
+                  <div className="relative size-32 overflow-hidden rounded-full bg-paper ring-4 ring-paper transition-[box-shadow] duration-300 group-hover:ring-cyan-tint">
                     {m.photoUrl ? (
-                      <Image src={m.photoUrl} alt={`Portrait de ${m.fullName}`} fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover grayscale-[35%] transition-[filter,transform] duration-700 group-hover:scale-105 group-hover:grayscale-0" />
+                      <Image
+                        src={m.photoUrl}
+                        alt={`Portrait de ${m.fullName}`}
+                        fill
+                        sizes="128px"
+                        className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                      />
                     ) : (
-                      <span aria-hidden className="absolute inset-0 grid place-items-center font-display text-6xl font-extrabold tracking-[-0.025em] text-line-strong">
+                      <span aria-hidden className="absolute inset-0 grid place-items-center font-display text-4xl font-extrabold tracking-[-0.025em] text-line-strong">
                         {initials(pending ? m.positionTitle : m.fullName)}
                       </span>
                     )}
                   </div>
-                  <div className="p-5">
-                    <p className="inline-flex rounded-full bg-cyan-tint px-3 py-1 text-[0.74rem] font-semibold text-cyan-dark">{m.positionTitle}</p>
-                    <p className={`mt-3 font-display text-[1.2rem] font-bold tracking-[-0.01em] ${pending ? "text-muted" : "text-navy"}`}>{m.fullName}</p>
-                    {m.organization && <p className="mt-1 text-[0.92rem] text-muted">{m.organization}</p>}
-                  </div>
+                  <p className={`mt-5 font-display text-[1.15rem] leading-snug font-bold tracking-[-0.01em] text-balance ${pending ? "text-muted" : "text-navy"}`}>
+                    {m.fullName}
+                  </p>
+                  <p className="mt-2 inline-flex rounded-full bg-cyan-tint px-3 py-1 text-[0.74rem] font-semibold text-cyan-dark">{m.positionTitle}</p>
+                  {m.organization && <p className="mt-2 text-[0.88rem] text-muted">{m.organization}</p>}
+                  {m.linkedinUrl && (
+                    <a
+                      href={m.linkedinUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Profil LinkedIn de ${m.fullName}`}
+                      className="mt-4 grid size-9 place-content-center rounded-full border border-line text-[#0A66C2] transition-colors hover:border-[#0A66C2] hover:bg-[#0A66C2] hover:text-white"
+                    >
+                      <svg aria-hidden viewBox="0 0 24 24" className="size-4 fill-current">
+                        <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z" />
+                      </svg>
+                    </a>
+                  )}
                 </li>
               );
             })}

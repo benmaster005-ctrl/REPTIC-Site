@@ -208,10 +208,15 @@ export async function getGovernance(): Promise<GovernanceMember[]> {
   cacheTag(tags.governance);
   cacheLife("days");
   if (isDemo) return fallbackGovernance;
-  const { data } = await createPublicClient()
+  const first = await createPublicClient()
     .from("governance_members")
-    .select("id,full_name,position_title,organization,photo_path,bio")
+    .select("id,full_name,position_title,organization,photo_path,bio,linkedin_url")
     .order("sort_order");
+  let data: Row[] | null = first.data;
+  if (first.error?.code === "42703") {
+    // Migration 16 pas encore appliquée : sans le lien LinkedIn.
+    ({ data } = await createPublicClient().from("governance_members").select("id,full_name,position_title,organization,photo_path,bio").order("sort_order"));
+  }
   return (data ?? []).map((r: Row) => ({
     id: r.id as string,
     fullName: r.full_name as string,
@@ -219,6 +224,7 @@ export async function getGovernance(): Promise<GovernanceMember[]> {
     organization: str(r.organization),
     photoUrl: publicMediaUrl(str(r.photo_path)),
     bio: str(r.bio),
+    linkedinUrl: str(r.linkedin_url),
   }));
 }
 
