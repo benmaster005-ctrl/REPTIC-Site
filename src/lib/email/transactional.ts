@@ -186,6 +186,8 @@ export function buildEmail(key: TemplateKey, template: { subject: string; body: 
     reason: def.reason,
     contactEmail: opts.contactEmail,
     siteUrl: opts.siteUrl,
+    // Alerte interne au secrétariat : pas de formule « L'équipe du REPTIC.CM »
+    signature: key !== "contact.received",
   };
   return { subject, html: renderEmail(content), text: renderText(content) };
 }

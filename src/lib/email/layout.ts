@@ -7,6 +7,9 @@
  *
  * Contraintes e-mail : tableaux, styles en ligne, 600 px, pas de police web,
  * bouton « à l'épreuve d'Outlook », texte d'aperçu masqué, couleurs fixes.
+ *
+ * Style sobre, comme les grandes plateformes : logo en haut, contenu, pied de page avec le logo,
+ * directement sur fond blanc, sans cadre ni bordure.
  */
 
 export const brand = {
@@ -15,11 +18,12 @@ export const brand = {
   cyan: "#209AD7",
   cyanDark: "#157BB0",
   cyanTint: "#E8F4FB",
-  ink: "#1A1F33",
-  muted: "#5B6178",
-  line: "#DDE0E8",
-  paper: "#F5F6F8",
-  font: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+  ink: "#1F2333",
+  muted: "#6B7085",
+  line: "#E6E8EE",
+  paper: "#F4F5F7",
+  soft: "#F7F8FA",
+  font: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
   mono: "'SFMono-Regular', Menlo, Consolas, 'Courier New', monospace",
 };
 
@@ -36,7 +40,7 @@ export type EmailBlock =
 export type EmailContent = {
   /** Texte d'aperçu affiché par la messagerie à côté du sujet. */
   preheader: string;
-  /** Libellé au-dessus du titre (ex. « Demande d'adhésion »). */
+  /** Rubrique de l'e-mail (conservée pour le classement, non affichée). */
   eyebrow: string;
   title: string;
   blocks: EmailBlock[];
@@ -47,50 +51,59 @@ export type EmailContent = {
   siteUrl?: string;
   /** Lien de désinscription (lettres d'information). */
   unsubscribeUrl?: string;
+  /** Formule de fin « L'équipe du REPTIC.CM » (par défaut : oui). */
+  signature?: boolean;
 };
 
 export function escapeHtml(value: string) {
   return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
-const p = (html: string, extra = "") =>
-  `<p style="margin:0 0 18px;font-family:${brand.font};font-size:16px;line-height:26px;color:${brand.ink};${extra}">${html}</p>`;
+const text = (size: number, line: number, color: string, extra = "") =>
+  `font-family:${brand.font};font-size:${size}px;line-height:${line}px;color:${color};${extra}`;
 
+const p = (html: string) => `<p style="margin:0 0 16px;${text(15, 24, brand.ink)}">${html}</p>`;
+
+/**
+ * Bouton moderne : pastille arrondie, flèche en fin, cyan de la marque.
+ * « À l'épreuve d'Outlook » : cellule colorée + VML arrondi pour Outlook Windows.
+ */
 function button(label: string, url: string) {
-  // Bouton « bulletproof » : cellule colorée + VML pour Outlook Windows.
   return `
-<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:8px 0 26px;">
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:12px 0 28px;">
   <tr>
-    <td bgcolor="${brand.navy}" style="background:${brand.navy};mso-padding-alt:15px 26px;">
-      <!--[if mso]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${url}" style="height:50px;v-text-anchor:middle;width:300px;" stroked="false" fillcolor="${brand.navy}"><w:anchorlock/><center style="color:#ffffff;font-family:Arial,sans-serif;font-size:15px;font-weight:bold;">${label}</center></v:rect><![endif]-->
-      <!--[if !mso]><!-- --><a href="${url}" target="_blank" style="display:inline-block;padding:15px 26px;font-family:${brand.font};font-size:15px;font-weight:bold;line-height:20px;color:#ffffff;text-decoration:none;">${label}&nbsp;&nbsp;&rarr;</a><!--<![endif]-->
+    <td align="center" bgcolor="${brand.cyanDark}" style="background:${brand.cyanDark};border-radius:999px;mso-padding-alt:14px 30px;">
+      <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${url}" style="height:48px;v-text-anchor:middle;width:300px;" arcsize="50%" stroked="false" fillcolor="${brand.cyanDark}"><w:anchorlock/><center style="color:#ffffff;font-family:Arial,sans-serif;font-size:15px;font-weight:bold;">${label} &#8594;</center></v:roundrect><![endif]-->
+      <!--[if !mso]><!-- --><a href="${url}" target="_blank" style="display:inline-block;padding:14px 30px;border-radius:999px;${text(15, 20, "#ffffff", "font-weight:600;letter-spacing:0.1px;text-decoration:none;")}">${label}&nbsp;&nbsp;&#8594;</a><!--<![endif]-->
     </td>
   </tr>
 </table>`;
 }
 
+/** Récapitulatif : libellé à gauche, valeur à droite, sans filets. */
 function facts(rows: { label: string; value: string }[]) {
   const cells = rows
     .map(
-      (r, i) => `
+      (r) => `
   <tr>
-    <td style="padding:12px 0;${i ? `border-top:1px solid ${brand.line};` : ""}font-family:${brand.font};font-size:13px;line-height:18px;color:${brand.muted};width:42%;vertical-align:top;">${r.label}</td>
-    <td style="padding:12px 0;${i ? `border-top:1px solid ${brand.line};` : ""}font-family:${brand.font};font-size:15px;line-height:20px;color:${brand.navy};font-weight:bold;vertical-align:top;">${r.value}</td>
+    <td style="padding:5px 0;${text(14, 20, brand.muted)}width:45%;vertical-align:top;">${r.label}</td>
+    <td style="padding:5px 0;${text(14, 20, brand.ink, "font-weight:600;")}vertical-align:top;">${r.value}</td>
   </tr>`,
     )
     .join("");
   return `
-<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin:4px 0 26px;border-top:2px solid ${brand.navy};border-bottom:1px solid ${brand.line};">${cells}
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 20px;">${cells}
 </table>`;
 }
 
+/** Texte libre saisi par une personne (motif, message) : fond gris très clair. */
 function quote(html: string, label?: string) {
   return `
-<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin:4px 0 26px;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin:4px 0 24px;">
   <tr>
-    <td style="border-left:3px solid ${brand.cyan};background:${brand.cyanTint};padding:16px 20px;">
-      ${label ? `<p style="margin:0 0 6px;font-family:${brand.mono};font-size:11px;letter-spacing:1px;text-transform:uppercase;color:${brand.cyanDark};">${label}</p>` : ""}
-      <p style="margin:0;font-family:${brand.font};font-size:15px;line-height:24px;color:${brand.ink};">${html}</p>
+    <td style="background:${brand.soft};border-radius:6px;padding:16px 18px;">
+      ${label ? `<p style="margin:0 0 6px;${text(13, 18, brand.muted)}">${label}</p>` : ""}
+      <p style="margin:0;${text(15, 24, brand.ink)}">${html}</p>
     </td>
   </tr>
 </table>`;
@@ -98,33 +111,34 @@ function quote(html: string, label?: string) {
 
 function code(value: string) {
   return `
-<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:4px 0 26px;">
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:4px 0 24px;">
   <tr>
-    <td style="border:1px solid ${brand.line};border-top:2px solid ${brand.navy};padding:16px 28px;font-family:${brand.mono};font-size:30px;line-height:36px;letter-spacing:8px;font-weight:bold;color:${brand.navy};">${value}</td>
+    <td style="background:${brand.soft};border-radius:6px;padding:14px 26px;font-family:${brand.mono};font-size:28px;line-height:34px;letter-spacing:6px;font-weight:bold;color:${brand.ink};">${value}</td>
   </tr>
 </table>`;
 }
 
 function link(label: string, url: string) {
-  return `<p style="margin:-8px 0 26px;font-family:${brand.font};font-size:13px;line-height:20px;color:${brand.muted};">${label}<br><a href="${url}" style="color:${brand.cyanDark};word-break:break-all;">${url}</a></p>`;
+  return `<p style="margin:-8px 0 24px;${text(13, 20, brand.muted)}">${label}<br><a href="${url}" style="color:${brand.cyanDark};word-break:break-all;">${url}</a></p>`;
 }
 
+/** Article de lettre d'information : titre lien, résumé, filet de séparation. */
 function article(title: string, url: string, html?: string, meta?: string) {
   return `
-<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 22px;border-top:2px solid ${brand.navy};">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 22px;">
   <tr>
-    <td style="padding-top:14px;">
-      ${meta ? `<p style="margin:0 0 6px;font-family:${brand.mono};font-size:11px;letter-spacing:1px;text-transform:uppercase;color:${brand.cyanDark};">${meta}</p>` : ""}
-      <p style="margin:0 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:19px;line-height:25px;font-weight:bold;"><a href="${url}" style="color:${brand.navy};text-decoration:none;">${title}</a></p>
-      ${html ? `<p style="margin:0 0 10px;font-family:${brand.font};font-size:15px;line-height:23px;color:${brand.muted};">${html}</p>` : ""}
-      <a href="${url}" style="font-family:${brand.font};font-size:14px;font-weight:bold;color:${brand.cyanDark};text-decoration:none;">Lire la suite &rarr;</a>
+    <td style="padding:0;">
+      ${meta ? `<p style="margin:0 0 4px;${text(12, 18, brand.muted)}">${meta}</p>` : ""}
+      <p style="margin:0 0 6px;${text(16, 22, brand.ink, "font-weight:600;")}"><a href="${url}" style="color:${brand.ink};text-decoration:none;">${title}</a></p>
+      ${html ? `<p style="margin:0 0 8px;${text(14, 22, brand.muted)}">${html}</p>` : ""}
+      <a href="${url}" style="${text(14, 20, brand.cyanDark, "text-decoration:none;")}">Lire la suite</a>
     </td>
   </tr>
 </table>`;
 }
 
 function note(html: string) {
-  return `<p style="margin:8px 0 0;padding-top:18px;border-top:1px solid ${brand.line};font-family:${brand.font};font-size:13px;line-height:20px;color:${brand.muted};">${html}</p>`;
+  return `<p style="margin:8px 0 0;${text(13, 20, brand.muted)}">${html}</p>`;
 }
 
 function renderBlock(b: EmailBlock) {
@@ -148,23 +162,13 @@ function renderBlock(b: EmailBlock) {
   }
 }
 
-/** Monogramme : le nuage « .cm » du logo, en tracé simple (rendu partout, sans image). */
-function wordmark() {
-  return `
-<table role="presentation" cellspacing="0" cellpadding="0" border="0">
-  <tr>
-    <td style="font-family:Arial,Helvetica,sans-serif;font-size:26px;line-height:28px;font-weight:900;letter-spacing:-0.5px;color:${brand.navy};">REPTIC<span style="color:${brand.cyan};">.cm</span></td>
-  </tr>
-  <tr>
-    <td style="padding-top:6px;font-family:${brand.font};font-size:10px;line-height:14px;color:${brand.muted};">R&eacute;seau des Entreprises &amp; Professionnels du Secteur des T&eacute;l&eacute;coms et du Num&eacute;rique au Cameroun</td>
-  </tr>
-</table>`;
-}
-
 export function renderEmail(c: EmailContent) {
   const contact = c.contactEmail ?? "contact@reptic.cm";
   const site = c.siteUrl ?? "https://reptic.cm";
-  const siteLabel = site.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  // Modèles Supabase : l'adresse est la variable {{ .SiteURL }}, on affiche le domaine officiel.
+  const siteLabel = site.startsWith("{{") ? "reptic.cm" : site.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  const signature =
+    c.signature === false ? "" : `<p style="margin:24px 0 0;${text(15, 24, brand.ink)}">Cordialement,<br>L'équipe du REPTIC.CM</p>`;
   return `<!DOCTYPE html>
 <html lang="fr" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
@@ -182,38 +186,39 @@ export function renderEmail(c: EmailContent) {
   @media (max-width:620px) {
     .wrap { width:100% !important; }
     .pad { padding-left:24px !important; padding-right:24px !important; }
-    .title { font-size:24px !important; line-height:30px !important; }
   }
 </style>
 </head>
-<body style="margin:0;padding:0;background:${brand.paper};-webkit-text-size-adjust:100%;">
+<body style="margin:0;padding:0;background:#ffffff;-webkit-text-size-adjust:100%;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">${escapeHtml(c.preheader)}&#8199;&#65279;&#847;&#8199;&#65279;&#847;&#8199;&#65279;&#847;&#8199;&#65279;&#847;&#8199;&#65279;&#847;</div>
-<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:${brand.paper};">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#ffffff;">
   <tr>
     <td align="center" style="padding:32px 12px;">
       <table role="presentation" class="wrap" width="600" cellspacing="0" cellpadding="0" border="0" style="width:600px;max-width:600px;background:#ffffff;">
-        <tr><td style="height:4px;line-height:4px;font-size:0;background:${brand.navy};">&nbsp;</td></tr>
+        <!-- En-tête : logo -->
         <tr>
-          <td class="pad" style="padding:30px 44px 26px;border-bottom:1px solid ${brand.line};">${wordmark()}</td>
-        </tr>
-        <tr>
-          <td class="pad" style="padding:38px 44px 34px;">
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 16px;">
-              <tr>
-                <td style="width:9px;height:9px;border:2px solid ${brand.cyan};border-radius:50%;font-size:0;line-height:0;">&nbsp;</td>
-                <td style="padding-left:10px;font-family:${brand.mono};font-size:11px;line-height:14px;letter-spacing:1.4px;text-transform:uppercase;color:${brand.muted};">${c.eyebrow}</td>
-              </tr>
-            </table>
-            <h1 class="title" style="margin:0 0 22px;font-family:Arial,Helvetica,sans-serif;font-size:28px;line-height:34px;font-weight:900;letter-spacing:-0.5px;color:${brand.navy};">${c.title}</h1>
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 26px;"><tr><td style="width:56px;height:3px;line-height:3px;font-size:0;background:${brand.cyan};">&nbsp;</td></tr></table>
-            ${c.blocks.map(renderBlock).join("\n")}
+          <td class="pad" style="padding:8px 24px 0;">
+            <a href="${site}" target="_blank" style="text-decoration:none;">
+              <img src="${site}/brand/logo-reptic-email.png" width="170" alt="REPTIC.CM" style="display:block;width:170px;height:auto;border:0;outline:none;font-family:Arial,Helvetica,sans-serif;font-size:22px;font-weight:bold;color:${brand.navy};">
+            </a>
           </td>
         </tr>
+        <!-- Contenu -->
         <tr>
-          <td class="pad" style="padding:26px 44px 30px;background:${brand.navy};">
-            <p style="margin:0 0 6px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:900;color:#ffffff;">REPTIC<span style="color:${brand.cyan};">.cm</span></p>
-            <p style="margin:0 0 14px;font-family:${brand.font};font-size:12px;line-height:19px;color:#B9C0D6;">Yaound&eacute;, Cameroun &middot; <a href="mailto:${contact}" style="color:#ffffff;text-decoration:none;">${contact}</a> &middot; <a href="${site}" style="color:#ffffff;text-decoration:none;">${siteLabel}</a></p>
-            <p style="margin:0;font-family:${brand.font};font-size:11px;line-height:17px;color:#8E97B3;">${c.reason}${c.unsubscribeUrl ? ` <a href="${c.unsubscribeUrl}" style="color:#ffffff;">Se d&eacute;sinscrire</a>` : ""}</p>
+          <td class="pad" style="padding:32px 24px 28px;">
+            <h1 style="margin:0 0 20px;${text(22, 30, brand.ink, "font-weight:600;")}">${c.title}</h1>
+            ${c.blocks.map(renderBlock).join("\n")}
+            ${signature}
+          </td>
+        </tr>
+        <!-- Pied de page : logo en bas, comme une signature professionnelle -->
+        <tr>
+          <td class="pad" style="padding:8px 24px 24px;">
+            <a href="${site}" target="_blank" style="text-decoration:none;">
+              <img src="${site}/brand/logo-reptic-email.png" width="150" alt="REPTIC.CM" style="display:block;width:150px;height:auto;margin:0 0 14px;border:0;outline:none;font-family:Arial,Helvetica,sans-serif;font-size:18px;font-weight:bold;color:${brand.navy};">
+            </a>
+            <p style="margin:0 0 6px;${text(12, 18, brand.muted)}">REPTIC.CM &middot; Yaound&eacute;, Cameroun &middot; <a href="mailto:${contact}" style="color:${brand.muted};">${contact}</a> &middot; <a href="${site}" style="color:${brand.muted};">${siteLabel}</a></p>
+            <p style="margin:0;${text(12, 18, brand.muted)}">${c.reason}${c.unsubscribeUrl ? ` <a href="${c.unsubscribeUrl}" style="color:${brand.muted};">Se d&eacute;sinscrire</a>` : ""}</p>
           </td>
         </tr>
       </table>
@@ -239,7 +244,7 @@ export function renderText(c: EmailContent) {
       .replace(/&eacute;/g, "é")
       .replace(/&rarr;/g, "→")
       .replace(/&middot;/g, "·");
-  const lines: string[] = ["REPTIC.CM", "", strip(c.title).toUpperCase(), ""];
+  const lines: string[] = ["REPTIC.CM", "", strip(c.title), ""];
   for (const b of c.blocks) {
     if (b.type === "paragraph" || b.type === "note") lines.push(strip(b.html), "");
     else if (b.type === "quote") lines.push(`${b.label ? `${strip(b.label)} : ` : ""}${strip(b.html)}`, "");
@@ -248,6 +253,7 @@ export function renderText(c: EmailContent) {
     else if (b.type === "facts") lines.push(...b.rows.map((r) => `${strip(r.label)} : ${strip(r.value)}`), "");
     else if (b.type === "article") lines.push(`${b.meta ? `[${strip(b.meta)}] ` : ""}${strip(b.title)}`, ...(b.html ? [strip(b.html)] : []), b.url, "");
   }
+  if (c.signature !== false) lines.push("Cordialement,", "L'équipe du REPTIC.CM", "");
   lines.push("--", "REPTIC.CM · Yaoundé, Cameroun", strip(c.reason));
   if (c.unsubscribeUrl) lines.push(`Se désinscrire : ${c.unsubscribeUrl}`);
   return lines.join("\n");
