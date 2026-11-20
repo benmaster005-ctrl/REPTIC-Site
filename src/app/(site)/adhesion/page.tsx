@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { applicationSteps, memberBenefits, membershipFaq, requiredDocuments } from "@/content/site";
 import { getPage } from "@/lib/data/public";
 import { PageHero, RichText, RuledList, SectionHeader } from "@/components/ui/content";
@@ -107,7 +107,7 @@ export default async function MembershipPage() {
             <p className="mt-2 text-white/70">Préparez vos justificatifs : la saisie prend une quinzaine de minutes.</p>
           </div>
           <Link href="/adhesion/demande" className="btn-inverse shrink-0">
-            Déposer ma demande <ArrowRight aria-hidden className="size-4" />
+            Déposer ma demande
           </Link>
         </div>
       </section>

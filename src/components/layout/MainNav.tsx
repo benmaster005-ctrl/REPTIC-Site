@@ -6,7 +6,7 @@ import { ChevronDown } from "lucide-react";
 import type { NavItem } from "@/content/site";
 
 const linkBase =
-  "relative flex h-[4.75rem] items-center gap-1 px-3 text-[0.92rem] font-semibold text-navy transition-colors hover:text-cyan-dark after:absolute after:inset-x-3 after:bottom-0 after:h-[3px] after:origin-left after:scale-x-0 after:bg-cyan after:transition-transform hover:after:scale-x-100";
+  "relative flex h-[4.75rem] items-center gap-1 px-2.5 text-[0.92rem] font-semibold whitespace-nowrap xl:px-3.5 text-navy transition-colors hover:text-cyan-dark after:absolute after:inset-x-3 after:bottom-0 after:h-[3px] after:origin-left after:scale-x-0 after:bg-cyan after:transition-transform hover:after:scale-x-100";
 
 export function MainNav({ items, cta, mobileExtra }: { items: NavItem[]; cta: React.ReactNode; mobileExtra: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -97,7 +97,7 @@ export function MainNav({ items, cta, mobileExtra }: { items: NavItem[]; cta: Re
       </button>
 
       {mobileOpen && (
-        <div id="menu-mobile" className="fixed inset-x-0 top-[4.8rem] md:top-[7.05rem] bottom-0 z-40 overflow-y-auto border-t border-line bg-white lg:hidden">
+        <div id="menu-mobile" className="fixed inset-x-0 top-[4.8rem] bottom-0 z-40 overflow-y-auto border-t border-line bg-white lg:hidden">
           <nav aria-label="Navigation mobile" className="container-site py-4">
             {items.map((item) =>
               item.children ? (

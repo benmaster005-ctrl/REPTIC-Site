@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { ArrowRight } from "lucide-react";
 import { getSessionUserId } from "@/lib/auth";
 import { applicationSteps } from "@/content/site";
 import { PageHero } from "@/components/ui/content";
@@ -45,7 +44,7 @@ export default function ApplicationGatewayPage() {
             <p className="mt-3 font-display text-[1.5rem] leading-tight font-bold text-navy">Créer un compte</p>
             <p className="mt-2 text-[0.95rem] text-muted">Une adresse e-mail et un mot de passe suffisent. Vous confirmerez l&apos;adresse par e-mail.</p>
             <Link href="/inscription?suite=/espace/adhesion" className="btn-primary mt-8">
-              Créer mon compte <ArrowRight aria-hidden className="size-4" />
+              Créer mon compte
             </Link>
           </div>
           <div className="bg-white p-8">

@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins } from "next/font/google";
+import { Schibsted_Grotesk } from "next/font/google";
 import { SITE_URL } from "@/lib/env";
 import "./globals.css";
 
-// Police unique du site : Poppins (graisses utilisées : 400 à 800).
-const poppins = Poppins({ variable: "--font-poppins", subsets: ["latin", "latin-ext"], weight: ["400", "500", "600", "700", "800"], display: "swap" });
+// Police unique du site public : Schibsted Grotesk (variable, 400 à 900).
+// Grotesque institutionnelle et ferme, chiffres nets pour les dates et le barème.
+const siteFont = Schibsted_Grotesk({ variable: "--font-site", subsets: ["latin", "latin-ext"], display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -22,7 +23,7 @@ export const viewport: Viewport = { themeColor: "#232d57" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="fr" className={`${poppins.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="fr" className={`${siteFont.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         {/* Active les animations d'apparition seulement si JS tourne : sans JS, tout reste visible. */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />

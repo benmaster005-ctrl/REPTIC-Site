@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { getSiteSettings } from "@/lib/data/public";
 import { NewsletterForm } from "@/components/forms/NewsletterForm";
-import { SectionLabel } from "@/components/brand/Trace";
 import { Logo } from "./Logo";
 
 const footerLinks = [
@@ -79,11 +78,11 @@ export async function SiteFooter() {
         <div className="grid gap-10 sm:grid-cols-3 lg:col-span-5">
           {footerLinks.map((col) => (
             <nav key={col.title} aria-label={col.title}>
-              <h2 className="label">{col.title}</h2>
+              <h2 className="text-[0.95rem] font-semibold text-navy">{col.title}</h2>
               <ul className="mt-5 space-y-3">
                 {col.links.map((l) => (
                   <li key={l.href + l.label}>
-                    <Link href={l.href} className="text-[0.92rem] text-navy hover:text-cyan-dark">
+                    <Link href={l.href} className="text-[0.92rem] text-muted hover:text-navy">
                       {l.label}
                     </Link>
                   </li>
@@ -94,20 +93,20 @@ export async function SiteFooter() {
         </div>
 
         <div className="lg:col-span-3">
-          <SectionLabel>Lettre d&apos;information</SectionLabel>
+          <h2 className="text-[0.95rem] font-semibold text-navy">Lettre d&apos;information</h2>
           <p className="mt-4 mb-5 text-[0.92rem] text-muted">Les actualités et les rendez-vous du réseau, une fois par mois.</p>
           <NewsletterForm />
         </div>
       </div>
 
-      <div className="bg-navy text-white/65">
+      <div className="border-t border-line text-muted">
         <div className="container-site flex flex-col gap-3 py-5 text-[0.8rem] sm:flex-row sm:items-center sm:justify-between">
           <p>© {year} REPTIC.CM</p>
           <div className="flex gap-6">
-            <Link href="/mentions-legales" className="hover:text-white">
+            <Link href="/mentions-legales" className="hover:text-navy">
               Mentions légales
             </Link>
-            <Link href="/confidentialite" className="hover:text-white">
+            <Link href="/confidentialite" className="hover:text-navy">
               Confidentialité
             </Link>
           </div>

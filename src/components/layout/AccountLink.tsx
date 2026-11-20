@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { getSessionUserId } from "@/lib/auth";
 
-type Variant = "bar" | "block";
+type Variant = "bar" | "nav" | "block";
 
 const styles: Record<Variant, string> = {
   bar: "font-semibold text-white hover:text-cyan",
+  nav: "text-[0.92rem] font-semibold whitespace-nowrap text-navy hover:text-cyan-dark",
   block: "btn-secondary w-full",
 };
 

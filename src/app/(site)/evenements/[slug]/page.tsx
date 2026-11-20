@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { getEventBySlug } from "@/lib/data/public";
 import { SITE_URL } from "@/lib/env";
 import { formatDate } from "@/lib/format";
@@ -60,8 +60,8 @@ async function EventDetail({ params }: Pick<PageProps<"/evenements/[slug]">, "pa
               ))}
             </dl>
             {item.registrationEnabled ? (
-              <Link href="/espace/evenements" className="btn-primary w-full justify-between">
-                S&apos;inscrire <ArrowRight aria-hidden className="size-4" />
+              <Link href="/espace/evenements" className="btn-primary w-full">
+                S&apos;inscrire
               </Link>
             ) : (
               <p className="border-l-[3px] border-line-strong pl-4 text-[0.9rem] text-muted">Inscriptions non ouvertes pour cet événement.</p>

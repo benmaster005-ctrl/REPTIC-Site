@@ -16,20 +16,20 @@ export async function LinkedinPosts({ limit = 3 }: { limit?: number }) {
   return (
     <section className="border-t border-line bg-paper py-20 sm:py-28">
       <div className="container-site">
-        <SectionHeader label="Sur LinkedIn" title="Le réseau au quotidien" action={{ label: "Suivre la page", href: PAGE_URL }} />
+        <SectionHeader label="Sur LinkedIn" title="Le réseau sur LinkedIn" action={{ label: "Suivre la page", href: PAGE_URL }} />
         {/* Carrousel glissant sur mobile, grille à partir de la tablette */}
         <RevealGroup
           as="ul"
-          className="-mx-4 mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 md:pb-0 lg:ml-[calc(25%+0.375rem)] xl:grid-cols-3 [&::-webkit-scrollbar]:hidden"
+          className="-mx-4 mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 md:pb-0 xl:grid-cols-3 [&::-webkit-scrollbar]:hidden"
         >
           {posts.map((p) => (
             <li
               key={p.id}
-              className="group relative flex w-[85%] shrink-0 snap-start flex-col overflow-hidden rounded-xl border border-line bg-white transition-[transform,border-color] hover:border-navy duration-300 hover:-translate-y-1 sm:w-[60%] md:w-auto"
+              className="group relative flex w-[85%] shrink-0 snap-start flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-line transition-shadow hover:ring-navy/30 sm:w-[60%] md:w-auto"
             >
               {p.image && (
                 <div className="relative aspect-[16/10] overflow-hidden bg-line/40">
-                  <Image src={p.image} alt="" fill sizes="(min-width: 1280px) 25vw, (min-width: 768px) 50vw, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <Image src={p.image} alt="" fill sizes="(min-width: 1280px) 25vw, (min-width: 768px) 50vw, 100vw" className="object-cover" />
                 </div>
               )}
               <div className="flex flex-1 flex-col p-6">

@@ -10,22 +10,24 @@
    ========================================================================== */
 
 @theme {
-  /* Police unique : Poppins, pour les titres, le texte et les libellés techniques. */
-  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  /* Police unique : Schibsted Grotesk, pour les titres, le texte et les libellés. */
+  --font-sans: var(--font-site), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-site), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-site), ui-sans-serif, system-ui, sans-serif;
 
   --color-navy: #232d57;
-  --color-navy-deep: #161d3d;
+  --color-navy-deep: #1b2348;
   --color-navy-soft: #3b456f;
   --color-cyan: #209ad7;
   --color-cyan-dark: #157bb0;
-  --color-cyan-tint: #e8f4fb;
-  --color-ink: #1a1f33;
-  --color-muted: #5b6178;
-  --color-line: #dde0e8;
+  --color-cyan-tint: #e6f2fa;
+  --color-ice: #eef4f9;
+  --color-signal: #f5c518;
+  --color-ink: #141a33;
+  --color-muted: #586079;
+  --color-line: #dfe4ec;
   --color-line-strong: #c3c8d5;
-  --color-paper: #f5f6f8;
+  --color-paper: #f5f7fa;
 
   --radius-sm: 2px;
 }
@@ -65,21 +67,21 @@ body {
   font-stretch: 100%;
 }
 
-/* Titres : Poppins gras. Lettre plus large qu'une police condensée : tailles et
-   approche légèrement réduites, interlignage un peu plus ouvert. */
+/* Titres : Schibsted Grotesk gras, interlignage serré, approche resserrée.
+   Échelle : 17 → 22 → 28 → 44 → 74 px (rapport ≈ 1,6 entre paliers). */
 @utility heading-xl {
-  @apply font-display text-[2.35rem] leading-[1.08] font-bold tracking-[-0.025em] text-navy sm:text-[3.7rem] lg:text-[4.5rem];
+  @apply font-display text-[2.6rem] leading-[1.02] font-bold tracking-[-0.035em] text-navy sm:text-[3.9rem] lg:text-[4.6rem];
 }
 @utility heading-lg {
-  @apply font-display text-[1.85rem] leading-[1.12] font-bold tracking-[-0.02em] text-navy sm:text-[2.75rem];
+  @apply font-display text-[1.9rem] leading-[1.08] font-bold tracking-[-0.025em] text-navy sm:text-[2.75rem];
 }
 @utility heading-md {
-  @apply font-display text-[1.45rem] leading-tight font-semibold tracking-[-0.01em] text-navy sm:text-[1.75rem];
+  @apply font-display text-[1.4rem] leading-[1.2] font-semibold tracking-[-0.015em] text-navy sm:text-[1.75rem];
 }
 
-/* Libellé technique : petites capitales espacées, discret */
+/* Libellé discret : bas de casse, graisse moyenne (pas de capitales espacées) */
 @utility label {
-  @apply font-mono text-[0.7rem] font-medium tracking-[0.1em] text-muted uppercase;
+  @apply text-[0.85rem] font-medium text-muted;
 }
 
 /* Boutons : rectangles nets, flèche en fin */
@@ -124,38 +126,10 @@ body {
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-/* --- Apparition au défilement ([data-reveal], composant <Reveal>) -------- */
-.js [data-reveal="up"],
-.js [data-reveal="group"] > * {
-  opacity: 0;
-  transform: translate3d(0, 28px, 0);
-  transition:
-    opacity 0.9s var(--ease-out),
-    transform 0.9s var(--ease-out);
-  transition-delay: var(--reveal-delay, 0ms);
-}
-.js [data-reveal="fade"] {
-  opacity: 0;
-  transition: opacity 1s var(--ease-out) var(--reveal-delay, 0ms);
-}
-.js [data-reveal="line"] {
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 1.1s var(--ease-in-out) var(--reveal-delay, 0ms);
-}
-.js [data-reveal][data-shown],
-.js [data-reveal="group"][data-shown] > * {
-  opacity: 1;
-  transform: none;
-}
-/* Décalage en cascade des enfants d'un groupe */
-.js [data-reveal="group"] > :nth-child(2) { transition-delay: calc(var(--reveal-delay, 0ms) + 80ms); }
-.js [data-reveal="group"] > :nth-child(3) { transition-delay: calc(var(--reveal-delay, 0ms) + 160ms); }
-.js [data-reveal="group"] > :nth-child(4) { transition-delay: calc(var(--reveal-delay, 0ms) + 240ms); }
-.js [data-reveal="group"] > :nth-child(5) { transition-delay: calc(var(--reveal-delay, 0ms) + 320ms); }
-.js [data-reveal="group"] > :nth-child(6) { transition-delay: calc(var(--reveal-delay, 0ms) + 400ms); }
-.js [data-reveal="group"] > :nth-child(7) { transition-delay: calc(var(--reveal-delay, 0ms) + 480ms); }
-.js [data-reveal="group"] > :nth-child(n + 8) { transition-delay: calc(var(--reveal-delay, 0ms) + 540ms); }
+/* --- Apparition au défilement ([data-reveal], composant <Reveal>) --------
+   Désactivée : le contenu s'affiche directement, sans effet d'entrée par
+   section (une seule animation sur le site : la bannière). Le composant reste
+   en place, sans effet visuel. */
 
 /* --- Titre d'ouverture : les mots montent depuis leur ligne -------------- */
 .rise-mask {

@@ -30,7 +30,7 @@ export default async function GovernancePage() {
               return (
                 <li
                   key={m.id}
-                  className="group flex flex-col items-center rounded-xl border border-line bg-white px-6 pt-8 pb-6 text-center transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-navy"
+                  className="group flex flex-col items-center px-4 pt-4 pb-6 text-center"
                 >
                   {/* Portrait rond, cerclé de cyan au survol */}
                   <div className="relative size-32 overflow-hidden rounded-full bg-paper ring-4 ring-paper transition-[box-shadow] duration-300 group-hover:ring-cyan-tint">
