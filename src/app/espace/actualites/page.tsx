@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Actualités" };
 
 export default function MemberNewsPage() {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <MemberNews />
     </Suspense>
   );
@@ -23,7 +23,7 @@ async function MemberNews() {
   return (
     <>
       <SpaceHeader label="Actualités" title="Actualités du réseau" description="Publications publiques et informations réservées aux membres." />
-      <Panel className="mt-8 p-0 sm:p-0">
+      <Panel className="mt-4 p-0 sm:p-0">
         {news.length ? (
           <ul>
             {news.map((n) => (
@@ -34,7 +34,7 @@ async function MemberNews() {
                     {n.category && <span className="label">{n.category}</span>}
                     {n.membersOnly && <span className="label text-cyan-dark">Réservé aux membres</span>}
                   </p>
-                  <p className="mt-2 font-display text-[1.2rem] font-bold text-navy group-hover:text-cyan-dark">{n.title}</p>
+                  <p className="mt-2 font-display text-[1.2rem] font-bold text-heading group-hover:text-cyan-dark">{n.title}</p>
                   {n.excerpt && <p className="mt-1 line-clamp-2 text-[0.92rem] text-muted">{n.excerpt}</p>}
                 </Link>
               </li>

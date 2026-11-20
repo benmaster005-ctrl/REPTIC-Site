@@ -14,7 +14,7 @@ export const metadata: Metadata = { title: "Fiche membre" };
 
 export default function MemberProfilePage({ params }: PageProps<"/espace/annuaire/[id]">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Profile params={params} />
     </Suspense>
   );
@@ -56,7 +56,7 @@ async function Profile({ params }: Pick<PageProps<"/espace/annuaire/[id]">, "par
         </div>
       </Panel>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-12">
+      <div className="mt-3 grid gap-3 xl:grid-cols-12">
         <Panel className="xl:col-span-7">
           <h2 className="label">Présentation</h2>
           {m.bio || m.organizationDescription ? (
@@ -69,7 +69,7 @@ async function Profile({ params }: Pick<PageProps<"/espace/annuaire/[id]">, "par
           )}
           {m.contactName && (
             <p className="mt-6 border-t border-line pt-4 text-[0.92rem] text-muted">
-              Contact référent : <span className="font-semibold text-navy">{m.contactName}</span>
+              Contact référent : <span className="font-semibold text-heading">{m.contactName}</span>
             </p>
           )}
         </Panel>
@@ -84,12 +84,12 @@ async function Profile({ params }: Pick<PageProps<"/espace/annuaire/[id]">, "par
                   <span className="min-w-0">
                     <span className="block text-[0.78rem] text-muted">{label}</span>
                     {href ? (
-                      <a href={href} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="inline-flex items-center gap-1 font-semibold break-all text-navy hover:text-cyan-dark">
+                      <a href={href} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="inline-flex items-center gap-1 font-semibold break-all text-heading hover:text-cyan-dark">
                         {value}
                         {external && <ArrowUpRight aria-hidden className="size-3.5 shrink-0" />}
                       </a>
                     ) : (
-                      <span className="font-semibold text-navy">{value}</span>
+                      <span className="font-semibold text-heading">{value}</span>
                     )}
                   </span>
                 </li>

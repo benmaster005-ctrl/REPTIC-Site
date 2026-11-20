@@ -25,7 +25,7 @@ export function EmailPreferencesForm({ enabled }: { enabled: boolean }) {
       <label className="flex items-start gap-3 text-sm">
         <input type="checkbox" name="email_publications" defaultChecked={state.values?.email_publications === "on"} className="mt-0.5 size-4 accent-navy" />
         <span>
-          <span className="font-semibold text-navy">Recevoir un e-mail à chaque nouvelle actualité ou nouvel événement</span>
+          <span className="font-semibold text-heading">Recevoir un e-mail à chaque nouvelle actualité ou nouvel événement</span>
           <span className="block text-xs text-muted">Les notifications dans votre espace restent actives dans tous les cas. Les messages importants du secrétariat sont toujours envoyés.</span>
         </span>
       </label>

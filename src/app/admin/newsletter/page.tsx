@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "Lettre d'information" };
 
 export default function NewsletterAdminPage() {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <NewsletterAdmin />
     </Suspense>
   );
@@ -43,29 +43,29 @@ async function NewsletterAdmin() {
       />
       {campaigns.error && <Flash tone="error">Exécutez la migration 20261114000008_stories_bloc2.sql dans Supabase pour activer l&apos;envoi des lettres.</Flash>}
       <div className="mt-8 grid gap-px bg-line sm:grid-cols-3">
-        <div className="bg-white p-6">
+        <div className="bg-surface p-6">
           <p className="label">Abonnés actifs</p>
-          <p className="mt-3 font-display text-[2.4rem] leading-none font-extrabold text-navy tabular-nums">{active.count ?? 0}</p>
+          <p className="mt-3 font-display text-[2.4rem] leading-none font-extrabold text-heading tabular-nums">{active.count ?? 0}</p>
         </div>
-        <div className="bg-white p-6">
+        <div className="bg-surface p-6">
           <p className="label">Désinscrits</p>
-          <p className="mt-3 font-display text-[2.4rem] leading-none font-extrabold text-navy tabular-nums">{unsubscribed.count ?? 0}</p>
+          <p className="mt-3 font-display text-[2.4rem] leading-none font-extrabold text-heading tabular-nums">{unsubscribed.count ?? 0}</p>
         </div>
-        <div className="flex flex-col justify-between bg-white p-6">
+        <div className="flex flex-col justify-between bg-surface p-6">
           <p className="label">Liste des abonnés</p>
           <a href="/admin/newsletter/abonnes" download className="link-arrow mt-3 self-start">
             <Download aria-hidden className="size-4" /> Exporter (Excel)
           </a>
         </div>
       </div>
-      <Panel className="mt-6 p-0 sm:p-0">
+      <Panel className="mt-4 p-0 sm:p-0">
         <DataTable head={["Lettre", "Statut", "Envoi", "Créée le"]} empty={rows.length ? undefined : "Aucune lettre pour le moment."}>
           {rows.map((c) => {
             const [label, tone] = statusTag[c.status] ?? statusTag.draft;
             return (
               <tr key={c.id}>
                 <td>
-                  <Link href={`/admin/newsletter/${c.id}`} className="font-semibold text-navy underline-offset-4 hover:text-cyan-dark hover:underline">
+                  <Link href={`/admin/newsletter/${c.id}`} className="font-semibold text-heading underline-offset-4 hover:text-cyan-dark hover:underline">
                     {c.subject}
                   </Link>
                 </td>

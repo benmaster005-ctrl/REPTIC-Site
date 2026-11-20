@@ -457,6 +457,141 @@ body {
   }
 }
 
+/* --- Univers « application » : espace membre et administration ----------
+   Volontairement distinct du site public (inspiration éditeurs no-code type
+   WeWeb) : gris froids, accent indigo, cartes à filet fin, barre latérale.
+   Les composants gardent leurs classes (bg-navy, text-heading, bg-ice…) :
+   seules les valeurs des jetons changent dans .app-shell. */
+.app-shell {
+  --color-canvas: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-paper: #f9fafb;
+  --color-ice: #f2f3f7;
+  --color-line: #e6e8ee;
+  --color-line-strong: #d4d7e0;
+  --color-ink: #1f2430;
+  --color-muted: #6b7280;
+  --color-heading: #111827;
+  --color-navy: #4f46e5;
+  --color-navy-deep: #4338ca;
+  --color-cyan: #6366f1;
+  --color-cyan-dark: #4f46e5;
+  --color-cyan-tint: #eef0ff;
+  color: var(--color-ink);
+  background: var(--color-canvas);
+  font-size: 0.9375rem;
+}
+@media (prefers-color-scheme: dark) {
+  .app-shell {
+    --color-canvas: #0d0f14;
+    --color-surface: #15181f;
+    --color-paper: #1a1d25;
+    --color-ice: #1d212a;
+    --color-line: #262a35;
+    --color-line-strong: #343947;
+    --color-ink: #e4e6eb;
+    --color-muted: #9aa1ae;
+    --color-heading: #f3f4f6;
+    --color-navy: #6366f1;
+    --color-navy-deep: #4f46e5;
+    --color-cyan: #818cf8;
+    --color-cyan-dark: #a5b4fc;
+    --color-cyan-tint: #1e1f3d;
+    color-scheme: dark;
+  }
+  body:has(.app-shell) {
+    background: #0d0f14;
+  }
+}
+@media (prefers-color-scheme: light) {
+  body:has(.app-shell) {
+    background: #f6f7f9;
+  }
+}
+/* Boutons et champs de l'application : coins arrondis modérés, taille compacte */
+.app-shell :is(.btn, .btn-primary, .btn-secondary, .btn-inverse) {
+  border-radius: 0.625rem;
+  padding: 0.55rem 1rem;
+  font-size: 0.875rem;
+  gap: 0.5rem;
+}
+/* Pas de « padding » forcé ici : il écraserait la marge réservée aux icônes
+   (ex. loupe de la recherche, pl-10). Hauteur ajustée par padding-block seul. */
+.app-shell .field-input {
+  border-radius: 0.625rem;
+  padding-block: 0.6rem;
+  font-size: 0.9rem;
+  border-color: var(--color-line-strong);
+}
+.app-shell .field-input:focus {
+  border-color: var(--color-navy);
+  outline: 3px solid color-mix(in srgb, var(--color-navy) 20%, transparent);
+  outline-offset: 0;
+}
+.app-shell .field-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+/* Cartes de l'application : filet fin et ombre très légère */
+.app-shell .app-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 0.875rem;
+  box-shadow: 0 1px 2px rgb(16 24 40 / 0.04);
+}
+
+/* --- Barres de défilement modernes -----------------------------------------
+   Fines, arrondies, aux couleurs du thème (clair ou sombre, site ou
+   application). Standard (scrollbar-width / scrollbar-color : Chrome, Edge,
+   Firefox) et repli WebKit pour Safari. Les bandes horizontales qui masquent
+   volontairement leur barre ([scrollbar-width:none]) ne sont pas touchées. */
+@layer base {
+:root {
+  --scroll-thumb: color-mix(in srgb, var(--color-navy) 28%, transparent);
+  --scroll-thumb-hover: color-mix(in srgb, var(--color-navy) 50%, transparent);
+}
+.site-theme,
+.app-shell {
+  --scroll-thumb: color-mix(in srgb, var(--color-muted) 45%, transparent);
+  --scroll-thumb-hover: color-mix(in srgb, var(--color-muted) 75%, transparent);
+}
+html,
+.app-shell * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) transparent;
+}
+html:has(.site-theme) {
+  scrollbar-color: color-mix(in srgb, var(--color-navy) 30%, transparent) var(--color-canvas);
+}
+@media (prefers-color-scheme: dark) {
+  html:has(.site-theme),
+  html:has(.app-shell) {
+    scrollbar-color: rgb(255 255 255 / 0.18) #0b1020;
+  }
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scroll-thumb-hover);
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+}
+
 /* --- Images des cartes : rapprochement discret au survol ----------------- */
 .img-hover {
   transition: transform 0.9s var(--ease-out);

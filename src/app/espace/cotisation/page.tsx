@@ -21,7 +21,7 @@ const statusTag = {
 
 export default function FeePage({ searchParams }: PageProps<"/espace/cotisation">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Fee searchParams={searchParams} />
     </Suspense>
   );
@@ -54,16 +54,16 @@ async function Fee({ searchParams }: Pick<PageProps<"/espace/cotisation">, "sear
 
       {!isPaymentEnabled && (
         <div role="status" className="mt-8 flex gap-4 rounded-xl border border-cyan/30 bg-cyan-tint p-5 sm:p-6">
-          <span className="grid size-11 shrink-0 place-content-center rounded-full bg-white text-cyan-dark">
+          <span className="grid size-11 shrink-0 place-content-center rounded-full bg-surface text-cyan-dark">
             <Clock aria-hidden className="size-5" />
           </span>
           <div>
-            <p className="font-display text-[1.1rem] font-bold text-navy">Le paiement en ligne arrive bientôt</p>
+            <p className="font-display text-[1.1rem] font-bold text-heading">Le paiement en ligne arrive bientôt</p>
             <p className="mt-1.5 text-[0.95rem] leading-relaxed text-ink/80">
               Vous pourrez très prochainement régler votre cotisation directement depuis cet espace, par Mobile Money ou carte bancaire. Nous vous
               préviendrons dès l&apos;ouverture. En attendant, le secrétariat reste à votre disposition pour toute question sur votre cotisation.
             </p>
-            <Link href="/contact" className="mt-3 inline-block text-sm font-semibold text-navy underline underline-offset-4 hover:text-cyan-dark">
+            <Link href="/contact" className="mt-3 inline-block text-sm font-semibold text-heading underline underline-offset-4 hover:text-cyan-dark">
               Contacter le secrétariat
             </Link>
           </div>
@@ -79,19 +79,19 @@ async function Fee({ searchParams }: Pick<PageProps<"/espace/cotisation">, "sear
             <p className="mt-4 text-muted">Le montant de la cotisation n&apos;est pas encore fixé. Le secrétariat vous informera dès l&apos;ouverture des paiements.</p>
           ) : (
             <>
-              <p className="mt-3 font-display text-[2.6rem] leading-none font-extrabold tracking-[-0.02em] text-navy">{formatAmount(amount, overview.fee?.currency)}</p>
+              <p className="mt-3 font-display text-[2.6rem] leading-none font-extrabold tracking-[-0.02em] text-heading">{formatAmount(amount, overview.fee?.currency)}</p>
               <p className="mt-2 text-[0.92rem] text-muted">par année civile</p>
               <div className="mt-8 space-y-4">
                 {years.map((y) =>
                   overview.paidYears.has(y) ? (
                     <div key={y} className="flex items-center justify-between border-t border-line pt-4">
-                      <span className="font-semibold text-navy">Cotisation {y}</span>
+                      <span className="font-semibold text-heading">Cotisation {y}</span>
                       <StatusTag tone="success">Réglée</StatusTag>
                     </div>
                   ) : (
                     <form key={y} action={startFeePayment} className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
                       <input type="hidden" name="year" value={y} />
-                      <span className="font-semibold text-navy">Cotisation {y}</span>
+                      <span className="font-semibold text-heading">Cotisation {y}</span>
                       {isPaymentEnabled ? (
                         <SubmitButton pendingLabel="Redirection vers le paiement…">Payer {formatAmount(amount, overview.fee?.currency)}</SubmitButton>
                       ) : (
@@ -112,14 +112,14 @@ async function Fee({ searchParams }: Pick<PageProps<"/espace/cotisation">, "sear
             <li className="flex gap-3">
               <Smartphone aria-hidden className="mt-0.5 size-5 shrink-0 text-cyan-dark" />
               <span>
-                <span className="font-semibold text-navy">Mobile Money</span>
+                <span className="font-semibold text-heading">Mobile Money</span>
                 <span className="block text-muted">Orange Money, MTN Mobile Money</span>
               </span>
             </li>
             <li className="flex gap-3">
               <CreditCard aria-hidden className="mt-0.5 size-5 shrink-0 text-cyan-dark" />
               <span>
-                <span className="font-semibold text-navy">Carte bancaire</span>
+                <span className="font-semibold text-heading">Carte bancaire</span>
                 <span className="block text-muted">Visa, Mastercard</span>
               </span>
             </li>
@@ -130,7 +130,7 @@ async function Fee({ searchParams }: Pick<PageProps<"/espace/cotisation">, "sear
         </Panel>
       </div>
 
-      <Panel className="mt-6">
+      <Panel className="mt-4">
         <p className="label">Historique</p>
         {overview.payments.length ? (
           <ul className="mt-4 border-t-2 border-navy">
@@ -139,7 +139,7 @@ async function Fee({ searchParams }: Pick<PageProps<"/espace/cotisation">, "sear
               return (
                 <li key={p.reference} className="grid gap-2 border-b border-line py-3.5 sm:grid-cols-[1fr_auto_auto] sm:items-center sm:gap-6">
                   <span>
-                    <span className="block font-semibold text-navy">
+                    <span className="block font-semibold text-heading">
                       Cotisation {p.year} · {formatAmount(p.amount, p.currency)}
                     </span>
                     <span className="font-mono text-[0.72rem] text-muted">
@@ -149,7 +149,7 @@ async function Fee({ searchParams }: Pick<PageProps<"/espace/cotisation">, "sear
                   </span>
                   <StatusTag tone={tone}>{label}</StatusTag>
                   {p.status === "paid" ? (
-                    <Link href={`/espace/cotisation/recu/${p.reference}`} className="text-sm font-semibold text-navy underline underline-offset-4 hover:text-cyan-dark">
+                    <Link href={`/espace/cotisation/recu/${p.reference}`} className="text-sm font-semibold text-heading underline underline-offset-4 hover:text-cyan-dark">
                       Reçu
                     </Link>
                   ) : (

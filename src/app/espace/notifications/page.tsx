@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Notifications" };
 
 export default function NotificationsPage() {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Notifications />
     </Suspense>
   );
@@ -36,7 +36,7 @@ async function Notifications() {
           ) : null
         }
       />
-      <Panel className="mt-8 p-0 sm:p-0">
+      <Panel className="mt-4 p-0 sm:p-0">
         {items.length ? (
           <ul>
             {items.map((n) => (
@@ -47,7 +47,7 @@ async function Notifications() {
                   <button type="submit" className="group grid w-full grid-cols-[1rem_1fr] gap-4 px-6 py-5 text-left transition-colors hover:bg-paper sm:px-8">
                     <span aria-hidden className={`mt-1.5 size-2.5 rounded-full border-2 ${n.readAt ? "border-line-strong" : "border-cyan bg-cyan"}`} />
                     <span>
-                      <span className={`block ${n.readAt ? "text-navy/80" : "font-semibold text-navy"}`}>{n.title}</span>
+                      <span className={`block ${n.readAt ? "text-navy/80" : "font-semibold text-heading"}`}>{n.title}</span>
                       {n.body && <span className="mt-1 block text-[0.92rem] text-muted">{n.body}</span>}
                       <span className="mt-1.5 block font-mono text-[0.72rem] text-muted">{formatDateTime(n.createdAt)}</span>
                     </span>

@@ -20,7 +20,7 @@ export const metadata: Metadata = { title: "Lettre" };
 
 export default function CampaignPage({ params }: PageProps<"/admin/newsletter/[id]">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Campaign params={params} />
     </Suspense>
   );

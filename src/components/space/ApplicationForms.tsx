@@ -195,7 +195,7 @@ export function DocumentUploader({ applicationId, userId, documentType, accept, 
 
 export function FileChip({ name, size }: { name: string; size: number }) {
   return (
-    <span className="inline-flex max-w-full items-center gap-2 text-[0.88rem] text-navy">
+    <span className="inline-flex max-w-full items-center gap-2 text-[0.88rem] text-heading">
       <FileText aria-hidden className="size-4 shrink-0 text-cyan-dark" />
       <span className="truncate">{name}</span>
       <span className="shrink-0 font-mono text-[0.72rem] text-muted">{formatBytes(size)}</span>

@@ -14,7 +14,7 @@ const tone = (s: string | null) => (s === "active" ? "success" : s === "suspende
 
 export default function MembersPage({ searchParams }: PageProps<"/admin/membres">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Members searchParams={searchParams} />
     </Suspense>
   );
@@ -54,7 +54,7 @@ async function Members({ searchParams }: Pick<PageProps<"/admin/membres">, "sear
           <tr key={m.id}>
             <td className="font-mono text-[0.8rem] whitespace-nowrap">{m.number ?? "—"}</td>
             <td>
-              <Link href={`/admin/membres/${m.id}`} className="font-semibold text-navy underline-offset-4 hover:text-cyan-dark hover:underline">
+              <Link href={`/admin/membres/${m.id}`} className="font-semibold text-heading underline-offset-4 hover:text-cyan-dark hover:underline">
                 {m.name}
               </Link>
               {m.email && <span className="block text-[0.8rem] text-muted">{m.email}</span>}

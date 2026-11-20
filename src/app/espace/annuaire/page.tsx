@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Annuaire des membres" };
 
 export default function DirectoryPage({ searchParams }: PageProps<"/espace/annuaire">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Directory searchParams={searchParams} />
     </Suspense>
   );
@@ -30,7 +30,7 @@ async function Directory({ searchParams }: Pick<PageProps<"/espace/annuaire">, "
   return (
     <>
       <SpaceHeader label="Annuaire" title="Annuaire des membres" description="Seuls les membres ayant choisi d'apparaître dans l'annuaire sont listés." />
-      <form role="search" className="mt-8 grid gap-3 bg-white p-4 sm:grid-cols-[1fr_16rem_auto]">
+      <form role="search" className="app-card mt-4 grid gap-2.5 p-3 sm:grid-cols-[1fr_16rem_auto]">
         <label className="sr-only" htmlFor="annuaire-q">
           Rechercher
         </label>
@@ -61,12 +61,12 @@ async function Directory({ searchParams }: Pick<PageProps<"/espace/annuaire">, "
       {members.length ? (
         <ul className="mt-3 grid gap-px bg-line sm:grid-cols-2">
           {members.map((m) => (
-            <li key={m.id} className="group relative flex gap-4 bg-white p-6 transition-colors hover:bg-cyan-tint/50">
-              <span aria-hidden className="grid size-12 shrink-0 place-items-center bg-paper font-display text-lg font-extrabold text-navy">
+            <li key={m.id} className="group relative flex gap-4 bg-surface p-6 transition-colors hover:bg-cyan-tint/50">
+              <span aria-hidden className="grid size-12 shrink-0 place-items-center bg-paper font-display text-lg font-extrabold text-heading">
                 {initials(m.name)}
               </span>
               <div className="min-w-0">
-                <p className="font-display text-[1.1rem] font-bold text-navy">
+                <p className="font-display text-[1.1rem] font-bold text-heading">
                   <Link href={`/espace/annuaire/${m.id}`} className="title-sweep after:absolute after:inset-0 group-hover:text-cyan-dark">
                     {m.name}
                   </Link>
@@ -75,7 +75,7 @@ async function Directory({ searchParams }: Pick<PageProps<"/espace/annuaire">, "
                 {m.category && <p className="label mt-2 text-cyan-dark">{m.category}</p>}
                 {m.bio && <p className="mt-2 line-clamp-3 text-[0.88rem] text-ink/80">{m.bio}</p>}
                 {m.website && (
-                  <a href={m.website} target="_blank" rel="noopener noreferrer" className="relative z-10 mt-2 inline-flex items-center gap-1 text-[0.85rem] font-semibold text-navy hover:text-cyan-dark">
+                  <a href={m.website} target="_blank" rel="noopener noreferrer" className="relative z-10 mt-2 inline-flex items-center gap-1 text-[0.85rem] font-semibold text-heading hover:text-cyan-dark">
                     Site web <ArrowUpRight aria-hidden className="size-3.5" />
                   </a>
                 )}
@@ -84,7 +84,7 @@ async function Directory({ searchParams }: Pick<PageProps<"/espace/annuaire">, "
           ))}
         </ul>
       ) : (
-        <Panel className="mt-3">
+        <Panel className="mt-4">
           <p className="text-muted">Aucun membre ne correspond à cette recherche.</p>
         </Panel>
       )}

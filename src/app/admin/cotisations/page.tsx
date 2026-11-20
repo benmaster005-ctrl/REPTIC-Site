@@ -15,7 +15,7 @@ const statusTag = { paid: ["Payée", "success"], pending: ["En attente", "info"]
 
 export default function FeesAdminPage({ searchParams }: PageProps<"/admin/cotisations">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <FeesAdmin searchParams={searchParams} />
     </Suspense>
   );
@@ -82,11 +82,11 @@ async function FeesAdmin({ searchParams }: Pick<PageProps<"/admin/cotisations">,
       {(feesError || error) && <Flash tone="error">Exécutez la migration 20261115000009_cotisations.sql dans Supabase pour activer les cotisations.</Flash>}
       {!arePaymentsOpen && !feesError && (
         <div role="status" className="mt-6 flex gap-4 rounded-xl border border-cyan/30 bg-cyan-tint p-5 sm:p-6">
-          <span className="grid size-11 shrink-0 place-content-center rounded-full bg-white text-cyan-dark">
+          <span className="grid size-11 shrink-0 place-content-center rounded-full bg-surface text-cyan-dark">
             <Clock aria-hidden className="size-5" />
           </span>
           <div>
-            <p className="font-display text-[1.1rem] font-bold text-navy">Le paiement en ligne arrive bientôt</p>
+            <p className="font-display text-[1.1rem] font-bold text-heading">Le paiement en ligne arrive bientôt</p>
             <p className="mt-1.5 text-[0.95rem] leading-relaxed text-ink/80">
               Les membres voient ce même message dans leur espace : aucun paiement en ligne n&apos;est possible pour l&apos;instant. Vous pouvez déjà fixer les
               tarifs annuels ci-dessous, ils s&apos;afficheront à l&apos;ouverture.
@@ -99,18 +99,18 @@ async function FeesAdmin({ searchParams }: Pick<PageProps<"/admin/cotisations">,
       )}
 
       <div className="mt-8 grid gap-px bg-line sm:grid-cols-3">
-        <div className="bg-white p-6">
+        <div className="bg-surface p-6">
           <p className="label">Encaissé en {year}</p>
-          <p className="mt-3 font-display text-[2rem] leading-none font-extrabold text-navy tabular-nums">{formatAmount(total)}</p>
+          <p className="mt-3 font-display text-[2rem] leading-none font-extrabold text-heading tabular-nums">{formatAmount(total)}</p>
         </div>
-        <div className="bg-white p-6">
+        <div className="bg-surface p-6">
           <p className="label">Membres à jour</p>
-          <p className="mt-3 font-display text-[2rem] leading-none font-extrabold text-navy tabular-nums">
+          <p className="mt-3 font-display text-[2rem] leading-none font-extrabold text-heading tabular-nums">
             {payers}
             <span className="text-[1rem] font-semibold text-muted"> / {activeMembers ?? 0}</span>
           </p>
         </div>
-        <div className="flex flex-col justify-between bg-white p-6">
+        <div className="flex flex-col justify-between bg-surface p-6">
           <p className="label">Liste des paiements</p>
           <a href={listHref("/admin/cotisations/export", { annee: year, statut })} download className="link-arrow mt-3 self-start">
             <Download aria-hidden className="size-4" /> Exporter (Excel)
@@ -119,7 +119,7 @@ async function FeesAdmin({ searchParams }: Pick<PageProps<"/admin/cotisations">,
       </div>
 
       {can("members.manage") && !feesError && (
-        <Panel className="mt-6">
+        <Panel className="mt-4">
           <h2 className="label mb-5">Tarifs annuels</h2>
           <FeesForm initial={{ physical: feeOf("physical") ? String(feeOf("physical")) : "", legal: feeOf("legal") ? String(feeOf("legal")) : "" }} />
         </Panel>
@@ -141,7 +141,7 @@ async function FeesAdmin({ searchParams }: Pick<PageProps<"/admin/cotisations">,
               <td className="font-mono text-[0.8rem] whitespace-nowrap">{r.reference}</td>
               <td>
                 {r.member ? (
-                  <Link href={`/admin/membres/${r.member.id}`} className="font-semibold text-navy underline-offset-4 hover:underline">
+                  <Link href={`/admin/membres/${r.member.id}`} className="font-semibold text-heading underline-offset-4 hover:underline">
                     {name}
                   </Link>
                 ) : (

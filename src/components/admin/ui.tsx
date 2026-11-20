@@ -12,7 +12,7 @@ export function FilterBar({ q, placeholder = "Rechercher…", selects = [], hidd
   hiddens?: Record<string, string>;
 }) {
   return (
-    <form role="search" className="mt-8 flex flex-wrap gap-3 bg-white p-4">
+    <form role="search" className="app-card mt-4 flex flex-wrap gap-2.5 p-3">
       {Object.entries(hiddens).map(([k, v]) => (
         <input key={k} type="hidden" name={k} value={v} />
       ))}
@@ -54,7 +54,7 @@ export function Pagination({ page, pages, href }: { page: number; pages: number;
           <Link
             href={href(p)}
             aria-current={p === page ? "page" : undefined}
-            className={`grid size-10 place-items-center font-mono text-sm ${p === page ? "bg-navy text-white" : "border border-line bg-white text-navy hover:border-navy"}`}
+            className={`grid size-9 place-items-center rounded-lg text-sm font-medium tabular-nums ${p === page ? "bg-navy text-white" : "border border-line bg-surface text-heading hover:bg-ice"}`}
           >
             {p}
           </Link>
@@ -67,12 +67,12 @@ export function Pagination({ page, pages, href }: { page: number; pages: number;
 /** Tableau de données sobre : en-têtes mono, lignes filetées. */
 export function DataTable({ head, children, empty }: { head: string[]; children: React.ReactNode; empty?: string }) {
   return (
-    <div className="mt-4 overflow-x-auto bg-white">
+    <div className="app-card mt-4 overflow-x-auto">
       <table className="w-full min-w-[44rem] text-left text-[0.9rem]">
         <thead>
-          <tr className="border-b-2 border-navy">
+          <tr className="border-b border-line bg-paper">
             {head.map((h) => (
-              <th key={h} scope="col" className="label px-4 py-3 font-medium whitespace-nowrap">
+              <th key={h} scope="col" className="px-4 py-2.5 text-[0.78rem] font-medium whitespace-nowrap text-muted">
                 {h}
               </th>
             ))}

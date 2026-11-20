@@ -43,7 +43,7 @@ export function BroadcastForm({ categories }: { categories: { value: string; lab
           <label className="flex items-start gap-3 text-sm">
             <input type="checkbox" name="send_email" defaultChecked={s.values?.send_email === "on"} className="mt-0.5 size-4 accent-navy" />
             <span>
-              <span className="font-semibold text-navy">Envoyer aussi par e-mail</span>
+              <span className="font-semibold text-heading">Envoyer aussi par e-mail</span>
               <span className="block text-xs text-muted">Sinon, le message apparaît uniquement dans les notifications de l&apos;espace membre.</span>
             </span>
           </label>

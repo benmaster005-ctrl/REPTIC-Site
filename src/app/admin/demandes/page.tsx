@@ -17,7 +17,7 @@ const statusOptions = [
 
 export default function ApplicationsPage({ searchParams }: PageProps<"/admin/demandes">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Applications searchParams={searchParams} />
     </Suspense>
   );
@@ -45,12 +45,12 @@ async function Applications({ searchParams }: Pick<PageProps<"/admin/demandes">,
         {rows.map((r) => (
           <tr key={r.id}>
             <td className="font-mono text-[0.8rem] whitespace-nowrap">
-              <Link href={`/admin/demandes/${r.id}`} className="font-semibold text-navy underline-offset-4 hover:text-cyan-dark hover:underline">
+              <Link href={`/admin/demandes/${r.id}`} className="font-semibold text-heading underline-offset-4 hover:text-cyan-dark hover:underline">
                 {r.reference}
               </Link>
             </td>
             <td>
-              <span className="block font-semibold text-navy">{r.applicant}</span>
+              <span className="block font-semibold text-heading">{r.applicant}</span>
               {r.email && <span className="text-[0.8rem] text-muted">{r.email}</span>}
             </td>
             <td className="whitespace-nowrap text-muted">{applicantTypeLabels[r.type]}</td>

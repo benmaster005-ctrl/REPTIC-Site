@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "Messages de contact" };
 
 export default function MessagesPage({ searchParams }: PageProps<"/admin/messages">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Messages searchParams={searchParams} />
     </Suspense>
   );
@@ -31,7 +31,7 @@ async function Messages({ searchParams }: Pick<PageProps<"/admin/messages">, "se
           { href: "/admin/messages", label: "À traiter", active: !handled },
           { href: "/admin/messages?traites=1", label: "Traités", active: handled },
         ].map((t) => (
-          <Link key={t.href} href={t.href} aria-current={t.active ? "page" : undefined} className={`-mb-px border-b-2 px-4 py-2.5 text-sm font-semibold ${t.active ? "border-cyan text-navy" : "border-transparent text-muted hover:text-navy"}`}>
+          <Link key={t.href} href={t.href} aria-current={t.active ? "page" : undefined} className={`-mb-px border-b-2 px-4 py-2.5 text-sm font-semibold ${t.active ? "border-cyan text-heading" : "border-transparent text-muted hover:text-heading"}`}>
             {t.label}
           </Link>
         ))}
@@ -41,10 +41,10 @@ async function Messages({ searchParams }: Pick<PageProps<"/admin/messages">, "se
           <Panel key={m.id as string}>
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <p className="font-display text-[1.1rem] font-bold text-navy">{m.subject as string}</p>
+                <p className="font-display text-[1.1rem] font-bold text-heading">{m.subject as string}</p>
                 <p className="mt-1 text-[0.88rem] text-muted">
                   {m.full_name as string} ·{" "}
-                  <a href={`mailto:${m.email}?subject=${encodeURIComponent(`Re : ${m.subject}`)}`} className="font-semibold text-navy hover:text-cyan-dark">
+                  <a href={`mailto:${m.email}?subject=${encodeURIComponent(`Re : ${m.subject}`)}`} className="font-semibold text-heading hover:text-cyan-dark">
                     {m.email as string}
                   </a>
                   {m.phone ? ` · ${m.phone}` : ""}

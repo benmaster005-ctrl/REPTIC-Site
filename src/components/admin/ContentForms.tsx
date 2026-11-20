@@ -14,7 +14,7 @@ function Toggle({ name, label, state, hint }: { name: string; label: string; sta
     <label className="flex items-start gap-3 text-sm">
       <input type="checkbox" name={name} defaultChecked={state.values?.[name] === "on"} className="mt-0.5 size-4 shrink-0 accent-navy" />
       <span>
-        <span className="font-semibold text-navy">{label}</span>
+        <span className="font-semibold text-heading">{label}</span>
         {hint && <span className="block text-xs text-muted">{hint}</span>}
       </span>
     </label>
@@ -23,7 +23,7 @@ function Toggle({ name, label, state, hint }: { name: string; label: string; sta
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="bg-white p-6 sm:p-8">
+    <section className="bg-surface p-6 sm:p-8">
       <h2 className="label mb-5">{title}</h2>
       <div className="space-y-5">{children}</div>
     </section>

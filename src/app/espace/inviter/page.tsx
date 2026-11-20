@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Inviter" };
 
 export default function InvitePage() {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Invite />
     </Suspense>
   );
@@ -33,7 +33,7 @@ async function Invite() {
       />
       <div className="mt-8 grid gap-6 xl:grid-cols-12">
         <Panel className="xl:col-span-7">
-          <h2 className="font-display text-xl font-bold text-navy">Envoyer une invitation</h2>
+          <h2 className="font-display text-xl font-bold text-heading">Envoyer une invitation</h2>
           <p className="mt-1 mb-6 text-[0.9rem] text-muted">10 invitations par jour au maximum. Une même adresse ne peut être invitée qu&apos;une fois par semaine.</p>
           {error ? <p className="text-muted">Fonction indisponible : la migration du bloc 2 n&apos;est pas encore appliquée.</p> : <InviteForm />}
         </Panel>
@@ -51,7 +51,7 @@ async function Invite() {
               {invitations.map((i) => (
                 <li key={i.id as string} className="flex items-center justify-between gap-3 border-b border-line py-3">
                   <span className="min-w-0">
-                    <span className="block truncate text-[0.92rem] font-semibold text-navy">{i.email as string}</span>
+                    <span className="block truncate text-[0.92rem] font-semibold text-heading">{i.email as string}</span>
                     <span className="font-mono text-[0.72rem] text-muted">{formatDate(i.created_at as string, { day: "2-digit", month: "2-digit", year: "numeric" })}</span>
                   </span>
                   <StatusTag tone={i.accepted_at ? "success" : "neutral"}>{i.accepted_at ? "Inscrite" : "Envoyée"}</StatusTag>

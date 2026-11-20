@@ -27,7 +27,7 @@ export function MarkdownField({ name, label, state, rows = 14, hint }: { name: s
         </label>
         <div role="tablist" className="flex border border-line text-[0.8rem] font-semibold">
           {(["edit", "preview"] as const).map((t) => (
-            <button key={t} type="button" role="tab" aria-selected={tab === t} onClick={() => setTab(t)} className={`px-3 py-1.5 ${tab === t ? "bg-navy text-white" : "text-navy hover:bg-paper"}`}>
+            <button key={t} type="button" role="tab" aria-selected={tab === t} onClick={() => setTab(t)} className={`px-3 py-1.5 ${tab === t ? "bg-navy text-white" : "text-heading hover:bg-paper"}`}>
               {t === "edit" ? "Rédiger" : "Aperçu"}
             </button>
           ))}
@@ -43,7 +43,7 @@ export function MarkdownField({ name, label, state, rows = 14, hint }: { name: s
         aria-invalid={errors?.length ? true : undefined}
       />
       {tab === "preview" && (
-        <div className="min-h-48 border border-line-strong bg-white px-5 py-4">
+        <div className="min-h-48 border border-line-strong bg-surface px-5 py-4">
           {value.trim() ? (
             <div className="prose-site">
               <Markdown remarkPlugins={[remarkGfm]} components={{ h1: ({ children }) => <h2>{children}</h2> }}>{value}</Markdown>
@@ -100,7 +100,7 @@ export function ImageField({ name, label, folder, state }: { name: string; label
           </div>
         </div>
       ) : (
-        <button type="button" onClick={() => inputRef.current?.click()} disabled={busy} className="flex aspect-[16/9] w-full max-w-md flex-col items-center justify-center gap-2 border border-dashed border-line-strong bg-paper text-sm font-semibold text-navy hover:border-navy">
+        <button type="button" onClick={() => inputRef.current?.click()} disabled={busy} className="flex aspect-[16/9] w-full max-w-md flex-col items-center justify-center gap-2 border border-dashed border-line-strong bg-paper text-sm font-semibold text-heading hover:border-navy">
           {busy ? <Loader2 aria-hidden className="size-5 animate-spin" /> : <ImagePlus aria-hidden className="size-5" />}
           {busy ? "Envoi…" : "Ajouter une image"}
           <span className="font-mono text-[0.7rem] font-normal text-muted">JPEG, PNG, WebP · 5 Mo max</span>

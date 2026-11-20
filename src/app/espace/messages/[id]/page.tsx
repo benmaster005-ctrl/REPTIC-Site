@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Message" };
 
 export default function MessagePage({ params }: PageProps<"/espace/messages/[id]">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Message params={params} />
     </Suspense>
   );

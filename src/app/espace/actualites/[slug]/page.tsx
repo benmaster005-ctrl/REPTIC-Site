@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Actualité" };
 
 export default function MemberArticlePage({ params }: PageProps<"/espace/actualites/[slug]">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Article params={params} />
     </Suspense>
   );

@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Paiement (démonstration)", robots: 
 /** Simulateur de page de paiement, actif uniquement avec PAYMENT_PROVIDER=demo. */
 export default function DemoPaymentPage({ searchParams }: PageProps<"/espace/cotisation/demo">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-72 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-72 animate-pulse bg-surface" />}>
       <Demo searchParams={searchParams} />
     </Suspense>
   );
@@ -34,15 +34,15 @@ async function Demo({ searchParams }: Pick<PageProps<"/espace/cotisation/demo">,
       <dl className="mt-6 border-t-2 border-navy text-[0.95rem]">
         <div className="flex justify-between border-b border-line py-3">
           <dt className="text-muted">Bénéficiaire</dt>
-          <dd className="font-semibold text-navy">REPTIC.CM</dd>
+          <dd className="font-semibold text-heading">REPTIC.CM</dd>
         </div>
         <div className="flex justify-between border-b border-line py-3">
           <dt className="text-muted">Objet</dt>
-          <dd className="font-semibold text-navy">Cotisation {pay.year as number}</dd>
+          <dd className="font-semibold text-heading">Cotisation {pay.year as number}</dd>
         </div>
         <div className="flex justify-between border-b border-line py-3">
           <dt className="text-muted">Montant</dt>
-          <dd className="font-semibold text-navy">{formatAmount(pay.amount as number, pay.currency as string)}</dd>
+          <dd className="font-semibold text-heading">{formatAmount(pay.amount as number, pay.currency as string)}</dd>
         </div>
       </dl>
       {pay.status === "pending" ? (

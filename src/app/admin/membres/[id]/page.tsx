@@ -18,7 +18,7 @@ const v = (x: unknown) => (x == null ? "" : String(x));
 
 export default function MemberDetailPage({ params }: PageProps<"/admin/membres/[id]">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Detail params={params} />
     </Suspense>
   );
@@ -90,7 +90,7 @@ async function Detail({ params }: Pick<PageProps<"/admin/membres/[id]">, "params
             <ul className="mt-4 border-t-2 border-navy">
               {memberships.map((ms) => (
                 <li key={v(ms.id)} className="border-b border-line py-3 text-[0.9rem]">
-                  <p className="font-semibold text-navy">
+                  <p className="font-semibold text-heading">
                     {formatDate(v(ms.starts_on), { day: "2-digit", month: "2-digit", year: "numeric" })} → {ms.ends_on ? formatDate(v(ms.ends_on), { day: "2-digit", month: "2-digit", year: "numeric" }) : "sans échéance"}
                   </p>
                   <p className="font-mono text-[0.72rem] text-muted">
@@ -111,7 +111,7 @@ async function Detail({ params }: Pick<PageProps<"/admin/membres/[id]">, "params
             <ul className="mt-4 space-y-2 text-[0.9rem]">
               {m.applications.map((a) => (
                 <li key={v(a.id)}>
-                  <Link href={`/admin/demandes/${v(a.id)}`} className="font-mono font-semibold text-navy underline-offset-4 hover:underline">
+                  <Link href={`/admin/demandes/${v(a.id)}`} className="font-mono font-semibold text-heading underline-offset-4 hover:underline">
                     {v(a.reference)}
                   </Link>{" "}
                   <span className="text-muted">· {statusLabels[v(a.status) as ApplicationStatus]}</span>

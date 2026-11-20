@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Paiement de la cotisation" };
 /** Retour du membre depuis la page de paiement : le statut est revérifié auprès du prestataire. */
 export default function ReturnPage({ searchParams }: PageProps<"/espace/cotisation/retour">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-72 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-72 animate-pulse bg-surface" />}>
       <Result searchParams={searchParams} />
     </Suspense>
   );

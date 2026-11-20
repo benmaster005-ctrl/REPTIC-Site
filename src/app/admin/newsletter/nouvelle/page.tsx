@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "Nouvelle lettre" };
 
 export default function NewCampaignPage() {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <NewCampaign />
     </Suspense>
   );
@@ -26,7 +26,7 @@ async function NewCampaign() {
         <ArrowLeft aria-hidden className="size-4" /> Lettre d&apos;information
       </Link>
       <AdminHeader label="Relations" title="Nouvelle lettre" description="Commencez par un brouillon : vous pourrez le prévisualiser et vous l'envoyer avant la diffusion." />
-      <Panel className="mt-8">
+      <Panel className="mt-4">
         <CampaignForm initial={{ intro: "Chers membres et partenaires,\n\n" }} news={news} selected={news.slice(0, 3).map((n) => n.id)} />
       </Panel>
     </>

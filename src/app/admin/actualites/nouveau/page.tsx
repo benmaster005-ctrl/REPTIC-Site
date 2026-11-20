@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "Nouvelle actualité" };
 
 export default function NewNewsPage() {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <NewNews />
     </Suspense>
   );

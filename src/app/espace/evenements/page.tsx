@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "Événements" };
 
 export default function MemberEventsPage({ searchParams }: PageProps<"/espace/evenements">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <MemberEvents searchParams={searchParams} />
     </Suspense>
   );
@@ -30,7 +30,7 @@ async function MemberEvents({ searchParams }: Pick<PageProps<"/espace/evenements
       {params.annule === "1" && <SpaceFlash>Votre inscription est annulée.</SpaceFlash>}
       {params.erreur && <SpaceFlash tone="error">L&apos;inscription n&apos;a pas pu être enregistrée (inscriptions closes ou complètes).</SpaceFlash>}
 
-      <Panel className="mt-8 p-0 sm:p-0">
+      <Panel className="mt-4 p-0 sm:p-0">
         {upcoming.length ? (
           <ul>
             {upcoming.map((e) => {
@@ -39,7 +39,7 @@ async function MemberEvents({ searchParams }: Pick<PageProps<"/espace/evenements
               return (
                 <li key={e.id} id={`evenement-${e.id}`} className="grid scroll-mt-8 gap-5 border-b border-line px-6 py-6 last:border-b-0 sm:grid-cols-[5rem_1fr_auto] sm:items-center sm:px-8">
                   <p className="leading-none">
-                    <span className="block font-display text-[2.2rem] font-extrabold tracking-[-0.025em] text-navy">{formatDate(e.startsAt, { day: "2-digit" })}</span>
+                    <span className="block font-display text-[2.2rem] font-extrabold tracking-[-0.025em] text-heading">{formatDate(e.startsAt, { day: "2-digit" })}</span>
                     <span className="mt-1 block font-mono text-[0.72rem] text-muted uppercase">{formatDate(e.startsAt, { month: "short", year: "numeric" })}</span>
                   </p>
                   <div>
@@ -47,7 +47,7 @@ async function MemberEvents({ searchParams }: Pick<PageProps<"/espace/evenements
                       {e.membersOnly && <span className="label text-cyan-dark">Réservé aux membres</span>}
                       {reg && <StatusTag tone={reg.status === "waitlisted" ? "warning" : "success"}>{reg.status === "waitlisted" ? "Liste d'attente" : "Inscrit"}</StatusTag>}
                     </p>
-                    <p className="mt-1 font-display text-[1.15rem] font-bold text-navy">
+                    <p className="mt-1 font-display text-[1.15rem] font-bold text-heading">
                       <Link href={`/evenements/${e.slug}`} className="hover:text-cyan-dark">
                         {e.title}
                       </Link>

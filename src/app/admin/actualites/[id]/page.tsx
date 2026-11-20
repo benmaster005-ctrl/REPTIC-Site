@@ -15,7 +15,7 @@ export const metadata: Metadata = { title: "Modifier une actualité" };
 
 export default function EditNewsPage({ params, searchParams }: PageProps<"/admin/actualites/[id]">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <EditNews params={params} searchParams={searchParams} />
     </Suspense>
   );

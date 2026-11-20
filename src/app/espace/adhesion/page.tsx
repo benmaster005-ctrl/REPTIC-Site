@@ -36,7 +36,7 @@ export const metadata: Metadata = { title: "Ma demande d'adhésion" };
 
 export default function ApplicationPage({ searchParams }: PageProps<"/espace/adhesion">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <ApplicationFlow searchParams={searchParams} />
     </Suspense>
   );
@@ -84,7 +84,7 @@ async function ApplicationFlow({ searchParams }: Pick<PageProps<"/espace/adhesio
         action={<StatusTag tone={applicationTone(app.status)}>{statusLabels[app.status]}</StatusTag>}
       />
       {app.status === "additional_info" && (
-        <div className="mt-6 border-l-[3px] border-amber-500 bg-white px-5 py-4">
+        <div className="mt-6 border-l-[3px] border-amber-500 bg-surface px-5 py-4">
           <p className="label text-amber-700">Complément demandé par le secrétariat</p>
           <p className="mt-2 text-ink">{app.decisionReason ?? "Des informations ou des pièces supplémentaires sont nécessaires."}</p>
         </div>
@@ -107,8 +107,8 @@ async function ApplicationFlow({ searchParams }: Pick<PageProps<"/espace/adhesio
     return (
       <>
         {header}
-        <Panel className="mt-8">
-          <h2 className="font-display text-xl font-bold text-navy">Informations et coordonnées</h2>
+        <Panel className="mt-4">
+          <h2 className="font-display text-xl font-bold text-heading">Informations et coordonnées</h2>
           <p className="mt-1 mb-8 text-[0.92rem] text-muted">Les champs marqués d&apos;un astérisque sont obligatoires.</p>
           <ApplicationInfoForm applicationId={app.id} type={app.applicantType} initial={initial} />
         </Panel>
@@ -120,8 +120,8 @@ async function ApplicationFlow({ searchParams }: Pick<PageProps<"/espace/adhesio
     return (
       <>
         {header}
-        <Panel className="mt-8">
-          <h2 className="font-display text-xl font-bold text-navy">Justificatifs</h2>
+        <Panel className="mt-4">
+          <h2 className="font-display text-xl font-bold text-heading">Justificatifs</h2>
           <p className="mt-1 text-[0.92rem] text-muted">PDF, JPEG, PNG ou WebP, 10 Mo maximum par fichier. Les pièces sont stockées de façon privée et ne sont visibles que par vous et les gestionnaires.</p>
           <DocumentsList app={app} userId={user.id} docs={docs} required={required} />
           <div className="mt-8 flex flex-col-reverse gap-3 border-t border-line pt-6 sm:flex-row sm:justify-between">
@@ -147,8 +147,8 @@ async function ApplicationFlow({ searchParams }: Pick<PageProps<"/espace/adhesio
   return (
     <>
       {header}
-      <Panel className="mt-8">
-        <h2 className="font-display text-xl font-bold text-navy">Vérification</h2>
+      <Panel className="mt-4">
+        <h2 className="font-display text-xl font-bold text-heading">Vérification</h2>
         <p className="mt-1 text-[0.92rem] text-muted">Relisez votre dossier avant de l&apos;envoyer. Après l&apos;envoi, il ne sera plus modifiable, sauf si le secrétariat vous demande un complément.</p>
         <Summary app={app} docs={docs} required={required} editable />
         <div className="mt-10">
@@ -184,16 +184,16 @@ function TypeStep({ current, error, header }: { current: Application | null; err
               : "La demande n'a pas pu être créée. Réessayez."}
         </SpaceFlash>
       )}
-      <Panel className="mt-8">
+      <Panel className="mt-4">
         <form action={chooseApplicantType}>
           <fieldset>
-            <legend className="font-display text-xl font-bold text-navy">Vous adhérez en tant que…</legend>
-            <div className="mt-6 grid gap-px bg-line-strong sm:grid-cols-2">
+            <legend className="font-display text-xl font-bold text-heading">Vous adhérez en tant que…</legend>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2 [&>*]:rounded-xl">
               {options.map(({ value, icon: Icon, title, text }) => (
-                <label key={value} className="group relative cursor-pointer bg-white p-7 transition-colors has-[:checked]:bg-navy has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-cyan">
+                <label key={value} className="group relative cursor-pointer bg-surface p-7 transition-colors has-[:checked]:bg-navy has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-cyan">
                   <input type="radio" name="applicant_type" value={value} defaultChecked={current?.applicantType === value} required className="peer sr-only" />
-                  <Icon aria-hidden className="size-7 text-navy transition-colors group-has-[:checked]:text-cyan" />
-                  <span className="mt-5 block font-display text-[1.35rem] font-bold text-navy group-has-[:checked]:text-white">{title}</span>
+                  <Icon aria-hidden className="size-7 text-heading transition-colors group-has-[:checked]:text-cyan" />
+                  <span className="mt-5 block font-display text-[1.35rem] font-bold text-heading group-has-[:checked]:text-white">{title}</span>
                   <span className="mt-1.5 block text-[0.92rem] text-muted group-has-[:checked]:text-white/70">{text}</span>
                   <span aria-hidden className="absolute top-6 right-6 size-4 rounded-full border-2 border-line-strong transition-colors group-has-[:checked]:border-cyan group-has-[:checked]:bg-cyan" />
                 </label>
@@ -226,7 +226,7 @@ function DocumentsList({ app, userId, docs, required }: { app: Application; user
           <li key={r.key} className="grid gap-4 border-t border-line py-5 sm:grid-cols-[1fr_auto] sm:items-start">
             <div className="min-w-0">
               <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                <span className="font-semibold text-navy">{r.label}</span>
+                <span className="font-semibold text-heading">{r.label}</span>
                 {r.isRequired ? (
                   doc ? <StatusTag tone="success">Déposée</StatusTag> : <StatusTag tone="warning">Obligatoire</StatusTag>
                 ) : (
@@ -263,12 +263,12 @@ function Summary({ app, docs, required, editable }: { app: Application; docs: Ap
     .map((k) => [k, app.payload[k]] as const)
     .filter(([, v]) => v !== undefined && v !== null && v !== "");
   return (
-    <div className="mt-8 grid gap-10 xl:grid-cols-5">
+    <div className="mt-3 grid gap-3 xl:grid-cols-5">
       <div className="xl:col-span-3">
         <div className="flex items-center justify-between">
           <h3 className="label">Informations</h3>
           {editable && (
-            <Link href="/espace/adhesion?etape=informations" className="text-sm font-semibold text-navy hover:text-cyan-dark">
+            <Link href="/espace/adhesion?etape=informations" className="text-sm font-semibold text-heading hover:text-cyan-dark">
               Modifier
             </Link>
           )}
@@ -276,12 +276,12 @@ function Summary({ app, docs, required, editable }: { app: Application; docs: Ap
         <dl className="mt-3 border-t-2 border-navy">
           <div className="grid grid-cols-[minmax(8rem,40%)_1fr] gap-4 border-b border-line py-3 text-[0.92rem]">
             <dt className="text-muted">Type</dt>
-            <dd className="font-semibold text-navy">{applicantTypeLabels[app.applicantType]}</dd>
+            <dd className="font-semibold text-heading">{applicantTypeLabels[app.applicantType]}</dd>
           </div>
           {entries.map(([k, v]) => (
             <div key={k} className="grid grid-cols-[minmax(8rem,40%)_1fr] gap-4 border-b border-line py-3 text-[0.92rem]">
               <dt className="text-muted">{fieldLabels[k] ?? k}</dt>
-              <dd className="font-semibold break-words whitespace-pre-line text-navy">{k === "birth_date" ? formatDate(String(v)) : String(v)}</dd>
+              <dd className="font-semibold break-words whitespace-pre-line text-heading">{k === "birth_date" ? formatDate(String(v)) : String(v)}</dd>
             </div>
           ))}
         </dl>
@@ -290,7 +290,7 @@ function Summary({ app, docs, required, editable }: { app: Application; docs: Ap
         <div className="flex items-center justify-between">
           <h3 className="label">Pièces jointes</h3>
           {editable && (
-            <Link href="/espace/adhesion?etape=pieces" className="text-sm font-semibold text-navy hover:text-cyan-dark">
+            <Link href="/espace/adhesion?etape=pieces" className="text-sm font-semibold text-heading hover:text-cyan-dark">
               Modifier
             </Link>
           )}
@@ -329,10 +329,10 @@ async function Tracking({ app, flash }: { app: Application; flash: boolean }) {
         </SpaceFlash>
       )}
       <Stepper current="suivi" reachable={[]} />
-      <div className="mt-8 grid gap-6 xl:grid-cols-5">
+      <div className="mt-3 grid gap-3 xl:grid-cols-5">
         <Panel className="xl:col-span-3">
           <p className="label">État actuel</p>
-          <p className="mt-3 font-display text-[1.5rem] leading-tight font-bold text-navy">{statusDescriptions[app.status]}</p>
+          <p className="mt-3 font-display text-[1.5rem] leading-tight font-bold text-heading">{statusDescriptions[app.status]}</p>
           {app.status === "rejected" && app.decisionReason && <p className="mt-4 border-l-[3px] border-red-600 pl-4 text-ink">{app.decisionReason}</p>}
           {app.status === "rejected" && (
             <Link href="/espace/adhesion?etape=type" className="btn-secondary mt-6">
@@ -346,8 +346,8 @@ async function Tracking({ app, flash }: { app: Application; flash: boolean }) {
           <ol className="relative mt-5 ml-1.5 border-l-2 border-line">
             {history.map((h, i) => (
               <li key={h.id} className="relative pb-6 pl-6 last:pb-0">
-                <span aria-hidden className={`absolute top-1 -left-[7px] size-3 rounded-full border-2 bg-white ${i === 0 ? "border-cyan" : "border-line-strong"}`} />
-                <p className={`text-[0.92rem] font-semibold ${i === 0 ? "text-navy" : "text-muted"}`}>{statusLabels[h.toStatus]}</p>
+                <span aria-hidden className={`absolute top-1 -left-[7px] size-3 rounded-full border-2 bg-surface ${i === 0 ? "border-cyan" : "border-line-strong"}`} />
+                <p className={`text-[0.92rem] font-semibold ${i === 0 ? "text-heading" : "text-muted"}`}>{statusLabels[h.toStatus]}</p>
                 <p className="font-mono text-[0.72rem] text-muted">{formatDateTime(h.createdAt)}</p>
                 {h.comment && <p className="mt-1 text-[0.85rem] text-ink">{h.comment}</p>}
               </li>
@@ -355,7 +355,7 @@ async function Tracking({ app, flash }: { app: Application; flash: boolean }) {
           </ol>
         </Panel>
       </div>
-      <Panel className="mt-6">
+      <Panel className="mt-4">
         <p className="label">Dossier envoyé</p>
         <Summary app={app} docs={docs} required={required} />
       </Panel>
@@ -381,12 +381,12 @@ async function MembershipSummary({ userId, app }: { userId: string; app: Applica
   return (
     <>
       <SpaceHeader label="Mon adhésion" title={member?.organizationName ?? "Votre adhésion au réseau"} action={<StatusTag tone="success">Membre</StatusTag>} />
-      <Panel className="mt-8">
+      <Panel className="mt-4">
         <dl className="grid border-t-2 border-navy sm:grid-cols-2 lg:grid-cols-3">
           {facts.map((f) => (
             <div key={f.label} className="border-b border-line py-5 sm:pr-6">
               <dt className="label">{f.label}</dt>
-              <dd className="mt-1.5 font-semibold text-navy">{f.value}</dd>
+              <dd className="mt-1.5 font-semibold text-heading">{f.value}</dd>
             </div>
           ))}
         </dl>

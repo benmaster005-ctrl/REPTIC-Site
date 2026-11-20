@@ -28,7 +28,7 @@ export function ApplicationDecisions({ applicationId, status, missingCount, cate
   const hidden = { application_id: applicationId };
 
   return (
-    <section className="bg-white p-6 sm:p-8">
+    <section className="bg-surface p-6 sm:p-8">
       <h2 className="label">Décision</h2>
 
       {!open ? (
@@ -63,7 +63,7 @@ export function ApplicationDecisions({ applicationId, status, missingCount, cate
                 role="tab"
                 aria-selected={tab === key}
                 onClick={() => setTab(key)}
-                className={`px-2 py-2.5 text-[0.82rem] font-semibold transition-colors ${tab === key ? "bg-navy text-white" : "text-navy hover:bg-paper"}`}
+                className={`px-2 py-2.5 text-[0.82rem] font-semibold transition-colors ${tab === key ? "bg-navy text-white" : "text-heading hover:bg-paper"}`}
               >
                 {label}
               </button>

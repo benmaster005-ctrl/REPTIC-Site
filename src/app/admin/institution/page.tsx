@@ -13,7 +13,7 @@ const v = (x: unknown) => (x == null ? "" : String(x));
 
 export default function InstitutionPage() {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Institution />
     </Suspense>
   );
@@ -26,8 +26,8 @@ async function Institution() {
     <>
       <AdminHeader label="Contenus" title="Bureau exécutif et chiffres clés" description="Publiés sur les pages Bureau exécutif et Accueil. Ne publiez que les informations autorisées par les personnes concernées." />
 
-      <Panel className="mt-8">
-        <h2 className="font-display text-xl font-bold text-navy">Bureau exécutif</h2>
+      <Panel className="mt-4">
+        <h2 className="font-display text-xl font-bold text-heading">Bureau exécutif</h2>
         <ul className="mt-6 space-y-8">
           {governance.map((g) => (
             <li key={v(g.id)} className="border-t-2 border-navy pt-6">
@@ -50,8 +50,8 @@ async function Institution() {
         </div>
       </Panel>
 
-      <Panel className="mt-6">
-        <h2 className="font-display text-xl font-bold text-navy">Chiffres clés</h2>
+      <Panel className="mt-4">
+        <h2 className="font-display text-xl font-bold text-heading">Chiffres clés</h2>
         <p className="mt-1 text-[0.92rem] text-muted">Affichés sur l&apos;accueil. Un nombre suivi de « + » est animé à l&apos;affichage.</p>
         <ul className="mt-6 space-y-4">
           {figures.map((f) => (

@@ -19,7 +19,7 @@ const publicPath: Record<string, string> = {
 
 export default function PagesAdminPage() {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <PagesAdmin />
     </Suspense>
   );
@@ -35,7 +35,7 @@ async function PagesAdmin() {
         {pages.map((p) => (
           <tr key={p.id as string}>
             <td>
-              <Link href={`/admin/pages/${p.id}`} className="font-semibold text-navy underline-offset-4 hover:text-cyan-dark hover:underline">
+              <Link href={`/admin/pages/${p.id}`} className="font-semibold text-heading underline-offset-4 hover:text-cyan-dark hover:underline">
                 {p.title as string}
               </Link>
             </td>

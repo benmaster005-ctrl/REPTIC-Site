@@ -30,7 +30,7 @@ async function Dashboard({ searchParams }: Pick<PageProps<"/espace">, "searchPar
       <SpaceHeader label="Tableau de bord" title={`Bonjour ${displayName(user)}`} description={isMember ? "Retrouvez votre adhésion, les annonces et les prochaines échéances du réseau." : "Votre compte candidat vous permet de constituer et de suivre votre demande d'adhésion."} />
       {mdp === "ok" && <SpaceFlash>Votre mot de passe a été modifié.</SpaceFlash>}
 
-      <div className="mt-8 grid gap-6 xl:grid-cols-5">
+      <div className="mt-3 grid gap-3 xl:grid-cols-5">
         {/* Adhésion */}
         <Panel className="xl:col-span-3">
           <p className="label">{isMember ? "Mon adhésion" : "Ma demande"}</p>
@@ -40,7 +40,7 @@ async function Dashboard({ searchParams }: Pick<PageProps<"/espace">, "searchPar
                 <StatusTag tone={applicationTone(application.status)}>{statusLabels[application.status]}</StatusTag>
                 <span className="font-mono text-[0.75rem] text-muted">{application.reference}</span>
               </div>
-              <p className="mt-3 font-display text-[1.4rem] leading-tight font-bold text-navy">{statusDescriptions[application.status]}</p>
+              <p className="mt-3 font-display text-[1.4rem] leading-tight font-bold text-heading">{statusDescriptions[application.status]}</p>
               {application.status === "additional_info" && application.decisionReason && (
                 <p className="mt-3 border-l-[3px] border-amber-500 pl-4 text-[0.95rem] text-ink">{application.decisionReason}</p>
               )}
@@ -51,7 +51,7 @@ async function Dashboard({ searchParams }: Pick<PageProps<"/espace">, "searchPar
             </>
           ) : (
             <>
-              <p className="mt-3 font-display text-[1.4rem] leading-tight font-bold text-navy">Vous n&apos;avez pas encore commencé votre demande.</p>
+              <p className="mt-3 font-display text-[1.4rem] leading-tight font-bold text-heading">Vous n&apos;avez pas encore commencé votre demande.</p>
               <p className="mt-2 text-[0.95rem] text-muted">Comptez une quinzaine de minutes, justificatifs prêts.</p>
               <Link href="/espace/adhesion" className="btn-primary mt-6">
                 Commencer ma demande <ArrowRight aria-hidden className="size-4" />
@@ -64,7 +64,7 @@ async function Dashboard({ searchParams }: Pick<PageProps<"/espace">, "searchPar
         <Panel className="xl:col-span-2">
           <div className="flex items-center justify-between">
             <p className="label">Notifications</p>
-            <Link href="/espace/notifications" className="text-sm font-semibold text-navy hover:text-cyan-dark">
+            <Link href="/espace/notifications" className="text-sm font-semibold text-heading hover:text-cyan-dark">
               Tout voir
             </Link>
           </div>
@@ -72,7 +72,7 @@ async function Dashboard({ searchParams }: Pick<PageProps<"/espace">, "searchPar
             <ul className="mt-4">
               {notifications.map((n) => (
                 <li key={n.id} className="border-t border-line py-3 first:border-t-0">
-                  <p className={`text-[0.92rem] ${n.readAt ? "text-muted" : "font-semibold text-navy"}`}>{n.title}</p>
+                  <p className={`text-[0.92rem] ${n.readAt ? "text-muted" : "font-semibold text-heading"}`}>{n.title}</p>
                   <p className="mt-0.5 font-mono text-[0.72rem] text-muted">{formatDate(n.createdAt, { day: "2-digit", month: "2-digit", year: "numeric" })}</p>
                 </li>
               ))}
@@ -87,7 +87,7 @@ async function Dashboard({ searchParams }: Pick<PageProps<"/espace">, "searchPar
             <Panel className="xl:col-span-3">
               <div className="flex items-center justify-between">
                 <p className="label">Annonces</p>
-                <Link href="/espace/actualites" className="text-sm font-semibold text-navy hover:text-cyan-dark">
+                <Link href="/espace/actualites" className="text-sm font-semibold text-heading hover:text-cyan-dark">
                   Toutes les actualités
                 </Link>
               </div>
@@ -98,7 +98,7 @@ async function Dashboard({ searchParams }: Pick<PageProps<"/espace">, "searchPar
                       {formatDate(n.publishedAt, { day: "2-digit", month: "2-digit", year: "numeric" })}
                       {n.membersOnly && <span className="ml-3 text-cyan-dark">Réservé aux membres</span>}
                     </p>
-                    <Link href={`/espace/actualites/${n.slug}`} className="mt-1 block font-semibold text-navy hover:text-cyan-dark">
+                    <Link href={`/espace/actualites/${n.slug}`} className="mt-1 block font-semibold text-heading hover:text-cyan-dark">
                       {n.title}
                     </Link>
                   </li>
@@ -109,19 +109,19 @@ async function Dashboard({ searchParams }: Pick<PageProps<"/espace">, "searchPar
             <Panel className="xl:col-span-2">
               <div className="flex items-center justify-between">
                 <p className="label">Prochaines échéances</p>
-                <Link href="/espace/evenements" className="text-sm font-semibold text-navy hover:text-cyan-dark">
+                <Link href="/espace/evenements" className="text-sm font-semibold text-heading hover:text-cyan-dark">
                   Agenda
                 </Link>
               </div>
               <ul className="mt-4">
                 {upcoming.map((e) => (
                   <li key={e.id} className="grid grid-cols-[3.5rem_1fr] gap-3 border-t border-line py-3 first:border-t-0">
-                    <span className="font-display text-2xl leading-none font-extrabold text-navy">
+                    <span className="font-display text-2xl leading-none font-extrabold text-heading">
                       {formatDate(e.startsAt, { day: "2-digit" })}
                       <span className="mt-1 block font-mono text-[0.68rem] font-normal text-muted uppercase">{formatDate(e.startsAt, { month: "short" })}</span>
                     </span>
                     <span>
-                      <span className="block text-[0.92rem] font-semibold text-navy">{e.title}</span>
+                      <span className="block text-[0.92rem] font-semibold text-heading">{e.title}</span>
                       {e.registration && e.registration.status !== "cancelled" && <span className="mt-1 block font-mono text-[0.7rem] text-cyan-dark">Inscrit</span>}
                     </span>
                   </li>
@@ -141,8 +141,8 @@ function DashboardSkeleton() {
     <div aria-busy className="space-y-6">
       <div className="h-24 animate-pulse bg-white/60" />
       <div className="grid gap-6 xl:grid-cols-5">
-        <div className="h-56 animate-pulse bg-white xl:col-span-3" />
-        <div className="h-56 animate-pulse bg-white xl:col-span-2" />
+        <div className="h-56 animate-pulse bg-surface xl:col-span-3" />
+        <div className="h-56 animate-pulse bg-surface xl:col-span-2" />
       </div>
     </div>
   );

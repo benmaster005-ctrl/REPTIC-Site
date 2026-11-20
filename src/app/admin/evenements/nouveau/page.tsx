@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "Nouvel événement" };
 
 export default function NewEventPage() {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <NewEvent />
     </Suspense>
   );

@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "Événements" };
 
 export default function EventsAdminPage({ searchParams }: PageProps<"/admin/evenements">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <EventsAdmin searchParams={searchParams} />
     </Suspense>
   );
@@ -43,7 +43,7 @@ async function EventsAdmin({ searchParams }: Pick<PageProps<"/admin/evenements">
           return (
             <tr key={e.id as string}>
               <td>
-                <Link href={`/admin/evenements/${e.id}`} className="font-semibold text-navy underline-offset-4 hover:text-cyan-dark hover:underline">
+                <Link href={`/admin/evenements/${e.id}`} className="font-semibold text-heading underline-offset-4 hover:text-cyan-dark hover:underline">
                   {e.title as string}
                 </Link>
                 {e.city ? <span className="block text-[0.8rem] text-muted">{e.city as string}</span> : null}

@@ -24,7 +24,7 @@ export function Stepper({ current, reachable }: { current: WizardStep; reachable
               <span className="relative flex w-full items-center">
                 <span
                   className={`relative z-10 grid size-7 shrink-0 place-items-center rounded-full border-2 font-mono text-[0.72rem] transition-colors duration-500 ${
-                    active ? "border-navy bg-navy text-white" : done ? "border-cyan bg-cyan text-white" : "border-line-strong bg-white text-muted"
+                    active ? "border-navy bg-navy text-white" : done ? "border-cyan bg-cyan text-white" : "border-line-strong bg-surface text-muted"
                   }`}
                 >
                   {done ? <Check aria-hidden className="size-3.5" strokeWidth={3} /> : i + 1}
@@ -35,7 +35,7 @@ export function Stepper({ current, reachable }: { current: WizardStep; reachable
                   </span>
                 )}
               </span>
-              <span className={`hidden pr-2 text-[0.8rem] leading-tight font-semibold sm:block ${active ? "text-navy" : done ? "text-navy/80" : "text-muted"}`}>{s.label}</span>
+              <span className={`hidden pr-2 text-[0.8rem] leading-tight font-semibold sm:block ${active ? "text-heading" : done ? "text-navy/80" : "text-muted"}`}>{s.label}</span>
             </span>
           );
           return (
@@ -51,7 +51,7 @@ export function Stepper({ current, reachable }: { current: WizardStep; reachable
           );
         })}
       </ol>
-      <p className="mt-4 text-sm font-semibold text-navy sm:hidden">
+      <p className="mt-4 text-sm font-semibold text-heading sm:hidden">
         Étape {currentIndex + 1} sur {wizardSteps.length} : {wizardSteps[currentIndex]?.label}
       </p>
     </nav>

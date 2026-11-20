@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Documents" };
 
 export default function DocumentsAdminPage() {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <DocumentsAdmin />
     </Suspense>
   );
@@ -25,7 +25,7 @@ async function DocumentsAdmin() {
   return (
     <>
       <AdminHeader label="Contenus" title="Documents de l'association" description="Statuts, règlement, comptes rendus… Les documents « membres » sont dans l'espace membre ; les documents « publics » apparaissent sur la page Ressources du site. Téléchargement par lien temporaire." />
-      <Panel className="mt-8">
+      <Panel className="mt-4">
         <h2 className="label mb-5">Publier un document</h2>
         <AssociationDocumentUpload />
       </Panel>
@@ -33,7 +33,7 @@ async function DocumentsAdmin() {
         {docs.map((d) => (
           <tr key={d.id as string}>
             <td>
-              <span className="block font-semibold text-navy">{(d.title as string) ?? (d.file_name as string)}</span>
+              <span className="block font-semibold text-heading">{(d.title as string) ?? (d.file_name as string)}</span>
               <span className="text-[0.8rem] text-muted">{d.file_name as string}</span>
             </td>
             <td className="whitespace-nowrap text-muted">{d.visibility === "members" ? "Membres" : "Public"}</td>

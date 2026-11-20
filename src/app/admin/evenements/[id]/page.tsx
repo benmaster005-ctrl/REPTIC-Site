@@ -19,7 +19,7 @@ const regLabels: Record<string, string> = { registered: "Inscrit", waitlisted: "
 
 export default function EditEventPage({ params, searchParams }: PageProps<"/admin/evenements/[id]">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <EditEvent params={params} searchParams={searchParams} />
     </Suspense>
   );
@@ -63,9 +63,9 @@ async function EditEvent({ params, searchParams }: Pick<PageProps<"/admin/evenem
         <EventForm id={id} initial={initial} categories={categories} />
       </div>
 
-      <Panel className="mt-6">
+      <Panel className="mt-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <h2 className="font-display text-xl font-bold text-navy">Inscriptions</h2>
+          <h2 className="font-display text-xl font-bold text-heading">Inscriptions</h2>
           <p className="font-mono text-[0.8rem] text-muted">
             {active} inscrit{active > 1 ? "s" : ""}
             {e.capacity ? ` sur ${v(e.capacity)} places` : ""}
@@ -74,7 +74,7 @@ async function EditEvent({ params, searchParams }: Pick<PageProps<"/admin/evenem
         <DataTable head={["Participant", "Contact", "Statut", "Date", ""]} empty={data.registrations.length ? undefined : "Aucune inscription."}>
           {data.registrations.map((r) => (
             <tr key={v(r.id)}>
-              <td className="font-semibold text-navy">
+              <td className="font-semibold text-heading">
                 {v(r.full_name)}
                 {r.organization ? <span className="block text-[0.8rem] font-normal text-muted">{v(r.organization)}</span> : null}
               </td>
@@ -88,12 +88,12 @@ async function EditEvent({ params, searchParams }: Pick<PageProps<"/admin/evenem
                 <form action={setRegistrationStatus} className="flex gap-2">
                   <input type="hidden" name="registration_id" value={v(r.id)} />
                   {r.status !== "attended" && r.status !== "cancelled" && (
-                    <button type="submit" name="status" value="attended" className="text-[0.8rem] font-semibold text-navy hover:text-cyan-dark">
+                    <button type="submit" name="status" value="attended" className="text-[0.8rem] font-semibold text-heading hover:text-cyan-dark">
                       Présent
                     </button>
                   )}
                   {r.status === "waitlisted" && (
-                    <button type="submit" name="status" value="registered" className="text-[0.8rem] font-semibold text-navy hover:text-cyan-dark">
+                    <button type="submit" name="status" value="registered" className="text-[0.8rem] font-semibold text-heading hover:text-cyan-dark">
                       Confirmer
                     </button>
                   )}

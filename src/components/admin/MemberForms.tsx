@@ -12,8 +12,8 @@ export function MemberEditForms({ memberId, member, organization }: {
   return (
     <>
       {organization && (
-        <section className="bg-white p-6 sm:p-8">
-          <h2 className="font-display text-xl font-bold text-navy">Entreprise</h2>
+        <section className="bg-surface p-6 sm:p-8">
+          <h2 className="font-display text-xl font-bold text-heading">Entreprise</h2>
           <div className="mt-6">
             <ActionForm action={updateOrganization} hidden={{ organization_id: organization.id }} initial={organization.values} submitLabel="Enregistrer l'entreprise">
               {(s) => (
@@ -36,8 +36,8 @@ export function MemberEditForms({ memberId, member, organization }: {
           </div>
         </section>
       )}
-      <section className="bg-white p-6 sm:p-8">
-        <h2 className="font-display text-xl font-bold text-navy">{organization ? "Contact référent" : "Fiche membre"}</h2>
+      <section className="bg-surface p-6 sm:p-8">
+        <h2 className="font-display text-xl font-bold text-heading">{organization ? "Contact référent" : "Fiche membre"}</h2>
         <div className="mt-6">
           <ActionForm action={updateMember} hidden={{ member_id: memberId }} initial={member} submitLabel="Enregistrer la fiche">
             {(s) => (
@@ -76,7 +76,7 @@ export function RenewForm({ memberId, lastEnd }: { memberId: string; lastEnd: st
   const end = `${start.slice(0, 4)}-12-31`;
   return (
     <details className="mt-5 border-t border-line pt-4">
-      <summary className="cursor-pointer text-sm font-semibold text-navy hover:text-cyan-dark">Renouveler / nouvelle période</summary>
+      <summary className="cursor-pointer text-sm font-semibold text-heading hover:text-cyan-dark">Renouveler / nouvelle période</summary>
       <div className="mt-4">
         <ActionForm action={renewMembership} hidden={{ member_id: memberId }} initial={{ starts_on: start, ends_on: end }} submitLabel="Créer la période" tone="secondary">
           {(s) => (
@@ -97,7 +97,7 @@ export function MemberStatusActions({ memberId, status }: { memberId: string; st
   if (status === "active") actions.push({ status: "suspended", label: "Suspendre", tone: "secondary", confirm: "Suspendre ce membre ? Il perd l'accès aux contenus réservés." });
   if (status !== "archived") actions.push({ status: "archived", label: "Archiver", tone: "danger", confirm: "Archiver ce membre ? Il est retiré de l'annuaire et son adhésion est close." });
   return (
-    <section className="bg-white p-6 sm:p-8">
+    <section className="bg-surface p-6 sm:p-8">
       <h2 className="label">Statut du compte</h2>
       <div className="mt-4 space-y-4">
         {actions.map((a) => (

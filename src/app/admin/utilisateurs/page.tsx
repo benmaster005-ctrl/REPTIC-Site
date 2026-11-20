@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Utilisateurs et rôles" };
 
 export default function UsersPage({ searchParams }: PageProps<"/admin/utilisateurs">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Users searchParams={searchParams} />
     </Suspense>
   );
@@ -32,12 +32,12 @@ async function Users({ searchParams }: Pick<PageProps<"/admin/utilisateurs">, "s
   return (
     <>
       <AdminHeader label="Paramètres" title="Utilisateurs et rôles" description="Pour donner accès à l'administration, la personne crée d'abord son compte sur le site (Créer un compte), puis vous lui attribuez un rôle ici." />
-      <Panel className="mt-8">
+      <Panel className="mt-4">
         <h2 className="label">Rôles d&apos;équipe (moindre privilège)</h2>
         <dl className="mt-4 grid gap-4 sm:grid-cols-3">
           {roleHelp.map(([r, d]) => (
             <div key={r} className="border-l-2 border-cyan pl-4">
-              <dt className="font-semibold text-navy">{r}</dt>
+              <dt className="font-semibold text-heading">{r}</dt>
               <dd className="mt-1 text-[0.85rem] text-muted">{d}</dd>
             </div>
           ))}
@@ -55,7 +55,7 @@ async function Users({ searchParams }: Pick<PageProps<"/admin/utilisateurs">, "s
           return (
             <tr key={u.id as string}>
               <td>
-                <span className="block font-semibold text-navy">{[u.first_name, u.last_name].filter(Boolean).join(" ") || "—"}</span>
+                <span className="block font-semibold text-heading">{[u.first_name, u.last_name].filter(Boolean).join(" ") || "—"}</span>
                 <span className="text-[0.8rem] text-muted">{u.email as string}</span>
               </td>
               <td className="whitespace-nowrap">

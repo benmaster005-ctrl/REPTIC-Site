@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Actualités" };
 
 export default function NewsAdminPage({ searchParams }: PageProps<"/admin/actualites">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <NewsAdmin searchParams={searchParams} />
     </Suspense>
   );
@@ -44,7 +44,7 @@ async function NewsAdmin({ searchParams }: Pick<PageProps<"/admin/actualites">, 
           return (
             <tr key={n.id as string}>
               <td>
-                <Link href={`/admin/actualites/${n.id}`} className="font-semibold text-navy underline-offset-4 hover:text-cyan-dark hover:underline">
+                <Link href={`/admin/actualites/${n.id}`} className="font-semibold text-heading underline-offset-4 hover:text-cyan-dark hover:underline">
                   {n.title as string}
                 </Link>
               </td>

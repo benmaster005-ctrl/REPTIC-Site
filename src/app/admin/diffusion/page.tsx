@@ -20,7 +20,7 @@ const audienceLabels: Record<string, string> = {
 
 export default function BroadcastPage() {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Broadcasts />
     </Suspense>
   );
@@ -46,7 +46,7 @@ async function Broadcasts() {
       <AdminHeader label="Relations" title="Messages de diffusion" description="Alertez les membres : le message apparaît dans leur espace (notification) et peut aussi partir par e-mail." />
       {error && <Flash tone="error">Exécutez la migration 20261114000008_stories_bloc2.sql dans Supabase pour activer les messages de diffusion.</Flash>}
       {!isEmailConfigured && <Flash tone="error">Serveur SMTP non configuré : les messages partiront uniquement en notification.</Flash>}
-      <Panel className="mt-8">
+      <Panel className="mt-4">
         <h2 className="label mb-5">Nouveau message</h2>
         <BroadcastForm categories={categories} />
       </Panel>
@@ -55,7 +55,7 @@ async function Broadcasts() {
         {rows.map((b) => (
           <tr key={b.id}>
             <td className="font-mono text-[0.78rem] whitespace-nowrap text-muted">{formatDateTime(b.created_at)}</td>
-            <td className="font-semibold text-navy">{b.title}</td>
+            <td className="font-semibold text-heading">{b.title}</td>
             <td className="whitespace-nowrap text-muted">
               {audienceLabels[b.audience] ?? b.audience}
               {b.category?.name ? ` : ${b.category.name}` : ""}

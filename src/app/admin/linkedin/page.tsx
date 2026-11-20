@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "LinkedIn" };
 
 export default function LinkedinAdminPage() {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <LinkedinAdmin />
     </Suspense>
   );
@@ -40,7 +40,7 @@ async function LinkedinAdmin() {
       {error && <Flash tone="error">Exécutez la migration 20261117000012_linkedin.sql dans Supabase.</Flash>}
       {!isLinkedinSyncConfigured && <Flash tone="error">Renseignez BRIGHTDATA_API_KEY et LINKEDIN_SYNC_SECRET dans les variables d&apos;environnement.</Flash>}
 
-      <Panel className="mt-8">
+      <Panel className="mt-4">
         <div className="flex flex-wrap items-start justify-between gap-6">
           <div>
             <h2 className="label">Synchronisation</h2>
@@ -73,7 +73,7 @@ async function LinkedinAdmin() {
         {(posts ?? []).map((p) => (
           <tr key={p.id as string}>
             <td className="max-w-md">
-              <p className="line-clamp-2 text-navy">{(p.text as string) ?? "(sans texte)"}</p>
+              <p className="line-clamp-2 text-heading">{(p.text as string) ?? "(sans texte)"}</p>
               <a href={p.url as string} target="_blank" rel="noopener noreferrer" className="text-[0.8rem] font-semibold text-cyan-dark hover:underline">
                 Ouvrir sur LinkedIn
               </a>
@@ -89,7 +89,7 @@ async function LinkedinAdmin() {
               <form action={setLinkedinPostVisibility}>
                 <input type="hidden" name="id" value={p.id as string} />
                 <input type="hidden" name="visible" value={p.is_visible ? "0" : "1"} />
-                <button type="submit" className="text-[0.85rem] font-semibold text-navy hover:text-cyan-dark">
+                <button type="submit" className="text-[0.85rem] font-semibold text-heading hover:text-cyan-dark">
                   {p.is_visible ? "Masquer" : "Afficher"}
                 </button>
               </form>

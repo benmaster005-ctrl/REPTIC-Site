@@ -21,7 +21,7 @@ export function EmailTemplateEditor({ templateKey, initial, variables, previewHt
             <>
               <Field name="subject" label="Sujet" state={s} required />
               <Field name="body" label="Texte" state={s} textarea rows={11} required hint="Séparez les paragraphes par une ligne vide. Un paragraphe réduit à {{motif}} ou {{message}} s'affiche dans un encadré." />
-              <label className="flex items-center gap-3 text-sm font-semibold text-navy">
+              <label className="flex items-center gap-3 text-sm font-semibold text-heading">
                 <input type="checkbox" name="is_enabled" defaultChecked={s.values?.is_enabled === "on"} className="size-4 accent-navy" />
                 Envoyer cet e-mail automatiquement
               </label>
@@ -35,7 +35,7 @@ export function EmailTemplateEditor({ templateKey, initial, variables, previewHt
           <ul className="mt-3 flex flex-wrap gap-2">
             {variables.map((v) => (
               <li key={v}>
-                <code className="border border-line bg-paper px-2 py-1 font-mono text-[0.78rem] text-navy">{`{{${v}}}`}</code>
+                <code className="border border-line bg-paper px-2 py-1 font-mono text-[0.78rem] text-heading">{`{{${v}}}`}</code>
               </li>
             ))}
           </ul>

@@ -14,7 +14,7 @@ export const metadata: Metadata = { title: "E-mails" };
 
 export default function EmailsPage() {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Emails />
     </Suspense>
   );
@@ -42,7 +42,7 @@ async function Emails() {
         </Flash>
       )}
       {!rows.length && (
-        <Panel className="mt-8">
+        <Panel className="mt-4">
           <p className="text-muted">Aucun modèle : exécutez la migration 20261112000006_emails.sql dans Supabase.</p>
         </Panel>
       )}
@@ -50,10 +50,10 @@ async function Emails() {
         {rows.map((t) => {
           const preview = buildEmail(t.key as TemplateKey, t, sampleVars, { siteUrl: SITE_URL, contactEmail: contact.email });
           return (
-            <details key={t.key} className="group bg-white">
+            <details key={t.key} className="group bg-surface">
               <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 p-6 hover:bg-paper/60 sm:px-8">
                 <span>
-                  <span className="block font-display text-[1.1rem] font-bold text-navy">{t.name ?? t.key}</span>
+                  <span className="block font-display text-[1.1rem] font-bold text-heading">{t.name ?? t.key}</span>
                   <span className="block text-[0.85rem] text-muted">{t.description}</span>
                 </span>
                 <span className="flex items-center gap-4">
@@ -63,7 +63,7 @@ async function Emails() {
               </summary>
               <div className="border-t border-line p-6 sm:p-8">
                 <p className="mb-6 text-[0.9rem] text-muted">
-                  Sujet actuel : <span className="font-semibold text-navy">{preview.subject}</span>
+                  Sujet actuel : <span className="font-semibold text-heading">{preview.subject}</span>
                 </p>
                 <EmailTemplateEditor
                   templateKey={t.key}
@@ -77,10 +77,10 @@ async function Emails() {
           );
         })}
       </div>
-      <Panel className="mt-8">
+      <Panel className="mt-4">
         <h2 className="label">E-mails de connexion (Supabase)</h2>
         <p className="mt-3 text-[0.9rem] text-muted">
-          La confirmation d&apos;inscription, le mot de passe oublié et les autres e-mails de compte sont envoyés par Supabase. Leurs modèles à la charte REPTIC se trouvent dans le dossier <code className="font-mono text-navy">supabase/templates</code> du projet, à coller dans Supabase &gt; Authentication &gt; Emails.
+          La confirmation d&apos;inscription, le mot de passe oublié et les autres e-mails de compte sont envoyés par Supabase. Leurs modèles à la charte REPTIC se trouvent dans le dossier <code className="font-mono text-heading">supabase/templates</code> du projet, à coller dans Supabase &gt; Authentication &gt; Emails.
         </p>
       </Panel>
     </>

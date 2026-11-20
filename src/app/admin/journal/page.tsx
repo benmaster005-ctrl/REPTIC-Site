@@ -53,7 +53,7 @@ function detailText(d: Record<string, unknown>) {
 
 export default function AuditPage({ searchParams }: PageProps<"/admin/journal">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Audit searchParams={searchParams} />
     </Suspense>
   );
@@ -73,7 +73,7 @@ async function Audit({ searchParams }: Pick<PageProps<"/admin/journal">, "search
         {rows.map((r) => (
           <tr key={r.id}>
             <td className="font-mono text-[0.78rem] whitespace-nowrap text-muted">{formatDateTime(r.createdAt)}</td>
-            <td className="font-semibold whitespace-nowrap text-navy">{describe(r.action)}</td>
+            <td className="font-semibold whitespace-nowrap text-heading">{describe(r.action)}</td>
             <td className="text-[0.85rem] text-muted">{detailText(r.details) || "—"}</td>
             <td className="whitespace-nowrap text-muted">{r.actor}</td>
           </tr>

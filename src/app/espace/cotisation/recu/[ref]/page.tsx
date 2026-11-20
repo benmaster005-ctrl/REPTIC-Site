@@ -15,7 +15,7 @@ export const metadata: Metadata = { title: "Reçu de cotisation", robots: { inde
 
 export default function ReceiptPage({ params }: PageProps<"/espace/cotisation/recu/[ref]">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Receipt params={params} />
     </Suspense>
   );
@@ -52,24 +52,24 @@ async function Receipt({ params }: Pick<PageProps<"/espace/cotisation/recu/[ref]
         </Link>
         <PrintButton />
       </div>
-      <article className="mx-auto max-w-2xl border-t-4 border-navy bg-white p-8 sm:p-12 print:max-w-none print:border-0 print:p-0">
+      <article className="mx-auto max-w-2xl border-t-4 border-navy bg-surface p-8 sm:p-12 print:max-w-none print:border-0 print:p-0">
         <header className="flex flex-wrap items-start justify-between gap-6 border-b border-line pb-6">
           <div>
-            <p className="font-display text-2xl font-extrabold tracking-tight text-navy">
+            <p className="font-display text-2xl font-extrabold tracking-tight text-heading">
               REPTIC<span className="text-cyan">.cm</span>
             </p>
             <p className="mt-1 max-w-xs text-[0.72rem] leading-snug text-muted">Réseau des Entreprises &amp; Professionnels du Secteur des Télécoms et du Numérique au Cameroun</p>
           </div>
           <div className="text-right">
             <p className="label">Reçu de cotisation</p>
-            <p className="mt-1 font-mono text-[0.85rem] text-navy">{pay.reference as string}</p>
+            <p className="mt-1 font-mono text-[0.85rem] text-heading">{pay.reference as string}</p>
           </div>
         </header>
         <dl className="mt-6">
           {rows.map(([k, v]) => (
             <div key={k} className="grid grid-cols-[minmax(9rem,38%)_1fr] gap-4 border-b border-line py-3 text-[0.95rem]">
               <dt className="text-muted">{k}</dt>
-              <dd className="font-semibold break-words text-navy">{v}</dd>
+              <dd className="font-semibold break-words text-heading">{v}</dd>
             </div>
           ))}
         </dl>

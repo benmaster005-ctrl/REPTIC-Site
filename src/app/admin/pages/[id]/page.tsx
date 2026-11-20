@@ -14,7 +14,7 @@ const v = (x: unknown) => (x == null ? "" : String(x));
 
 export default function EditPagePage({ params }: PageProps<"/admin/pages/[id]">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <EditPage params={params} />
     </Suspense>
   );

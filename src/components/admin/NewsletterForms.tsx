@@ -26,7 +26,7 @@ export function CampaignForm({ id, initial, news, selected }: { id?: string; ini
                     <label className="flex cursor-pointer items-start gap-3 py-3 text-[0.92rem] hover:bg-paper/60">
                       <input type="checkbox" name="news_ids" value={n.id} defaultChecked={selected.includes(n.id)} className="mt-0.5 size-4 accent-navy" />
                       <span>
-                        <span className="font-semibold text-navy">{n.title}</span>
+                        <span className="font-semibold text-heading">{n.title}</span>
                         {n.publishedAt && <span className="ml-2 font-mono text-[0.72rem] text-muted">{formatDate(n.publishedAt, { day: "2-digit", month: "2-digit", year: "numeric" })}</span>}
                       </span>
                     </label>
@@ -111,7 +111,7 @@ export function CampaignSender({ id, status, total, sent, failed, subscribers }:
   return (
     <div className="space-y-3">
       <div className="flex items-baseline justify-between text-sm">
-        <span className="font-semibold text-navy">{progress.pending ? (running ? "Envoi en cours…" : "Envoi interrompu") : "Envoi terminé"}</span>
+        <span className="font-semibold text-heading">{progress.pending ? (running ? "Envoi en cours…" : "Envoi interrompu") : "Envoi terminé"}</span>
         <span className="font-mono text-[0.8rem] text-muted">
           {progress.sent} envoyée{progress.sent > 1 ? "s" : ""} · {progress.failed} échec{progress.failed > 1 ? "s" : ""} · {progress.total} au total
         </span>

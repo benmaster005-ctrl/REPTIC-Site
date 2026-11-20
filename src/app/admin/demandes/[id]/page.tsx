@@ -15,7 +15,7 @@ export const metadata: Metadata = { title: "Dossier d'adhésion" };
 
 export default function ApplicationDetailPage({ params }: PageProps<"/admin/demandes/[id]">) {
   return (
-    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-white" />}>
+    <Suspense fallback={<div aria-busy className="h-96 animate-pulse bg-surface" />}>
       <Detail params={params} />
     </Suspense>
   );
@@ -54,7 +54,7 @@ async function Detail({ params }: Pick<PageProps<"/admin/demandes/[id]">, "param
               {entries.map(([k, v]) => (
                 <div key={k} className="grid grid-cols-[minmax(9rem,35%)_1fr] gap-4 border-b border-line py-3 text-[0.92rem]">
                   <dt className="text-muted">{fieldLabels[k] ?? k}</dt>
-                  <dd className="font-semibold break-words whitespace-pre-line text-navy">{k === "birth_date" ? formatDate(String(v)) : String(v)}</dd>
+                  <dd className="font-semibold break-words whitespace-pre-line text-heading">{k === "birth_date" ? formatDate(String(v)) : String(v)}</dd>
                 </div>
               ))}
               {!entries.length && <p className="py-4 text-muted">Aucune information saisie.</p>}
@@ -77,7 +77,7 @@ async function Detail({ params }: Pick<PageProps<"/admin/demandes/[id]">, "param
                         {!r.isRequired && " (facultative)"}
                       </p>
                       {doc ? (
-                        <p className="flex min-w-0 items-center gap-2 text-[0.92rem] font-semibold text-navy">
+                        <p className="flex min-w-0 items-center gap-2 text-[0.92rem] font-semibold text-heading">
                           <FileText aria-hidden className="size-4 shrink-0 text-cyan-dark" />
                           <span className="truncate">{doc.fileName}</span>
                           <span className="shrink-0 font-mono text-[0.72rem] font-normal text-muted">{formatBytes(doc.sizeBytes)}</span>
@@ -105,13 +105,13 @@ async function Detail({ params }: Pick<PageProps<"/admin/demandes/[id]">, "param
             <dl className="mt-4 space-y-3 text-[0.92rem]">
               <div>
                 <dt className="text-muted">Compte</dt>
-                <dd className="font-semibold text-navy">{app.candidate.name}</dd>
+                <dd className="font-semibold text-heading">{app.candidate.name}</dd>
               </div>
               {app.candidate.email && (
                 <div>
                   <dt className="text-muted">E-mail</dt>
                   <dd>
-                    <a href={`mailto:${app.candidate.email}`} className="font-semibold break-all text-navy hover:text-cyan-dark">
+                    <a href={`mailto:${app.candidate.email}`} className="font-semibold break-all text-heading hover:text-cyan-dark">
                       {app.candidate.email}
                     </a>
                   </dd>
@@ -119,13 +119,13 @@ async function Detail({ params }: Pick<PageProps<"/admin/demandes/[id]">, "param
               )}
               <div>
                 <dt className="text-muted">Suivi par</dt>
-                <dd className="font-semibold text-navy">{app.assignee ?? "Personne"}</dd>
+                <dd className="font-semibold text-heading">{app.assignee ?? "Personne"}</dd>
               </div>
               {app.memberId && (
                 <div>
                   <dt className="text-muted">Fiche membre</dt>
                   <dd>
-                    <Link href={`/admin/membres/${app.memberId}`} className="font-semibold text-navy underline underline-offset-4 hover:text-cyan-dark">
+                    <Link href={`/admin/membres/${app.memberId}`} className="font-semibold text-heading underline underline-offset-4 hover:text-cyan-dark">
                       Ouvrir la fiche
                     </Link>
                   </dd>
@@ -149,8 +149,8 @@ async function Detail({ params }: Pick<PageProps<"/admin/demandes/[id]">, "param
             <ol className="relative mt-5 ml-1.5 border-l-2 border-line">
               {app.history.map((h, i) => (
                 <li key={h.id} className="relative pb-5 pl-6 last:pb-0">
-                  <span aria-hidden className={`absolute top-1 -left-[7px] size-3 rounded-full border-2 bg-white ${i === 0 ? "border-cyan" : "border-line-strong"}`} />
-                  <p className={`text-[0.9rem] font-semibold ${i === 0 ? "text-navy" : "text-muted"}`}>{statusLabels[h.toStatus]}</p>
+                  <span aria-hidden className={`absolute top-1 -left-[7px] size-3 rounded-full border-2 bg-surface ${i === 0 ? "border-cyan" : "border-line-strong"}`} />
+                  <p className={`text-[0.9rem] font-semibold ${i === 0 ? "text-heading" : "text-muted"}`}>{statusLabels[h.toStatus]}</p>
                   <p className="font-mono text-[0.7rem] text-muted">
                     {formatDateTime(h.createdAt)} · {h.author}
                   </p>
