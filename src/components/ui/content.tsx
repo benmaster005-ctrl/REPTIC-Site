@@ -166,7 +166,7 @@ export function RuledList({ items, columns = 1 }: { items: { title: string; desc
     <ul data-stagger className={`grid border-b border-line ${columns === 2 ? "md:grid-cols-2 md:gap-x-12" : ""}`}>
       {items.map((m) => (
         <li key={m.title} className="group grid gap-3 border-t border-line py-7 sm:grid-cols-12 sm:gap-8">
-          <h3 className={`font-display text-[1.15rem] leading-snug font-semibold tracking-[-0.01em] text-navy ${columns === 2 ? "sm:col-span-12" : "sm:col-span-5"}`}>{m.title}</h3>
+          <h3 className={`font-display text-[1.15rem] leading-snug font-semibold tracking-[-0.01em] text-heading ${columns === 2 ? "sm:col-span-12" : "sm:col-span-5"}`}>{m.title}</h3>
           <p className={`text-[0.98rem] leading-relaxed text-muted ${columns === 2 ? "sm:col-span-12" : "sm:col-span-7"}`}>{m.description}</p>
         </li>
       ))}
@@ -229,7 +229,7 @@ export function NewsCard({ item, size = "default", delay = 0 }: { item: NewsItem
           <time dateTime={item.publishedAt}>{date}</time>
         </p>
         <h3
-          className={`mt-2 font-display tracking-[-0.015em] text-balance text-navy ${
+          className={`mt-2 font-display tracking-[-0.015em] text-balance text-heading ${
             feature ? "text-[1.6rem] leading-[1.15] font-bold sm:text-[1.9rem]" : compact ? "line-clamp-3 text-[1.02rem] leading-snug font-semibold" : "text-[1.2rem] leading-snug font-bold"
           }`}
         >
@@ -251,7 +251,7 @@ export function EventRow({ item }: { item: EventItem }) {
   const time = formatDate(item.startsAt, { hour: "2-digit", minute: "2-digit" });
   const shortDate = formatDate(item.startsAt, { day: "numeric", month: "short", year: "numeric" });
   return (
-    <li className="group relative grid grid-cols-[4.75rem_1fr] items-center gap-5 rounded-2xl bg-white p-4 ring-1 ring-line transition-shadow hover:ring-navy/30 sm:grid-cols-[6rem_1fr] sm:gap-7 sm:p-5">
+    <li className="group relative grid grid-cols-[4.75rem_1fr] items-center gap-5 rounded-2xl bg-surface p-4 ring-1 ring-line transition-shadow hover:ring-navy/30 sm:grid-cols-[6rem_1fr] sm:gap-7 sm:p-5">
       {item.coverUrl ? (
         // Miniature de la couverture (le haut de l'affiche, là où se trouve le titre)
         <span className="relative block aspect-square overflow-hidden rounded-lg border border-line bg-paper">
@@ -275,7 +275,7 @@ export function EventRow({ item }: { item: EventItem }) {
             {time !== "00:00" && time}
           </span>
         </p>
-        <h3 className="mt-2 font-display text-[1.12rem] leading-snug font-bold tracking-[-0.01em] text-navy sm:text-[1.25rem]">
+        <h3 className="mt-2 font-display text-[1.12rem] leading-snug font-bold tracking-[-0.01em] text-heading sm:text-[1.25rem]">
           <Link href={`/evenements/${item.slug}`} className="title-sweep after:absolute after:inset-0">
             {item.title}
           </Link>
@@ -325,8 +325,8 @@ export function DemoNotice() {
 
 export function EmptyState({ title, description }: { title: string; description?: string }) {
   return (
-    <div className="rounded-xl border border-dashed border-line-strong bg-white p-10">
-      <p className="font-semibold text-navy">{title}</p>
+    <div className="rounded-xl border border-dashed border-line-strong bg-surface p-10">
+      <p className="font-semibold text-heading">{title}</p>
       {description && <p className="mt-1 text-sm text-muted">{description}</p>}
     </div>
   );

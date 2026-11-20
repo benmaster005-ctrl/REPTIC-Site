@@ -44,7 +44,7 @@ export function ScrollRail({ children, className = "", label }: { children: Reac
   };
 
   const btn =
-    "grid size-11 place-items-center rounded-full bg-white text-navy shadow-[0_6px_20px_-8px_rgb(20_26_51/0.35)] ring-1 ring-line transition-[opacity,transform] hover:scale-105 disabled:pointer-events-none disabled:opacity-0";
+    "grid size-11 place-items-center rounded-full bg-surface text-heading shadow-[0_6px_20px_-8px_rgb(20_26_51/0.35)] ring-1 ring-line transition-[opacity,transform] hover:scale-105 disabled:pointer-events-none disabled:opacity-0";
 
   return (
     <div className="relative">

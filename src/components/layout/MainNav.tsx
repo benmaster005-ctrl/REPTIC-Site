@@ -11,7 +11,7 @@ import { heroBanners, type NavItem } from "@/content/site";
 const previewFor = (href: string) => heroBanners[href.replace(/^\//, "") as keyof typeof heroBanners] ?? heroBanners.default;
 
 const linkBase =
-  "nav-link flex h-10 items-center gap-1 rounded-full px-2.5 text-[0.9rem] xl:px-3.5 font-semibold whitespace-nowrap text-navy transition-colors hover:bg-ice aria-expanded:bg-ice";
+  "nav-link flex h-10 items-center gap-1 rounded-full px-2.5 text-[0.9rem] xl:px-3.5 font-semibold whitespace-nowrap text-heading transition-colors hover:bg-ice aria-expanded:bg-ice";
 
 export function MainNav({ items, cta, mobileExtra }: { items: NavItem[]; cta: React.ReactNode; mobileExtra: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -72,7 +72,7 @@ export function MainNav({ items, cta, mobileExtra }: { items: NavItem[]; cta: Re
               {openMenu === item.label && (
                 // Menu enrichi : liste à gauche, aperçu photo à droite qui suit le lien survolé
                 <div className="menu-pop absolute top-full left-0 z-50 pt-3">
-                  <div className="grid w-[34rem] grid-cols-[1fr_13rem] gap-2 rounded-3xl bg-white p-2 shadow-[0_18px_50px_-16px_rgb(20_26_51/0.3)] ring-1 ring-line">
+                  <div className="grid w-[34rem] grid-cols-[1fr_13rem] gap-2 rounded-3xl bg-surface p-2 shadow-[0_18px_50px_-16px_rgb(20_26_51/0.3)] ring-1 ring-line">
                     <ul className="py-1">
                       {item.children.map((child) => (
                         <li key={child.href}>
@@ -83,7 +83,7 @@ export function MainNav({ items, cta, mobileExtra }: { items: NavItem[]; cta: Re
                             onFocus={() => setPreview(child.href)}
                             className="group block rounded-2xl px-4 py-3 transition-colors hover:bg-ice focus-visible:bg-ice"
                           >
-                            <span className="block text-[0.92rem] font-semibold text-navy">{child.label}</span>
+                            <span className="block text-[0.92rem] font-semibold text-heading">{child.label}</span>
                             {child.description && <span className="mt-0.5 block text-[0.8rem] text-muted">{child.description}</span>}
                           </Link>
                         </li>
@@ -121,7 +121,7 @@ export function MainNav({ items, cta, mobileExtra }: { items: NavItem[]; cta: Re
 
       <button
         type="button"
-        className="nav-link flex h-11 items-center gap-2.5 rounded-full px-3 text-sm font-semibold text-navy lg:hidden"
+        className="nav-link flex h-11 items-center gap-2.5 rounded-full px-3 text-sm font-semibold text-heading lg:hidden"
         aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
         aria-expanded={mobileOpen}
         aria-controls="menu-mobile"
@@ -138,20 +138,20 @@ export function MainNav({ items, cta, mobileExtra }: { items: NavItem[]; cta: Re
           un élément « fixed » serait enfermé dans la pastille et invisible. */}
       {mobileOpen &&
         createPortal(
-        <div id="menu-mobile" className="menu-pop fixed inset-x-2 top-[5.75rem] bottom-2 z-40 sm:inset-x-3 sm:top-[6.25rem] lg:hidden">
-          <nav aria-label="Navigation mobile" className="h-full overflow-y-auto rounded-[1.75rem] bg-white px-6 py-4 shadow-[0_24px_60px_-20px_rgb(20_26_51/0.35)] ring-1 ring-line">
+        <div id="menu-mobile" className="site-theme menu-pop fixed inset-x-2 top-[5.75rem] bottom-2 z-40 sm:inset-x-3 sm:top-[6.25rem] lg:hidden">
+          <nav aria-label="Navigation mobile" className="h-full overflow-y-auto rounded-[1.75rem] bg-surface px-6 py-4 shadow-[0_24px_60px_-20px_rgb(20_26_51/0.35)] ring-1 ring-line">
             {items.map((item) =>
               item.children ? (
                 <div key={item.label} className="border-b border-line py-4">
                   <p className="label">{item.label}</p>
                   {item.children.map((child) => (
-                    <Link key={child.href} href={child.href} onClick={close} className="block py-2.5 font-display text-xl font-bold text-navy">
+                    <Link key={child.href} href={child.href} onClick={close} className="block py-2.5 font-display text-xl font-bold text-heading">
                       {child.label}
                     </Link>
                   ))}
                 </div>
               ) : (
-                <Link key={item.href} href={item.href} onClick={close} className="block border-b border-line py-4 font-display text-xl font-bold text-navy">
+                <Link key={item.href} href={item.href} onClick={close} className="block border-b border-line py-4 font-display text-xl font-bold text-heading">
                   {item.label}
                 </Link>
               ),

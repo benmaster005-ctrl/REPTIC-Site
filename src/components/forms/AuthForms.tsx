@@ -42,7 +42,7 @@ function ProviderButton({ provider, next, logo, label }: { provider: "google" | 
     <form action={signInWithOAuthProvider}>
       <input type="hidden" name="fournisseur" value={provider} />
       <input type="hidden" name="suite" value={next} />
-      <SubmitButton className="btn w-full border border-line bg-white py-3 text-navy hover:border-navy" pendingLabel={`Redirection vers ${label}…`}>
+      <SubmitButton className="btn w-full border border-line bg-surface py-3 text-heading hover:border-navy" pendingLabel={`Redirection vers ${label}…`}>
         {logo} Continuer avec {label}
       </SubmitButton>
     </form>
@@ -77,7 +77,7 @@ export function LoginForm({ next }: { next?: string }) {
       <Field name="email" label="Adresse e-mail" type="email" state={state} required autoComplete="email" />
       <Field name="password" label="Mot de passe" type="password" state={state} required autoComplete="current-password" />
       <div className="flex justify-end">
-        <Link href="/mot-de-passe-oublie" className="text-sm font-semibold text-navy underline-offset-4 hover:underline">
+        <Link href="/mot-de-passe-oublie" className="text-sm font-semibold text-heading underline-offset-4 hover:underline">
           Mot de passe oublié ?
         </Link>
       </div>
@@ -98,7 +98,7 @@ export function SignUpForm({ next }: { next?: string }) {
         <FormMessage state={state} />
         <p className="text-sm text-muted">
           Rien reçu après quelques minutes ? Vérifiez vos courriers indésirables, puis{" "}
-          <Link href="/connexion" className="font-semibold text-navy underline underline-offset-4">
+          <Link href="/connexion" className="font-semibold text-heading underline underline-offset-4">
             connectez-vous
           </Link>{" "}
           une fois l&apos;adresse confirmée.
@@ -119,7 +119,7 @@ export function SignUpForm({ next }: { next?: string }) {
       <Field name="confirm" label="Confirmer le mot de passe" type="password" state={state} required autoComplete="new-password" />
       <Checkbox name="privacy" state={state} required>
         J&apos;accepte que mes données soient traitées pour l&apos;instruction de ma demande, conformément à la{" "}
-        <Link href="/confidentialite" className="font-semibold text-navy underline underline-offset-2">
+        <Link href="/confidentialite" className="font-semibold text-heading underline underline-offset-2">
           politique de confidentialité
         </Link>
         .

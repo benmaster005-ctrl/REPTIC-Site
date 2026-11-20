@@ -19,7 +19,7 @@ export default function NewsListPage({ searchParams }: PageProps<"/actualites">)
   return (
     <>
       <PageHero image={heroBanners.actualites} title="Actualités" eyebrow="Informations" summary="Communiqués, vie du réseau et actualités du secteur numérique." />
-      <section className="panel panel-pad bg-white">
+      <section className="panel panel-pad bg-surface">
         <Suspense fallback={<NewsGridSkeleton />}>
           <NewsGrid searchParams={searchParams} />
         </Suspense>
@@ -69,7 +69,7 @@ async function NewsGrid({ searchParams }: Pick<PageProps<"/actualites">, "search
               key={p}
               href={href(p, category)}
               aria-current={p === page ? "page" : undefined}
-              className={`grid size-11 place-items-center rounded-full font-mono text-sm ${p === page ? "bg-navy text-white" : "border border-line text-navy hover:border-navy"}`}
+              className={`grid size-11 place-items-center rounded-full font-mono text-sm ${p === page ? "bg-navy text-white" : "border border-line text-heading hover:border-navy"}`}
             >
               {p}
             </Link>

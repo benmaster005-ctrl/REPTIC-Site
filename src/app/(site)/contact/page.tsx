@@ -22,17 +22,17 @@ export default async function ContactPage() {
   return (
     <>
       <PageHero image={heroBanners.contact} title="Contact" eyebrow="Nous écrire" summary="Une question sur l'association, l'adhésion ou un partenariat ? Le secrétariat vous répond." />
-      <section className="panel panel-pad grid gap-14 bg-white lg:grid-cols-12 lg:gap-6">
+      <section className="panel panel-pad grid gap-14 bg-surface lg:grid-cols-12 lg:gap-6">
         <aside className="lg:col-span-3">
           <dl className="border-t-2 border-navy">
             <div className="border-b border-line py-5">
               <dt className="label">Adresse</dt>
-              <dd className="mt-1.5 font-semibold text-navy">{contact.address}</dd>
+              <dd className="mt-1.5 font-semibold text-heading">{contact.address}</dd>
             </div>
             <div className="border-b border-line py-5">
               <dt className="label">Téléphone</dt>
               <dd className="mt-1.5">
-                <a href={`tel:${contact.phone.replace(/\s/g, "")}`} className="font-semibold text-navy hover:text-cyan-dark">
+                <a href={`tel:${contact.phone.replace(/\s/g, "")}`} className="font-semibold text-heading hover:text-cyan-dark">
                   {contact.phone}
                 </a>
               </dd>
@@ -40,7 +40,7 @@ export default async function ContactPage() {
             <div className="border-b border-line py-5">
               <dt className="label">E-mail</dt>
               <dd className="mt-1.5">
-                <a href={`mailto:${contact.email}`} className="font-semibold break-all text-navy hover:text-cyan-dark">
+                <a href={`mailto:${contact.email}`} className="font-semibold break-all text-heading hover:text-cyan-dark">
                   {contact.email}
                 </a>
               </dd>
@@ -48,14 +48,14 @@ export default async function ContactPage() {
             {contact.hours && (
               <div className="border-b border-line py-5">
                 <dt className="label">Horaires</dt>
-                <dd className="mt-1.5 font-semibold text-navy">{contact.hours}</dd>
+                <dd className="mt-1.5 font-semibold text-heading">{contact.hours}</dd>
               </div>
             )}
             {contact.dpo && (
               <div className="border-b border-line py-5">
                 <dt className="label">Données personnelles</dt>
                 <dd className="mt-1.5">
-                  <a href={`mailto:${contact.dpo}`} className="font-semibold break-all text-navy hover:text-cyan-dark">
+                  <a href={`mailto:${contact.dpo}`} className="font-semibold break-all text-heading hover:text-cyan-dark">
                     {contact.dpo}
                   </a>
                 </dd>
@@ -66,7 +66,7 @@ export default async function ContactPage() {
                 <dt className="label">Réseaux officiels</dt>
                 <dd className="mt-2 space-y-1.5">
                   {socials.map((s) => (
-                    <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 font-semibold text-navy hover:text-cyan-dark">
+                    <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 font-semibold text-heading hover:text-cyan-dark">
                       {s.label} <ArrowUpRight aria-hidden className="size-3.5" />
                     </a>
                   ))}

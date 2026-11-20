@@ -51,7 +51,7 @@ export function FormMessage({ state }: { state: FormState }) {
     <p
       role={ok ? "status" : "alert"}
       className={`flex items-start gap-2.5 border-l-[3px] px-4 py-3 text-sm font-medium ${
-        ok ? "border-cyan bg-cyan-tint text-navy" : "border-red-600 bg-red-50 text-red-800"
+        ok ? "border-cyan bg-cyan-tint text-heading" : "border-red-600 bg-red-50 text-red-800"
       }`}
     >
       <Icon aria-hidden className="mt-0.5 size-4 shrink-0" />
@@ -146,7 +146,7 @@ export function SelectField({ name, label, state, options, required, placeholder
           </option>
         ))}
       </select>
-      <ChevronDown aria-hidden className="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-navy" />
+      <ChevronDown aria-hidden className="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-heading" />
       </div>
       {hint && (
         <p id={`${id}-aide`} className="mt-1 text-xs text-muted">

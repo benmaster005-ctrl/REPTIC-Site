@@ -30,7 +30,7 @@ export default async function MembershipPage() {
         crumbs={[{ label: "Membres" }]}
       />
 
-      <section className="panel panel-pad bg-white">
+      <section className="panel panel-pad bg-surface">
         <SectionHeader label="Avantages" title="Pourquoi adhérer" />
         <div className="mt-12 lg:ml-[calc(25%+0.375rem)]">
           <RuledList items={memberBenefits} columns={2} />
@@ -42,9 +42,9 @@ export default async function MembershipPage() {
           <SectionHeader label="Catégories" title="Deux profils, deux dossiers" description="Les pièces demandées dépendent de votre profil." />
           <RevealGroup className="mt-12 grid gap-4 lg:ml-[calc(25%+0.375rem)] lg:grid-cols-2">
             {profiles.map((p) => (
-              <article key={p.id} id={p.id} className="scroll-mt-32 rounded-xl border border-line bg-white p-8 target:border-cyan target:ring-4 target:ring-cyan/15 sm:p-10">
+              <article key={p.id} id={p.id} className="scroll-mt-32 rounded-xl border border-line bg-surface p-8 target:border-cyan target:ring-4 target:ring-cyan/15 sm:p-10">
                 <p className="label text-cyan-dark">{p.kind}</p>
-                <h2 className="mt-4 font-display text-[1.6rem] leading-tight font-bold tracking-[-0.02em] text-navy">{p.title}</h2>
+                <h2 className="mt-4 font-display text-[1.6rem] leading-tight font-bold tracking-[-0.02em] text-heading">{p.title}</h2>
                 <p className="mt-2 text-[0.98rem] text-muted">{p.audience}</p>
                 <h3 className="label mt-10">Pièces à fournir</h3>
                 <ul className="mt-4 grid gap-2">
@@ -63,7 +63,7 @@ export default async function MembershipPage() {
         </div>
       </section>
 
-      <section className="panel panel-pad bg-white">
+      <section className="panel panel-pad bg-surface">
         <SectionHeader label="Procédure" title="Cinq étapes, en ligne" />
         <RevealGroup as="ol" className="relative mt-12 grid gap-6 sm:grid-cols-5 sm:gap-4 lg:ml-[calc(25%+0.375rem)]">
           {/* Fil de la frise : vertical sur mobile, horizontal ensuite */}
@@ -74,7 +74,7 @@ export default async function MembershipPage() {
                 {i + 1}
               </span>
               <div>
-                <p className="font-display text-[1.05rem] font-bold text-navy sm:mt-2">{s.title}</p>
+                <p className="font-display text-[1.05rem] font-bold text-heading sm:mt-2">{s.title}</p>
                 <p className="mt-1 text-[0.9rem] leading-relaxed text-muted">{s.description}</p>
               </div>
             </li>

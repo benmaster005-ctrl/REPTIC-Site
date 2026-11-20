@@ -53,7 +53,7 @@ export default async function HomePage() {
         </div>
 
         {/* Membres */}
-        <BigFigure figure={members} fallback={{ value: "100+", label: "Membres" }} className="bg-white lg:col-span-3" href="/adhesion" linkLabel="Rejoindre" since={Number(founded?.value) || 2017} />
+        <BigFigure figure={members} fallback={{ value: "100+", label: "Membres" }} className="bg-surface lg:col-span-3" href="/adhesion" linkLabel="Rejoindre" since={Number(founded?.value) || 2017} />
 
         {/* Photo */}
         <Link href="/presentation" className={`${panel} lift group relative min-h-[22rem] lg:col-span-4 lg:row-span-2`}>
@@ -69,9 +69,9 @@ export default async function HomePage() {
         <BigFigure figure={sectors} fallback={{ value: "21", label: "Secteurs représentés" }} className="bg-cyan-tint lg:col-span-3" href="/acteurs" linkLabel="Les familles d'acteurs" />
 
         {/* Adhésion */}
-        <div className={`${panel} grid gap-6 bg-white p-7 sm:p-10 lg:col-span-7 lg:grid-cols-2`}>
+        <div className={`${panel} grid gap-6 bg-surface p-7 sm:p-10 lg:col-span-7 lg:grid-cols-2`}>
           <div>
-            <h2 className="text-[1.6rem] leading-[1.1] font-bold tracking-[-0.025em] text-navy sm:text-[2rem]">Deux façons d&apos;adhérer</h2>
+            <h2 className="text-[1.6rem] leading-[1.1] font-bold tracking-[-0.025em] text-heading sm:text-[2rem]">Deux façons d&apos;adhérer</h2>
             <p className="mt-3 text-[0.98rem] leading-relaxed text-muted">Dossier en ligne, pièces justificatives déposées et suivies depuis votre espace.</p>
             <CapsuleLink href="/adhesion/demande" className="mt-6">
               Déposer ma demande
@@ -95,9 +95,9 @@ export default async function HomePage() {
 
       {/* Actualités en carrousel */}
       {news.length > 0 && (
-        <section data-anim className={`${panel} bg-white py-8 sm:py-12`}>
+        <section data-anim className={`${panel} bg-surface py-8 sm:py-12`}>
           <div className="flex flex-wrap items-end justify-between gap-4 px-7 sm:px-10">
-            <h2 className="text-[1.9rem] leading-[1.05] font-bold tracking-[-0.03em] text-navy sm:text-[2.6rem]">Actualités</h2>
+            <h2 className="text-[1.9rem] leading-[1.05] font-bold tracking-[-0.03em] text-heading sm:text-[2.6rem]">Actualités</h2>
             <Link href="/actualites" className="link-arrow">
               Toutes les actualités
             </Link>
@@ -115,7 +115,7 @@ export default async function HomePage() {
         <section data-anim className={`${panel} bg-ice py-8 sm:py-12`}>
           <div className="flex flex-wrap items-end justify-between gap-4 px-7 sm:px-10">
             <div>
-              <h2 className="text-[1.9rem] leading-[1.05] font-bold tracking-[-0.03em] text-navy sm:text-[2.6rem]">Le Bureau exécutif</h2>
+              <h2 className="text-[1.9rem] leading-[1.05] font-bold tracking-[-0.03em] text-heading sm:text-[2.6rem]">Le Bureau exécutif</h2>
               <p className="mt-2 text-[0.98rem] text-muted">{board.length} dirigeants du secteur élus pour conduire l&apos;action du réseau.</p>
             </div>
             <Link href="/gouvernance" className="link-arrow">
@@ -201,7 +201,7 @@ function Hero({ next, founded }: { next?: EventItem; founded?: KeyFigure }) {
                 <Countdown startsAt={next.startsAt} className="rounded-full bg-cyan px-2.5 py-0.5 text-[0.75rem] font-semibold text-white" />
               </span>
               <span className="mt-3 flex items-center gap-4">
-                <span className="grid size-16 shrink-0 place-content-center rounded-2xl bg-white text-center text-navy">
+                <span className="grid size-16 shrink-0 place-content-center rounded-2xl bg-surface text-center text-heading">
                   <span className="text-[1.5rem] leading-none font-bold">{formatDate(next.startsAt, { day: "numeric" })}</span>
                   <span className="mt-0.5 text-[0.72rem]">{formatDate(next.startsAt, { month: "short" })}</span>
                 </span>
@@ -237,13 +237,13 @@ function BigFigure({ figure, fallback, className, href, linkLabel, since }: {
       {since ? (
         <AnimatedFigure value={f.value} since={since} />
       ) : (
-        <span className="text-[4.2rem] leading-[0.9] font-bold tracking-[-0.05em] text-navy sm:text-[5rem]">
+        <span className="text-[4.2rem] leading-[0.9] font-bold tracking-[-0.05em] text-heading sm:text-[5rem]">
           <CountUp value={f.value} />
         </span>
       )}
       <span className="flex items-end justify-between gap-3">
-        <span className="text-[1rem] font-medium text-navy">{f.label}</span>
-        <span className="text-[0.85rem] font-semibold text-cyan-dark group-hover:text-navy">{linkLabel}</span>
+        <span className="text-[1rem] font-medium text-heading">{f.label}</span>
+        <span className="text-[0.85rem] font-semibold text-cyan-dark group-hover:text-heading">{linkLabel}</span>
       </span>
     </Link>
   );
@@ -254,7 +254,7 @@ function ProfileLink({ href, kind, title }: { href: string; kind: string; title:
     <li>
       <Link href={href} className="lift group flex h-full flex-col justify-between rounded-2xl bg-ice p-5 transition-colors hover:bg-navy">
         <span className="text-[0.85rem] text-muted group-hover:text-white/70">{kind}</span>
-        <span className="mt-4 text-[1.1rem] leading-snug font-semibold text-navy group-hover:text-white">{title}</span>
+        <span className="mt-4 text-[1.1rem] leading-snug font-semibold text-heading group-hover:text-white">{title}</span>
       </Link>
     </li>
   );

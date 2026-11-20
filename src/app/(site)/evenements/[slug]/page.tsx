@@ -55,7 +55,7 @@ async function EventDetail({ params }: Pick<PageProps<"/evenements/[slug]">, "pa
               {facts.map((f) => (
                 <div key={f.label} className="border-b border-line py-4 last:border-b-0">
                   <dt className="label">{f.label}</dt>
-                  <dd className="mt-1.5 font-semibold text-navy first-letter:uppercase">{f.value}</dd>
+                  <dd className="mt-1.5 font-semibold text-heading first-letter:uppercase">{f.value}</dd>
                 </div>
               ))}
             </dl>

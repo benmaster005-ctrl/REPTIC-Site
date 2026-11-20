@@ -26,14 +26,14 @@ export default async function ResourcesPage() {
         summary="Documents de l'association en libre accès. Les membres retrouvent des ressources supplémentaires dans leur espace."
         crumbs={[{ label: "Le REPTIC" }]}
       />
-      <section className="panel panel-pad bg-white">
+      <section className="panel panel-pad bg-surface">
         {resources.length ? (
           <RevealGroup as="ul" className="border-b border-line lg:ml-[calc(25%+0.375rem)]">
             {resources.map((r) => (
               <li key={r.id} className="group relative grid grid-cols-[2.5rem_1fr] gap-4 border-t border-line py-6 sm:grid-cols-[2.5rem_1fr_auto] sm:items-center">
                 <FileText aria-hidden className="mt-1 size-6 text-cyan-dark sm:mt-0" />
                 <div className="min-w-0">
-                  <h2 className="font-display text-[1.2rem] leading-snug font-bold text-navy">{r.title}</h2>
+                  <h2 className="font-display text-[1.2rem] leading-snug font-bold text-heading">{r.title}</h2>
                   {r.description && <p className="mt-1 text-[0.95rem] text-muted">{r.description}</p>}
                   <p className="mt-1.5 font-mono text-[0.72rem] text-muted">
                     {kind(r.mimeType)} · {formatBytes(r.sizeBytes)} · {formatDate(r.createdAt, { day: "2-digit", month: "2-digit", year: "numeric" })}
@@ -56,7 +56,7 @@ export default async function ResourcesPage() {
         )}
         <p className="mt-10 text-[0.92rem] text-muted lg:ml-[calc(25%+0.375rem)]">
           Membre du réseau ?{" "}
-          <Link href="/espace/documents" className="font-semibold text-navy underline underline-offset-4">
+          <Link href="/espace/documents" className="font-semibold text-heading underline underline-offset-4">
             Accédez aux documents réservés
           </Link>
           .

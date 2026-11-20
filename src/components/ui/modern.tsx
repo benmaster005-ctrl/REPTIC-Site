@@ -45,7 +45,7 @@ export function MissionBento({ missions, image, href }: { missions: Mission[]; i
         return (
           <li
             key={m.title}
-            className={`group relative flex flex-col rounded-xl border border-line bg-white p-7 transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-navy ${wide ? "md:col-span-2" : ""}`}
+            className={`group relative flex flex-col rounded-xl border border-line bg-surface p-7 transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-navy ${wide ? "md:col-span-2" : ""}`}
           >
             <div className="flex items-start justify-between">
               <span className="grid size-12 place-items-center rounded-lg bg-cyan-tint text-cyan-dark transition-colors duration-300 group-hover:bg-cyan group-hover:text-white">
@@ -53,7 +53,7 @@ export function MissionBento({ missions, image, href }: { missions: Mission[]; i
               </span>
               <span className="font-mono text-[0.75rem] text-muted">{String(i + 2).padStart(2, "0")}</span>
             </div>
-            <h3 className="mt-6 font-display text-[1.15rem] leading-snug font-bold tracking-[-0.01em] text-navy">{m.title}</h3>
+            <h3 className="mt-6 font-display text-[1.15rem] leading-snug font-bold tracking-[-0.01em] text-heading">{m.title}</h3>
             <p className="mt-2 text-[0.94rem] leading-relaxed text-muted">{m.description}</p>
           </li>
         );
@@ -66,7 +66,7 @@ export function MissionBento({ missions, image, href }: { missions: Mission[]; i
           <span className="label text-white/80">Pour aller plus loin</span>
           <span className="flex items-end justify-between gap-4">
             <span className="font-display text-[1.4rem] leading-tight font-bold tracking-[-0.015em]">Objectifs et missions en détail</span>
-            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-white text-cyan-dark transition-transform duration-300 group-hover:rotate-45">
+            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-surface text-cyan-dark transition-transform duration-300 group-hover:rotate-45">
               <ArrowUpRight aria-hidden className="size-5" />
             </span>
           </span>
@@ -84,7 +84,7 @@ export function ActorMarquee({ categories }: { categories: Category[] }) {
   if (!categories.length) return null;
   const item = (c: Category, copy: boolean) => (
     <li key={`${copy ? "b" : "a"}-${c.slug}`} aria-hidden={copy || undefined} className="flex shrink-0 items-center gap-4">
-      <Link href={`/acteurs#${c.slug}`} tabIndex={copy ? -1 : undefined} className="rounded-full border border-line bg-white px-5 py-2.5 text-[0.92rem] font-semibold whitespace-nowrap text-navy transition-colors hover:border-navy hover:bg-navy hover:text-white">
+      <Link href={`/acteurs#${c.slug}`} tabIndex={copy ? -1 : undefined} className="rounded-full border border-line bg-surface px-5 py-2.5 text-[0.92rem] font-semibold whitespace-nowrap text-heading transition-colors hover:border-navy hover:bg-navy hover:text-white">
         {c.name}
       </Link>
       <span aria-hidden className="size-1.5 rounded-full bg-cyan" />
@@ -105,9 +105,9 @@ export function FaqAccordion({ items, name = "faq" }: { items: { question: strin
   return (
     <RevealGroup className="grid gap-3">
       {items.map((q) => (
-        <details key={q.question} name={name} className="faq group rounded-lg border border-line bg-white transition-colors open:border-navy">
+        <details key={q.question} name={name} className="faq group rounded-lg border border-line bg-surface transition-colors open:border-navy">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-6 p-5 sm:p-6 [&::-webkit-details-marker]:hidden">
-            <span className="font-display text-[1.05rem] leading-snug font-bold text-navy sm:text-[1.12rem]">{q.question}</span>
+            <span className="font-display text-[1.05rem] leading-snug font-bold text-heading sm:text-[1.12rem]">{q.question}</span>
             <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-full bg-cyan-tint text-cyan-dark transition-[transform,background-color,color] duration-300 group-open:rotate-45 group-open:bg-navy group-open:text-white">
               <Plus className="size-4" />
             </span>
@@ -136,7 +136,7 @@ export function FilterChips({ label, options, current }: { label: string; option
                 aria-current={active ? "page" : undefined}
                 style={active ? { viewTransitionName: "filtre-actif" } : undefined}
                 className={`inline-flex items-center rounded-full px-4 py-2 text-[0.88rem] font-semibold whitespace-nowrap transition-colors ${
-                  active ? "bg-white text-navy shadow-[0_2px_8px_-2px_rgb(20_26_51/0.18)]" : "text-muted hover:text-navy"
+                  active ? "bg-surface text-heading shadow-[0_2px_8px_-2px_rgb(20_26_51/0.18)]" : "text-muted hover:text-heading"
                 }`}
               >
                 {o.label}
@@ -171,7 +171,7 @@ export function HeroMosaic({ figures }: { figures: KeyFigure[] }) {
       <figure className={`${tile} col-span-7 row-span-4 bg-paper [--intro-delay:200ms]`}>
         <Image src={heroPhotos.main.src} alt={heroPhotos.main.alt} fill priority sizes="(min-width: 1024px) 28vw, 58vw" className="object-cover" />
         {year && (
-          <span className="absolute top-3 left-3 rounded-full bg-white px-3.5 py-1.5 text-[0.8rem] font-semibold text-navy">
+          <span className="absolute top-3 left-3 rounded-full bg-surface px-3.5 py-1.5 text-[0.8rem] font-semibold text-heading">
             Depuis {year.value}
           </span>
         )}

@@ -29,6 +29,9 @@
   --color-line-strong: #c3c8d5;
   --color-paper: #f5f7fa;
   --color-canvas: #eef1f5;
+  /* Surfaces claires et titres : basculent en mode sombre (voir .site-theme) */
+  --color-surface: #ffffff;
+  --color-heading: #232d57;
 
   --radius-sm: 2px;
 }
@@ -95,13 +98,13 @@ body {
 /* Titres : Schibsted Grotesk gras, interlignage serré, approche resserrée.
    Échelle : 17 → 22 → 28 → 44 → 74 px (rapport ≈ 1,6 entre paliers). */
 @utility heading-xl {
-  @apply font-display text-[2.6rem] leading-[1.02] font-bold tracking-[-0.035em] text-navy sm:text-[3.9rem] lg:text-[4.6rem];
+  @apply font-display text-[2.6rem] leading-[1.02] font-bold tracking-[-0.035em] text-heading sm:text-[3.9rem] lg:text-[4.6rem];
 }
 @utility heading-lg {
-  @apply font-display text-[1.9rem] leading-[1.08] font-bold tracking-[-0.025em] text-navy sm:text-[2.75rem];
+  @apply font-display text-[1.9rem] leading-[1.08] font-bold tracking-[-0.025em] text-heading sm:text-[2.75rem];
 }
 @utility heading-md {
-  @apply font-display text-[1.4rem] leading-[1.2] font-semibold tracking-[-0.015em] text-navy sm:text-[1.75rem];
+  @apply font-display text-[1.4rem] leading-[1.2] font-semibold tracking-[-0.015em] text-heading sm:text-[1.75rem];
 }
 
 /* Libellé discret : bas de casse, graisse moyenne (pas de capitales espacées) */
@@ -117,7 +120,7 @@ body {
   @apply btn bg-navy text-white hover:bg-cyan-dark;
 }
 @utility btn-secondary {
-  @apply btn border border-navy text-navy hover:bg-navy hover:text-white;
+  @apply btn border border-heading text-heading hover:bg-navy hover:text-white;
 }
 @utility btn-inverse {
   @apply btn bg-white text-navy hover:bg-cyan hover:text-white;
@@ -128,14 +131,14 @@ body {
 
 /* Lien éditorial souligné */
 @utility link-arrow {
-  @apply inline-flex items-center gap-2 border-b border-navy pb-0.5 text-sm font-semibold text-navy transition-colors hover:border-cyan hover:text-cyan-dark;
+  @apply inline-flex items-center gap-2 border-b border-heading pb-0.5 text-sm font-semibold text-heading transition-colors hover:border-cyan hover:text-cyan-dark;
 }
 
 @utility field-label {
-  @apply mb-2 block text-sm font-semibold text-navy;
+  @apply mb-2 block text-sm font-semibold text-heading;
 }
 @utility field-input {
-  @apply w-full rounded-sm border border-line-strong bg-white px-3.5 py-3 text-[0.95rem] text-ink placeholder:text-muted/60 focus:border-navy focus:ring-0 focus:outline-2 focus:outline-offset-0 focus:outline-cyan aria-[invalid=true]:border-red-600;
+  @apply w-full rounded-sm border border-line-strong bg-surface px-3.5 py-3 text-[0.95rem] text-ink placeholder:text-muted/60 focus:border-navy focus:ring-0 focus:outline-2 focus:outline-offset-0 focus:outline-cyan aria-[invalid=true]:border-red-600;
 }
 @utility field-error {
   @apply mt-1.5 text-sm text-red-700;
@@ -412,6 +415,48 @@ body {
   color: #fff;
 }
 
+/* --- Mode sombre du site public -------------------------------------------
+   Suit le réglage du système ou du navigateur (prefers-color-scheme). Limité
+   au site public (.site-theme) : l'espace membre et l'administration restent
+   clairs. Les surfaces claires, les filets et les titres basculent ; les
+   panneaux marine et les bannières photo gardent leurs couleurs. */
+@media (prefers-color-scheme: dark) {
+  .site-theme {
+    --color-canvas: #0b1020;
+    --color-surface: #141b33;
+    --color-ice: #1a2342;
+    --color-paper: #172040;
+    --color-cyan-tint: #12304a;
+    --color-line: #263059;
+    --color-line-strong: #36417a;
+    --color-ink: #e4e8f4;
+    --color-muted: #a0a8c2;
+    --color-heading: #eef1fb;
+    --color-cyan-dark: #4fb3e6;
+    color-scheme: dark;
+    color: var(--color-ink);
+  }
+  body:has(.site-theme) {
+    background: #0b1020;
+  }
+  .site-header[data-scrolled] .header-pill {
+    background-color: rgb(20 27 51 / 0.86);
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.08),
+      0 10px 30px -14px rgb(0 0 0 / 0.6);
+  }
+  .site-header[data-scrolled] .logo-white {
+    opacity: 1;
+  }
+  .site-header[data-scrolled] .logo-color {
+    opacity: 0;
+  }
+  .site-theme ::selection {
+    background: var(--color-cyan);
+    color: #fff;
+  }
+}
+
 /* --- Images des cartes : rapprochement discret au survol ----------------- */
 .img-hover {
   transition: transform 0.9s var(--ease-out);
@@ -611,10 +656,10 @@ body {
   @apply mt-5;
 }
 .prose-site h2 {
-  @apply mt-14 font-display text-[1.65rem] leading-tight font-bold tracking-[-0.02em] text-navy;
+  @apply mt-14 font-display text-[1.65rem] leading-tight font-bold tracking-[-0.02em] text-heading;
 }
 .prose-site h3 {
-  @apply mt-10 font-display text-xl font-bold text-navy;
+  @apply mt-10 font-display text-xl font-bold text-heading;
 }
 .prose-site a {
   @apply font-semibold text-cyan-dark underline decoration-1 underline-offset-4;
@@ -633,13 +678,13 @@ body {
   @apply list-decimal space-y-2 pl-6;
 }
 .prose-site strong {
-  @apply font-semibold text-navy;
+  @apply font-semibold text-heading;
 }
 .prose-site table {
   @apply w-full min-w-[30rem] border-collapse text-[0.95rem];
 }
 .prose-site thead th {
-  @apply border-b-2 border-navy py-2.5 pr-4 text-left text-[0.78rem] font-semibold tracking-[0.04em] text-navy uppercase;
+  @apply border-b-2 border-heading py-2.5 pr-4 text-left text-[0.78rem] font-semibold tracking-[0.04em] text-heading uppercase;
 }
 .prose-site tbody td {
   @apply border-b border-line py-2.5 pr-4 align-top;

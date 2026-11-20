@@ -14,7 +14,7 @@ export async function LinkedinPosts({ limit = 3 }: { limit?: number }) {
   if (!posts.length) return null;
 
   return (
-    <section className="panel bg-white py-10 sm:py-14">
+    <section className="panel bg-surface py-10 sm:py-14">
       <div className="container-site">
         <SectionHeader label="Sur LinkedIn" title="Le réseau sur LinkedIn" action={{ label: "Suivre la page", href: PAGE_URL }} />
         {/* Carrousel glissant sur mobile, grille à partir de la tablette */}
@@ -25,7 +25,7 @@ export async function LinkedinPosts({ limit = 3 }: { limit?: number }) {
           {posts.map((p) => (
             <li
               key={p.id}
-              className="group relative flex w-[85%] shrink-0 snap-start flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-line transition-shadow hover:ring-navy/30 sm:w-[60%] md:w-auto"
+              className="group relative flex w-[85%] shrink-0 snap-start flex-col overflow-hidden rounded-2xl bg-surface ring-1 ring-line transition-shadow hover:ring-navy/30 sm:w-[60%] md:w-auto"
             >
               {p.image && (
                 <div className="relative aspect-[16/10] overflow-hidden bg-line/40">
@@ -38,7 +38,7 @@ export async function LinkedinPosts({ limit = 3 }: { limit?: number }) {
                     <LinkedinIcon className="size-4 text-[#0A66C2]" />
                   </span>
                   <span className="leading-tight">
-                    <span className="block text-[0.88rem] font-semibold text-navy">REPTIC.CM</span>
+                    <span className="block text-[0.88rem] font-semibold text-heading">REPTIC.CM</span>
                     {p.postedAt && <span className="block text-[0.75rem] text-muted">{formatDate(p.postedAt, { day: "numeric", month: "long", year: "numeric" })}</span>}
                   </span>
                 </p>
@@ -56,7 +56,7 @@ export async function LinkedinPosts({ limit = 3 }: { limit?: number }) {
                       </span>
                     )}
                   </span>
-                  <a href={p.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-navy after:absolute after:inset-0 hover:text-cyan-dark">
+                  <a href={p.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-heading after:absolute after:inset-0 hover:text-cyan-dark">
                     Voir sur LinkedIn <ArrowUpRight aria-hidden className="size-3.5" />
                   </a>
                 </div>

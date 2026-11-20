@@ -35,7 +35,7 @@ export function AnimatedFigure({ value, since = 2017 }: { value: string; since?:
   const steps = 5;
   return (
     <div ref={ref}>
-      <span className="text-[4.2rem] leading-[0.9] font-bold tracking-[-0.05em] text-navy sm:text-[5rem]">
+      <span className="text-[4.2rem] leading-[0.9] font-bold tracking-[-0.05em] text-heading sm:text-[5rem]">
         <CountUp value={value} />
       </span>
       <div aria-hidden className="mt-5 flex gap-1">

@@ -5,7 +5,9 @@ import { DemoNotice } from "@/components/ui/content";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    // .site-theme : porte les couleurs du mode sombre du site public (globals.css).
+    // « contents » : l'enveloppe n'ajoute aucune boîte, la mise en page ne change pas.
+    <div className="site-theme contents">
       <a href="#contenu" className="sr-only z-[60] bg-navy px-4 py-2 font-semibold text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3">
         Aller au contenu
       </a>
@@ -16,6 +18,6 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         <ViewTransition default="page">{children}</ViewTransition>
       </main>
       <SiteFooter />
-    </>
+    </div>
   );
 }

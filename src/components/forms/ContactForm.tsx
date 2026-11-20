@@ -35,7 +35,7 @@ export function ContactForm() {
       <Field name="message" label="Message" state={state} required textarea rows={6} />
       <Checkbox name="consent" state={state} required>
         J&apos;accepte que mes données soient utilisées pour répondre à ma demande, conformément à la{" "}
-        <Link href="/confidentialite" className="font-semibold text-navy underline underline-offset-2">
+        <Link href="/confidentialite" className="font-semibold text-heading underline underline-offset-2">
           politique de confidentialité
         </Link>
         .

@@ -7,7 +7,7 @@ export const generateMetadata = () => editorialMetadata("objectifs-missions", "/
 export default function Page() {
   return (
     <EditorialPage slug="objectifs-missions" crumbs={[{ label: "Le REPTIC" }]} eyebrow="Le REPTIC">
-      <section className="panel panel-pad bg-white">
+      <section className="panel panel-pad bg-surface">
         <SectionHeader label="Axes stratégiques" title="Nos domaines d'intervention" />
         <div className="mt-12 lg:ml-[calc(25%+0.375rem)]">
           <RuledList items={missions} />

@@ -10,7 +10,7 @@ import { LinkedinIcon } from "@/components/layout/SocialIcons";
 export function BoardCard({ member, className = "", sizes = "184px" }: { member: GovernanceMember; className?: string; sizes?: string }) {
   const m = member;
   return (
-    <div className={`lift group relative rounded-3xl bg-white p-4 ${className}`}>
+    <div className={`lift group relative rounded-3xl bg-surface p-4 ${className}`}>
       <div className="relative">
         <div className="relative aspect-square overflow-hidden rounded-2xl bg-ice">
           {m.photoUrl ? (
@@ -27,13 +27,13 @@ export function BoardCard({ member, className = "", sizes = "184px" }: { member:
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Profil LinkedIn de ${m.fullName}`}
-            className="absolute -right-1.5 -bottom-1.5 grid size-10 place-items-center rounded-full bg-[#0A66C2] text-white ring-4 ring-white transition-[opacity,transform] duration-300 ease-[var(--ease-out)] hover:scale-110 focus-visible:opacity-100 [@media(hover:hover)]:scale-75 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:scale-100 [@media(hover:hover)]:group-hover:opacity-100"
+            className="absolute -right-1.5 -bottom-1.5 grid size-10 place-items-center rounded-full bg-[#0A66C2] text-white ring-4 ring-surface transition-[opacity,transform] duration-300 ease-[var(--ease-out)] hover:scale-110 focus-visible:opacity-100 [@media(hover:hover)]:scale-75 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:scale-100 [@media(hover:hover)]:group-hover:opacity-100"
           >
             <LinkedinIcon className="size-[1.1rem]" />
           </a>
         )}
       </div>
-      <p className="mt-4 text-[0.95rem] leading-snug font-semibold text-navy">{m.fullName}</p>
+      <p className="mt-4 text-[0.95rem] leading-snug font-semibold text-heading">{m.fullName}</p>
       <p className="mt-1 line-clamp-2 text-[0.84rem] leading-snug text-muted">{m.positionTitle}</p>
       {m.organization && <p className="mt-1 text-[0.82rem] text-muted/80">{m.organization}</p>}
     </div>

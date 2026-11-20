@@ -98,8 +98,8 @@ export async function SiteFooter() {
             ))}
           </div>
 
-          <div className="rounded-3xl bg-white p-6 text-ink lg:col-span-4">
-            <h2 className="text-[1.05rem] font-semibold text-navy">Lettre d&apos;information</h2>
+          <div className="rounded-3xl bg-surface p-6 text-ink lg:col-span-4">
+            <h2 className="text-[1.05rem] font-semibold text-heading">Lettre d&apos;information</h2>
             <p className="mt-2 mb-5 text-[0.92rem] text-muted">Les actualités et les rendez-vous du réseau, une fois par mois.</p>
             <NewsletterForm />
           </div>

@@ -17,7 +17,7 @@ export function ShareLinks({ url, title }: { url: string; title: string }) {
               href={l.href}
               aria-label={`Partager sur ${l.label}`}
               {...(l.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-              className="text-[0.92rem] font-semibold text-navy hover:text-cyan-dark"
+              className="text-[0.92rem] font-semibold text-heading hover:text-cyan-dark"
             >
               {l.label}
             </a>

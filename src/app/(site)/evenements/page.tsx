@@ -16,13 +16,13 @@ export default async function EventsPage() {
   return (
     <>
       <PageHero image={heroBanners.evenements} title="Événements" eyebrow="Agenda" summary="Forums, ateliers et rencontres du réseau." />
-      <section className="panel panel-pad bg-white">
+      <section className="panel panel-pad bg-surface">
         <SectionHeader label="À venir" title="Prochains rendez-vous" />
         <div className="mt-12 lg:ml-[calc(25%+0.375rem)]">
           {upcoming.length ? (
             <RevealGroup as="ul" className="grid gap-3">
               {upcoming.map((e) => (
-                <li key={e.slug}><EventTicket item={e} notch="#fff" /></li>
+                <li key={e.slug}><EventTicket item={e} notch="var(--color-surface)" /></li>
               ))}
             </RevealGroup>
           ) : (
@@ -31,12 +31,12 @@ export default async function EventsPage() {
         </div>
       </section>
       {past.length > 0 && (
-        <section className="panel panel-pad bg-white">
+        <section className="panel panel-pad bg-surface">
           <div>
             <SectionHeader label="Archives" title="Événements passés" />
             <RevealGroup as="ul" className="mt-12 grid gap-3 lg:ml-[calc(25%+0.375rem)]">
               {past.slice(0, 10).map((e) => (
-                <li key={e.slug}><EventTicket item={e} notch="#fff" /></li>
+                <li key={e.slug}><EventTicket item={e} notch="var(--color-surface)" /></li>
               ))}
             </RevealGroup>
           </div>

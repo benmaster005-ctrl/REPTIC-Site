@@ -32,7 +32,7 @@ async function Unsubscribe({ searchParams }: Pick<PageProps<"/newsletter/desinsc
   if (etat === "ok") {
     return (
       <div className="max-w-xl border-l-[3px] border-cyan pl-6">
-        <p className="font-display text-xl font-bold text-navy">Vous êtes désinscrit.</p>
+        <p className="font-display text-xl font-bold text-heading">Vous êtes désinscrit.</p>
         <p className="mt-2 text-muted">Vous ne recevrez plus la lettre d&apos;information du REPTIC.CM. Vous pouvez vous réinscrire à tout moment depuis le pied de page du site.</p>
         <Link href="/" className="link-arrow mt-6">
           Retour à l&apos;accueil
@@ -43,10 +43,10 @@ async function Unsubscribe({ searchParams }: Pick<PageProps<"/newsletter/desinsc
   if (etat === "invalide" || !token) {
     return (
       <div className="max-w-xl border-l-[3px] border-amber-500 pl-6">
-        <p className="font-display text-xl font-bold text-navy">Lien de désinscription invalide ou expiré.</p>
+        <p className="font-display text-xl font-bold text-heading">Lien de désinscription invalide ou expiré.</p>
         <p className="mt-2 text-muted">
           Utilisez le lien figurant en bas de la dernière lettre reçue, ou{" "}
-          <Link href="/contact" className="font-semibold text-navy underline underline-offset-4">
+          <Link href="/contact" className="font-semibold text-heading underline underline-offset-4">
             écrivez-nous
           </Link>{" "}
           : nous vous désinscrirons.
@@ -57,7 +57,7 @@ async function Unsubscribe({ searchParams }: Pick<PageProps<"/newsletter/desinsc
   return (
     <form action={unsubscribeNewsletter} className="max-w-xl">
       <input type="hidden" name="token" value={token} />
-      <p className="font-display text-xl font-bold text-navy">Ne plus recevoir la lettre d&apos;information ?</p>
+      <p className="font-display text-xl font-bold text-heading">Ne plus recevoir la lettre d&apos;information ?</p>
       <p className="mt-2 text-muted">Confirmez votre désinscription. Vous continuerez à recevoir les e-mails liés à votre compte ou à votre adhésion.</p>
       <button type="submit" className="btn-primary mt-6">
         Me désinscrire

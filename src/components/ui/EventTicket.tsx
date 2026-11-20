@@ -23,14 +23,14 @@ export function EventTicket({ item, notch = "var(--color-canvas)", className = "
   const place = [item.locationName, item.city].filter(Boolean).join(", ");
 
   return (
-    <div className={`lift group relative grid grid-cols-[5.5rem_1fr] overflow-hidden rounded-2xl bg-white ring-1 ring-line transition-shadow hover:ring-navy/30 sm:grid-cols-[7rem_1fr] ${className}`}>
+    <div className={`lift group relative grid grid-cols-[5.5rem_1fr] overflow-hidden rounded-2xl bg-surface ring-1 ring-line transition-shadow hover:ring-navy/30 sm:grid-cols-[7rem_1fr] ${className}`}>
       <div className="grid place-content-center bg-navy px-2 py-5 text-center text-white transition-colors duration-300 group-hover:bg-cyan-dark">
         <span className="text-[1.7rem] leading-none font-bold tracking-[-0.04em] tabular-nums sm:text-[2.1rem]">{days}</span>
         <span className="mt-1.5 text-[0.78rem] text-white/75">{month}</span>
       </div>
       <div className="min-w-0 border-l-2 border-dashed border-line-strong px-5 py-4 sm:px-6 sm:py-5">
         <Countdown startsAt={item.startsAt} className="text-[0.82rem] font-semibold text-cyan-dark" />
-        <Heading className="mt-1 text-[1.08rem] leading-snug font-bold tracking-[-0.01em] text-navy sm:text-[1.2rem]">
+        <Heading className="mt-1 text-[1.08rem] leading-snug font-bold tracking-[-0.01em] text-heading sm:text-[1.2rem]">
           <Link href={`/evenements/${item.slug}`} className="title-sweep after:absolute after:inset-0">
             {item.title}
           </Link>

@@ -6,7 +6,7 @@
 export function RecaptchaNotice({ className = "", tone = "default" }: { className?: string; tone?: "default" | "inverse" }) {
   if (!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) return null;
   const text = tone === "inverse" ? "text-white/55" : "text-muted/80";
-  const link = tone === "inverse" ? "underline underline-offset-2 hover:text-white" : "underline underline-offset-2 hover:text-navy";
+  const link = tone === "inverse" ? "underline underline-offset-2 hover:text-white" : "underline underline-offset-2 hover:text-heading";
   return (
     <p className={`text-[0.72rem] leading-snug ${text} ${className}`}>
       Ce site est protégé par reCAPTCHA. Les{" "}

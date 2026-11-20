@@ -44,7 +44,7 @@ async function Article({ params }: Pick<PageProps<"/actualites/[slug]">, "params
           <div className="space-y-8 lg:sticky lg:top-36">
             <div>
               <p className="label">Publié le</p>
-              <p className="mt-2 font-semibold text-navy">
+              <p className="mt-2 font-semibold text-heading">
                 <time dateTime={item.publishedAt}>{formatDate(item.publishedAt)}</time>
               </p>
             </div>

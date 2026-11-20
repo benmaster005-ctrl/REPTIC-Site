@@ -7,7 +7,7 @@ import { ArrowRight } from "lucide-react";
  * `tone="light"` pour les fonds marine (fond blanc, texte marine).
  */
 export function CapsuleLink({ href, children, tone = "dark", className = "" }: { href: string; children: React.ReactNode; tone?: "dark" | "light"; className?: string }) {
-  const colors = tone === "light" ? "bg-white text-navy hover:bg-ice" : "bg-navy text-white hover:bg-navy-deep";
+  const colors = tone === "light" ? "bg-white text-navy hover:bg-[#e6f2fa]" : "bg-navy text-white hover:bg-navy-deep";
   return (
     <Link
       href={href}
