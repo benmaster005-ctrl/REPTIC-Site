@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useId, useState } from "react";
 import {
   AtSign,
   BadgeCheck,
@@ -81,32 +81,40 @@ export function SideNav({ sections, label, root }: { sections: SideNavSection[];
 /** Variante sans lecture d'URL, utilisable comme repli dans la coque statique. */
 export function SideNavList({ sections, label, root, pathname }: { sections: SideNavSection[]; label: string; root: string; pathname: string | null }) {
   const [closed, setClosed] = useState<Record<string, boolean>>({});
+  const uid = useId();
 
   return (
     <nav aria-label={label} className="grid gap-1">
       {sections.map((s, i) => {
         const hasActive = s.items.some((it) => isActive(it.href, pathname, root));
         const open = hasActive || !closed[s.title];
-        const id = `nav-${root.replace(/\W/g, "")}-${i}`;
+        const id = `${uid}-${i}`;
         return (
           <div key={s.title} className={i > 0 ? "border-t border-line pt-2" : ""}>
+            {/* Titre de catégorie (masqué quand la barre est réduite en rail d'icônes) */}
             <button
               type="button"
               aria-expanded={open}
               aria-controls={id}
               onClick={() => !hasActive && setClosed((c) => ({ ...c, [s.title]: !c[s.title] }))}
-              className="group flex w-full items-center justify-between rounded-md px-2.5 py-1.5 text-left text-[0.75rem] font-semibold tracking-[0.02em] text-muted hover:text-heading"
+              className="group flex w-full items-center justify-between rounded-md px-2.5 py-1.5 text-left text-[0.75rem] font-semibold tracking-[0.02em] text-muted hover:text-heading lg:group-data-[collapsed=true]/shell:hidden"
             >
               {s.title}
-              <ChevronDown aria-hidden className={`size-3.5 transition-transform ${open ? "" : "-rotate-90"} ${hasActive ? "opacity-0" : "opacity-60 group-hover:opacity-100"}`} />
+              <ChevronDown aria-hidden className={`size-3.5 transition-transform duration-300 ${open ? "" : "-rotate-90"} ${hasActive ? "opacity-0" : "opacity-60 group-hover:opacity-100"}`} />
             </button>
-            {open && (
-              <ul id={id} className="mt-0.5 mb-1.5 grid gap-0.5">
+            {/* Repli en douceur : la hauteur passe de 1fr à 0fr (toujours ouvert en rail) */}
+            <div
+              id={id}
+              className={`grid transition-[grid-template-rows,opacity] duration-300 ease-[var(--ease-out)] lg:group-data-[collapsed=true]/shell:grid-rows-[1fr] lg:group-data-[collapsed=true]/shell:opacity-100 ${
+                open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+              }`}
+            >
+              <ul className={`mt-0.5 mb-1.5 grid min-h-0 gap-0.5 overflow-hidden ${open ? "" : "invisible lg:group-data-[collapsed=true]/shell:visible"}`}>
                 {s.items.map((item) => (
                   <NavLink key={item.href} item={item} active={isActive(item.href, pathname, root)} />
                 ))}
               </ul>
-            )}
+            </div>
           </div>
         );
       })}
@@ -120,15 +128,19 @@ function NavLink({ item, active }: { item: SideNavItem; active: boolean }) {
     <li>
       <Link
         href={item.href}
+        title={item.label}
         aria-current={active ? "page" : undefined}
-        className={`flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[0.875rem] font-medium transition-colors ${
+        className={`relative flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[0.875rem] font-medium transition-colors lg:group-data-[collapsed=true]/shell:justify-center lg:group-data-[collapsed=true]/shell:px-0 ${
           active ? "bg-cyan-tint text-cyan-dark" : "text-ink/80 hover:bg-ice hover:text-heading"
         }`}
       >
         <Icon aria-hidden className={`size-[1.05rem] shrink-0 ${active ? "text-cyan-dark" : "text-muted"}`} />
-        <span className="min-w-0 flex-1 truncate">{item.label}</span>
+        <span className="min-w-0 flex-1 truncate lg:group-data-[collapsed=true]/shell:sr-only">{item.label}</span>
         {item.badge ? (
-          <span className="grid min-w-5 place-items-center rounded-full bg-navy px-1.5 py-px text-[0.7rem] font-semibold text-white" aria-label={`${item.badge} en attente`}>
+          <span
+            className="grid min-w-5 place-items-center rounded-full bg-navy px-1.5 py-px text-[0.7rem] font-semibold text-white lg:group-data-[collapsed=true]/shell:absolute lg:group-data-[collapsed=true]/shell:top-1 lg:group-data-[collapsed=true]/shell:right-1.5 lg:group-data-[collapsed=true]/shell:size-2 lg:group-data-[collapsed=true]/shell:min-w-0 lg:group-data-[collapsed=true]/shell:p-0 lg:group-data-[collapsed=true]/shell:text-[0]"
+            aria-label={`${item.badge} en attente`}
+          >
             {item.badge}
           </span>
         ) : null}

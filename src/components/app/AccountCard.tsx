@@ -6,18 +6,18 @@ import { initials } from "@/lib/format";
 /** Carte de la personne connectée, en bas de la barre latérale. */
 export function AccountCard({ name, detail }: { name: string; detail: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl p-2">
-      <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-full bg-navy text-[0.8rem] font-semibold text-white">
+    <div className="flex items-center gap-3 rounded-xl p-2 lg:group-data-[collapsed=true]/shell:justify-center lg:group-data-[collapsed=true]/shell:p-0">
+      <span title={name} aria-hidden className="grid size-9 shrink-0 place-items-center rounded-full bg-navy text-[0.8rem] font-semibold text-white">
         {initials(name)}
       </span>
-      <span className="min-w-0 flex-1 leading-tight">
+      <span className="min-w-0 flex-1 leading-tight lg:group-data-[collapsed=true]/shell:hidden">
         <span className="block truncate text-[0.875rem] font-semibold text-heading">{name}</span>
         <span className="block truncate text-[0.75rem] text-muted">{detail}</span>
       </span>
-      <Link href="/" title="Site public" aria-label="Site public" className="grid size-8 place-items-center rounded-lg text-muted hover:bg-ice hover:text-heading">
+      <Link href="/" title="Site public" aria-label="Site public" className="lg:group-data-[collapsed=true]/shell:hidden grid size-8 place-items-center rounded-lg text-muted hover:bg-ice hover:text-heading">
         <Globe aria-hidden className="size-4" />
       </Link>
-      <form action={signOut}>
+      <form action={signOut} className="lg:group-data-[collapsed=true]/shell:hidden">
         <button type="submit" title="Se déconnecter" aria-label="Se déconnecter" className="grid size-8 place-items-center rounded-lg text-muted hover:bg-ice hover:text-heading">
           <LogOut aria-hidden className="size-4" />
         </button>
