@@ -36,7 +36,7 @@ export function PageHero({ title, summary, crumbs = [], eyebrow, image, imageAlt
   void eyebrow;
   return (
     <section className="relative isolate overflow-hidden bg-navy-deep text-white">
-      <Image src={banner} alt={cover ? "" : imageAlt} fill priority sizes="100vw" className={`-z-20 object-cover object-[70%_35%] ${cover ? "hidden lg:block" : ""}`} />
+      <Image src={banner} alt={cover ? "" : imageAlt} fill priority sizes="100vw" className={`banner-parallax -z-20 object-cover object-[70%_35%] ${cover ? "hidden lg:block" : ""}`} />
       {/* Voile marine, comme la bannière de l'accueil : plein sur mobile, dégradé depuis la gauche sur grand écran */}
       <span
         aria-hidden
@@ -200,7 +200,7 @@ export function NewsCard({ item, size = "default", delay = 0 }: { item: NewsItem
             alt=""
             fill
             sizes={compact ? "(min-width: 1024px) 15vw, 40vw" : feature ? "(min-width: 1024px) 55vw, 100vw" : "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"}
-            className="object-cover"
+            className="img-hover object-cover"
           />
         ) : (
           <CardPlaceholder />
@@ -239,7 +239,7 @@ export function EventRow({ item }: { item: EventItem }) {
       {item.coverUrl ? (
         // Miniature de la couverture (le haut de l'affiche, là où se trouve le titre)
         <span className="relative block aspect-square overflow-hidden rounded-lg border border-line bg-paper">
-          <Image src={item.coverUrl} alt="" fill sizes="96px" className="object-cover object-top transition-transform duration-500 group-hover:scale-105" />
+          <Image src={item.coverUrl} alt="" fill sizes="96px" className="img-hover object-cover object-top" />
         </span>
       ) : (
         <p className="grid aspect-square place-content-center rounded-lg bg-navy text-center leading-none text-white transition-colors duration-300 group-hover:bg-cyan-dark">

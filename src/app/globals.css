@@ -86,7 +86,7 @@ body {
 
 /* Boutons : rectangles nets, flèche en fin */
 @utility btn {
-  @apply inline-flex items-center justify-center gap-3 rounded-full px-6 py-3 text-[0.9rem] font-semibold transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60;
+  @apply inline-flex items-center justify-center gap-3 rounded-full px-6 py-3 text-[0.9rem] font-semibold transition-[background-color,color,border-color,transform] duration-200 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60;
 }
 @utility btn-primary {
   @apply btn bg-navy text-white hover:bg-cyan-dark;
@@ -285,6 +285,40 @@ body {
   }
 }
 
+/* --- Bannières : légère profondeur au défilement --------------------------
+   La photo descend un peu moins vite que la page (animation liée au
+   défilement, sans JavaScript). Navigateurs sans support : photo fixe. */
+@supports (animation-timeline: scroll()) {
+  .banner-parallax {
+    animation: banner-parallax linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 100vh;
+  }
+}
+@keyframes banner-parallax {
+  from {
+    transform: translate3d(0, 0, 0) scale(1.06);
+  }
+  to {
+    transform: translate3d(0, 9%, 0) scale(1.06);
+  }
+}
+
+/* --- En-tête dépoli une fois la page défilée ----------------------------- */
+.site-header[data-scrolled] {
+  background-color: rgb(255 255 255 / 0.84);
+  backdrop-filter: saturate(1.5) blur(14px);
+  -webkit-backdrop-filter: saturate(1.5) blur(14px);
+}
+
+/* --- Images des cartes : rapprochement discret au survol ----------------- */
+.img-hover {
+  transition: transform 0.9s var(--ease-out);
+}
+.group:hover .img-hover {
+  transform: scale(1.035);
+}
+
 /* --- Micro-interactions ------------------------------------------------------ */
 .btn svg,
 .link-arrow svg {
@@ -378,6 +412,14 @@ body {
   }
   .trace-signal {
     display: none;
+  }
+  /* Ni profondeur au défilement ni zoom au survol */
+  .banner-parallax {
+    animation: none !important;
+    transform: none !important;
+  }
+  .group:hover .img-hover {
+    transform: none;
   }
   /* Sans mouvement : les familles s'affichent à la ligne, sans la copie */
   .marquee {

@@ -5,6 +5,7 @@ import { getEvents, getGovernance, getKeyFigures, getLatestNews } from "@/lib/da
 import { formatDate } from "@/lib/format";
 import type { EventItem, NewsItem } from "@/lib/types";
 import { LinkedinPosts } from "@/components/ui/LinkedinPosts";
+import { RiseWords } from "@/components/motion/RiseWords";
 
 const profiles = [
   {
@@ -28,28 +29,23 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Ouverture : le réseau, au sens propre */}
+      {/* Ouverture : bannière photo. Seule séquence animée du site, jouée une fois
+          au chargement : la photo recule, le titre monte mot à mot, le reste suit. */}
       <section className="relative isolate overflow-hidden bg-navy-deep text-white">
-        {/* Bannière photo, assombrie côté texte pour la lisibilité */}
-        <Image
-          src="/images/reptic/pages/adhesion-reseau.webp"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="-z-20 object-cover object-[70%_30%]"
-        />
+        <div aria-hidden className="hero-zoom absolute inset-0 -z-20">
+          <Image src="/images/reptic/pages/adhesion-reseau.webp" alt="" fill priority sizes="100vw" className="banner-parallax object-cover object-[70%_30%]" />
+        </div>
         <div aria-hidden className="absolute inset-0 -z-10 bg-navy-deep/80 lg:bg-transparent lg:bg-gradient-to-r lg:from-navy-deep lg:via-navy-deep/85 lg:to-navy-deep/5" />
         <div className="container-site flex min-h-[36rem] items-center py-20 sm:min-h-[40rem] lg:min-h-[44rem] lg:py-24">
           <div className="max-w-[40rem]">
             <h1 className="font-display text-[2.6rem] leading-[1.02] font-bold tracking-[-0.035em] text-balance sm:text-[3.9rem] lg:text-[4.6rem]">
-              Le réseau qui fédère le numérique camerounais.
+              <RiseWords text="Le réseau qui fédère le numérique camerounais" accent="." start={150} step={60} />
             </h1>
-            <p className="mt-7 max-w-[34rem] text-[1.15rem] leading-[1.65] text-white/80">
+            <p className="intro mt-7 max-w-[34rem] text-[1.15rem] leading-[1.65] text-white/80 [--intro-delay:650ms]">
               Entreprises et professionnels des télécoms et du numérique, réunis pour défendre le secteur, accompagner ses acteurs et accélérer la
               transformation digitale du Cameroun.
             </p>
-            <div className="mt-9 flex flex-wrap gap-3">
+            <div className="intro mt-9 flex flex-wrap gap-3 [--intro-delay:780ms]">
               <Link href="/adhesion" className="btn-inverse">
                 Devenir membre
               </Link>
@@ -58,7 +54,7 @@ export default async function HomePage() {
               </Link>
             </div>
             {figures.length > 0 && (
-              <dl className="mt-14 grid max-w-[34rem] grid-cols-3 gap-6 border-t border-white/20 pt-6">
+              <dl className="intro mt-14 grid max-w-[34rem] grid-cols-3 gap-6 border-t border-white/20 pt-6 [--intro-delay:920ms]">
                 {figures.slice(0, 3).map((f) => (
                   <div key={f.label}>
                     <dt className="sr-only">{f.label}</dt>
@@ -149,10 +145,10 @@ export default async function HomePage() {
             </div>
             <ul className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4 lg:col-span-8">
               {board.slice(0, 8).map((m) => (
-                <li key={m.id}>
+                <li key={m.id} className="group">
                   <div className="relative size-24 overflow-hidden rounded-full bg-ice sm:size-28">
                     {m.photoUrl ? (
-                      <Image src={m.photoUrl} alt="" fill sizes="112px" className="object-cover" />
+                      <Image src={m.photoUrl} alt="" fill sizes="112px" className="img-hover object-cover" />
                     ) : (
                       <span className="grid size-full place-items-center text-xl font-semibold text-navy/50">{initials(m.fullName)}</span>
                     )}
@@ -224,7 +220,7 @@ function EventTicket({ item }: { item: EventItem }) {
       href={`/evenements/${item.slug}`}
       className="group mt-10 grid overflow-hidden rounded-2xl bg-white ring-1 ring-line transition-shadow hover:ring-navy/30 sm:grid-cols-[11rem_1fr] lg:grid-cols-[11rem_1fr_20rem]"
     >
-      <div className="flex flex-row items-baseline gap-3 bg-navy px-7 py-6 text-white sm:flex-col sm:justify-center sm:gap-1 sm:py-8">
+      <div className="flex flex-row items-baseline gap-3 bg-navy px-7 transition-colors duration-300 group-hover:bg-cyan-dark py-6 text-white sm:flex-col sm:justify-center sm:gap-1 sm:py-8">
         <span className="text-[2.6rem] leading-none font-bold tracking-[-0.04em] tabular-nums">{days}</span>
         <span className="text-[0.95rem] text-white/75">{monthYear}</span>
       </div>
@@ -236,7 +232,7 @@ function EventTicket({ item }: { item: EventItem }) {
       </div>
       {item.coverUrl && (
         <div className="relative hidden lg:block">
-          <Image src={item.coverUrl} alt="" fill sizes="320px" className="object-cover" />
+          <Image src={item.coverUrl} alt="" fill sizes="320px" className="img-hover object-cover" />
         </div>
       )}
     </Link>
@@ -247,7 +243,7 @@ function FeaturedNews({ item }: { item: NewsItem }) {
   return (
     <article className="group relative lg:col-span-7">
       <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-ice">
-        {item.coverUrl && <Image src={item.coverUrl} alt="" fill sizes="(min-width: 1024px) 720px, 100vw" className="object-cover" />}
+        {item.coverUrl && <Image src={item.coverUrl} alt="" fill sizes="(min-width: 1024px) 720px, 100vw" className="img-hover object-cover" />}
       </div>
       <p className="mt-6 text-[0.9rem] text-muted">
         {item.category && <span className="font-medium text-cyan-dark">{item.category}</span>}
@@ -268,7 +264,7 @@ function NewsLine({ item }: { item: NewsItem }) {
   return (
     <li className="group relative flex gap-5 border-t border-line py-6 first:border-t-0 first:pt-0 lg:first:border-t lg:first:pt-6">
       <div className="relative size-24 shrink-0 overflow-hidden rounded-lg bg-ice">
-        {item.coverUrl && <Image src={item.coverUrl} alt="" fill sizes="96px" className="object-cover" />}
+        {item.coverUrl && <Image src={item.coverUrl} alt="" fill sizes="96px" className="img-hover object-cover" />}
       </div>
       <div>
         <p className="text-[0.85rem] text-muted">

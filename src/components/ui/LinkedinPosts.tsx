@@ -29,7 +29,7 @@ export async function LinkedinPosts({ limit = 3 }: { limit?: number }) {
             >
               {p.image && (
                 <div className="relative aspect-[16/10] overflow-hidden bg-line/40">
-                  <Image src={p.image} alt="" fill sizes="(min-width: 1280px) 25vw, (min-width: 768px) 50vw, 100vw" className="object-cover" />
+                  <Image src={p.image} alt="" fill sizes="(min-width: 1280px) 25vw, (min-width: 768px) 50vw, 100vw" className="img-hover object-cover" />
                 </div>
               )}
               <div className="flex flex-1 flex-col p-6">
