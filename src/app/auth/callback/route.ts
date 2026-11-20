@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { safeInternalPath } from "@/lib/safe-redirect";
+import { publicOrigin } from "@/lib/env";
 import { RECOVERY_COOKIE, RECOVERY_MAX_AGE, RECOVERY_PATH } from "@/lib/recovery";
 
 /**
@@ -10,7 +11,9 @@ import { RECOVERY_COOKIE, RECOVERY_MAX_AGE, RECOVERY_PATH } from "@/lib/recovery
  * Gère le flux PKCE (?code=) et le flux token_hash (?token_hash=&type=).
  */
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = request.nextUrl;
+  const { searchParams } = request.nextUrl;
+  // Adresse publique (et non l'adresse interne du proxy, ex. localhost:3001)
+  const origin = publicOrigin(request.nextUrl.origin);
   const via = searchParams.get("via");
   const oauth = via === "google" || via === "linkedin" ? via : null;
   const next = safeInternalPath(searchParams.get("suite"));

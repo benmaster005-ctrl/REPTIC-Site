@@ -3,7 +3,7 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { SITE_URL, isSupabaseConfigured } from "@/lib/env";
+import { isSupabaseConfigured, publicOrigin } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import { emailSchema, fieldErrors, type FormState } from "@/lib/forms";
 import { RECAPTCHA_ERROR, verifyRecaptcha } from "@/lib/recaptcha";
@@ -14,14 +14,11 @@ import { RECOVERY_COOKIE } from "@/lib/recovery";
 const safeNext = (value: FormDataEntryValue | null) => safeInternalPath(value);
 
 /**
- * Origine des liens envoyés par e-mail. En production : l'adresse officielle
- * (NEXT_PUBLIC_SITE_URL). Ailleurs (aperçu Vercel, local) : l'origine réelle.
+ * Adresse publique du site, pour les liens de retour envoyés à Supabase
+ * (voir publicOrigin : jamais l'adresse interne du proxy en production).
  */
 async function siteOrigin() {
-  if (process.env.VERCEL_ENV === "production") return SITE_URL;
-  const h = await headers();
-  const origin = h.get("origin");
-  return origin && /^https?:\/\/[^/]+$/.test(origin) ? origin : SITE_URL;
+  return publicOrigin((await headers()).get("origin"));
 }
 
 const NOT_CONFIGURED: FormState = { status: "error", message: "Authentification indisponible : base non connectée." };
