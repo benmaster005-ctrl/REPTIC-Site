@@ -22,7 +22,10 @@ export const RECAPTCHA_ERROR = "La vérification anti-robot a échoué. Recharge
 
 type SiteVerify = { success: boolean; score?: number; action?: string; hostname?: string; "error-codes"?: string[] };
 
-/** Domaines d'où un jeton est accepté : le site officiel, ses aperçus Vercel, le poste local. */
+/**
+ * Domaines d'où un jeton est accepté : le site officiel et tous ses sous-domaines
+ * (www, test1…), le domaine de NEXT_PUBLIC_SITE_URL, les aperçus Vercel, le poste local.
+ */
 const SITE_HOST = (() => {
   try {
     return new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "").hostname;
@@ -32,7 +35,7 @@ const SITE_HOST = (() => {
 })();
 function isAllowedHost(host: string | undefined) {
   if (!host) return false;
-  return host === SITE_HOST || host === "reptic.cm" || host === "www.reptic.cm" || host.endsWith(".vercel.app") || host === "localhost";
+  return host === SITE_HOST || host === "reptic.cm" || host.endsWith(".reptic.cm") || host.endsWith(".vercel.app") || host === "localhost";
 }
 
 let warnedMissingKeys = false;
