@@ -28,6 +28,7 @@
   --color-line: #dfe4ec;
   --color-line-strong: #c3c8d5;
   --color-paper: #f5f7fa;
+  --color-canvas: #eef1f5;
 
   --radius-sm: 2px;
 }
@@ -41,8 +42,9 @@ html {
   scroll-padding-top: 7rem;
 }
 
+/* Toile gris très clair : les panneaux blancs et marine flottent dessus. */
 body {
-  background: #ffffff;
+  background: var(--color-canvas);
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-feature-settings: "ss01";
@@ -60,6 +62,29 @@ body {
 
 @utility container-site {
   @apply mx-auto w-full max-w-[84rem] px-4 sm:px-8 lg:px-12;
+}
+
+/* Panneau arrondi posé sur la toile, aligné sur la largeur de l'accueil
+   (90rem moins les marges). Géométrie seule : le fond est donné à part. */
+@utility panel {
+  margin-inline: max(0.5rem, calc((100% - 88.5rem) / 2));
+  margin-top: 0.75rem;
+  border-radius: 1.75rem;
+  overflow: hidden;
+  @media (width >= 40rem) {
+    margin-inline: max(0.75rem, calc((100% - 88.5rem) / 2));
+    border-radius: 2rem;
+  }
+}
+/* Marges intérieures standard d'un panneau */
+@utility panel-pad {
+  padding: 3rem 1.5rem;
+  @media (width >= 40rem) {
+    padding: 4rem 2.5rem;
+  }
+  @media (width >= 64rem) {
+    padding: 4.5rem 3.5rem;
+  }
 }
 
 @utility font-display {
@@ -126,10 +151,43 @@ body {
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-/* --- Apparition au défilement ([data-reveal], composant <Reveal>) --------
-   Désactivée : le contenu s'affiche directement, sans effet d'entrée par
-   section (une seule animation sur le site : la bannière). Le composant reste
-   en place, sans effet visuel. */
+/* --- Apparition au défilement, en CSS pur ---------------------------------
+   Chaque panneau, élément [data-anim] et enfant de groupe ([data-stagger],
+   <RevealGroup>) monte en fondu au moment où il entre dans l'écran (animation
+   liée à sa position, sans JavaScript ni modification du DOM). Les éléments
+   d'une grille arrivent donc l'un après l'autre, selon leur place.
+   - « backwards » : une fois entré, l'élément reprend ses styles normaux,
+     les effets de survol (.lift) fonctionnent ;
+   - ce qui est déjà à l'écran au chargement ne bouge pas ;
+   - navigateurs sans support ou « réduire les animations » : rien ne bouge. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    main .panel:not([data-no-anim]),
+    main [data-anim],
+    main [data-stagger] > *,
+    main [data-reveal="group"] > *,
+    footer > div {
+      animation: reveal-up linear backwards;
+      animation-timeline: view();
+      animation-range: entry 5% entry 60%;
+    }
+    /* Bandes horizontales : les cartes arrivent en entrant par le côté */
+    main ul[data-stagger].overflow-x-auto > * {
+      animation-timeline: view(inline);
+      animation-range: entry 0% entry 70%;
+    }
+  }
+}
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 36px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 
 /* --- Titre d'ouverture : les mots montent depuis leur ligne -------------- */
 .rise-mask {
@@ -305,10 +363,14 @@ body {
 }
 
 /* --- En-tête dépoli une fois la page défilée ----------------------------- */
-.site-header[data-scrolled] {
-  background-color: rgb(255 255 255 / 0.84);
-  backdrop-filter: saturate(1.5) blur(14px);
-  -webkit-backdrop-filter: saturate(1.5) blur(14px);
+.site-header[data-scrolled] .header-pill {
+  background-color: rgb(255 255 255 / 0.9);
+  box-shadow: 0 10px 30px -14px rgb(20 26 51 / 0.28);
+}
+.header-pill {
+  transition:
+    background-color 0.3s,
+    box-shadow 0.3s;
 }
 
 /* --- Images des cartes : rapprochement discret au survol ----------------- */
@@ -317,6 +379,66 @@ body {
 }
 .group:hover .img-hover {
   transform: scale(1.035);
+}
+
+/* --- Panneaux et cartes cliquables : légère élévation au survol ---------- */
+.lift {
+  transition:
+    transform 0.45s var(--ease-out),
+    box-shadow 0.45s var(--ease-out),
+    background-color 0.25s,
+    color 0.25s;
+}
+@media (hover: hover) {
+  .lift:hover {
+    transform: translate3d(0, -4px, 0);
+    box-shadow: 0 18px 40px -22px rgb(20 26 51 / 0.45);
+  }
+}
+.lift:active {
+  transform: translate3d(0, -1px, 0) scale(0.995);
+}
+
+/* --- Ouverture des menus : léger fondu depuis le haut -------------------- */
+.menu-pop > * {
+  animation: menu-pop 0.28s var(--ease-out) both;
+  transform-origin: top left;
+}
+@keyframes menu-pop {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -6px, 0) scale(0.98);
+  }
+}
+
+/* --- Texte dévoilé au survol (chapeau des cartes) ------------------------
+   Toujours visible sur écran tactile ; à la souris, il se déplie au survol. */
+@media (hover: hover) {
+  .reveal-on-hover {
+    display: grid;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      max-height 0.5s var(--ease-out),
+      opacity 0.4s,
+      margin 0.5s var(--ease-out);
+  }
+  .group:hover .reveal-on-hover,
+  .group:focus-within .reveal-on-hover {
+    max-height: 7rem;
+    opacity: 1;
+    margin-top: 0.6rem;
+  }
+}
+@media (hover: none) {
+  .reveal-on-hover {
+    margin-top: 0.6rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }
 
 /* --- Micro-interactions ------------------------------------------------------ */
@@ -356,9 +478,6 @@ body {
 .site-header[data-hidden] {
   transform: translate3d(0, -100%, 0);
 }
-.site-header[data-scrolled] {
-  box-shadow: 0 1px 0 var(--color-line);
-}
 
 /* --- Transitions entre pages (React <ViewTransition>) -------------------- */
 ::view-transition {
@@ -381,6 +500,11 @@ body {
     opacity: 0;
     transform: translate3d(0, 18px, 0);
   }
+}
+/* Indicateur du contrôle segmenté : glisse vers le nouveau choix */
+::view-transition-group(filtre-actif) {
+  animation-duration: 0.45s;
+  animation-timing-function: var(--ease-out);
 }
 ::view-transition-group(site-header) {
   animation: none;

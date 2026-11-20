@@ -2,279 +2,289 @@ import Image from "next/image";
 import Link from "next/link";
 import { missions } from "@/content/site";
 import { getEvents, getGovernance, getKeyFigures, getLatestNews } from "@/lib/data/public";
-import { formatDate } from "@/lib/format";
-import type { EventItem, NewsItem } from "@/lib/types";
+import { formatDate, readingTime } from "@/lib/format";
+import { Clock } from "lucide-react";
+import type { EventItem, KeyFigure, NewsItem } from "@/lib/types";
 import { LinkedinPosts } from "@/components/ui/LinkedinPosts";
 import { RiseWords } from "@/components/motion/RiseWords";
+import { CapsuleLink } from "@/components/ui/CapsuleLink";
+import { AnimatedFigure } from "@/components/ui/AnimatedFigure";
+import { Countdown } from "@/components/ui/Countdown";
+import { CountUp } from "@/components/motion/CountUp";
+import { BoardCard } from "@/components/ui/BoardCard";
+import { ScrollRail } from "@/components/ui/ScrollRail";
 
-const profiles = [
-  {
-    anchor: "physique",
-    kind: "Personne physique",
-    title: "Professionnels indépendants",
-    text: "Consultants, experts et indépendants des télécoms et du numérique.",
-  },
-  {
-    anchor: "morale",
-    kind: "Personne morale",
-    title: "Entreprises et organisations",
-    text: "Opérateurs, éditeurs, ESN, startups, cabinets, organismes de formation et associations du secteur.",
-  },
-];
+/*
+ * Accueil, version 2 : des panneaux arrondis posés sur une toile gris clair,
+ * espacés de 12 px. Ouverture plein écran, grille modulaire dense, actualités
+ * en carrousel, Bureau en bande défilante au doigt, appel à l'adhésion.
+ */
+
+const panel = "overflow-hidden rounded-[1.75rem] sm:rounded-[2rem]";
 
 export default async function HomePage() {
-  const [figures, news, { upcoming }, board] = await Promise.all([getKeyFigures(), getLatestNews(3), getEvents(), getGovernance()]);
-  const [featured, ...others] = news;
+  const [figures, news, { upcoming }, board] = await Promise.all([getKeyFigures(), getLatestNews(6), getEvents(), getGovernance()]);
   const next = upcoming[0];
+  const fig = (needle: string) => figures.find((f) => f.label.toLowerCase().includes(needle));
+  const members = fig("membre");
+  const sectors = fig("secteur");
+  const founded = fig("création") ?? fig("creation");
 
   return (
     <>
-      {/* Ouverture : bannière photo. Seule séquence animée du site, jouée une fois
-          au chargement : la photo recule, le titre monte mot à mot, le reste suit. */}
-      <section className="relative isolate overflow-hidden bg-navy-deep text-white">
-        <div aria-hidden className="hero-zoom absolute inset-0 -z-20">
-          <Image src="/images/reptic/pages/adhesion-reseau.webp" alt="" fill priority sizes="100vw" className="banner-parallax object-cover object-[70%_30%]" />
-        </div>
-        <div aria-hidden className="absolute inset-0 -z-10 bg-navy-deep/80 lg:bg-transparent lg:bg-gradient-to-r lg:from-navy-deep lg:via-navy-deep/85 lg:to-navy-deep/5" />
-        <div className="container-site flex min-h-[36rem] items-center py-20 sm:min-h-[40rem] lg:min-h-[44rem] lg:py-24">
-          <div className="max-w-[40rem]">
-            <h1 className="font-display text-[2.6rem] leading-[1.02] font-bold tracking-[-0.035em] text-balance sm:text-[3.9rem] lg:text-[4.6rem]">
-              <RiseWords text="Le réseau qui fédère le numérique camerounais" accent="." start={150} step={60} />
-            </h1>
-            <p className="intro mt-7 max-w-[34rem] text-[1.15rem] leading-[1.65] text-white/80 [--intro-delay:650ms]">
-              Entreprises et professionnels des télécoms et du numérique, réunis pour défendre le secteur, accompagner ses acteurs et accélérer la
-              transformation digitale du Cameroun.
-            </p>
-            <div className="intro mt-9 flex flex-wrap gap-3 [--intro-delay:780ms]">
-              <Link href="/adhesion" className="btn-inverse">
-                Devenir membre
-              </Link>
-              <Link href="/presentation" className="btn-inverse-outline">
-                Découvrir le réseau
-              </Link>
-            </div>
-            {figures.length > 0 && (
-              <dl className="intro mt-14 grid max-w-[34rem] grid-cols-3 gap-6 border-t border-white/20 pt-6 [--intro-delay:920ms]">
-                {figures.slice(0, 3).map((f) => (
-                  <div key={f.label}>
-                    <dt className="sr-only">{f.label}</dt>
-                    <dd className="text-[1.75rem] leading-none font-bold tracking-[-0.03em] tabular-nums">{f.value}</dd>
-                    <dd className="mt-2 text-[0.9rem] leading-snug text-white/70">{f.label}</dd>
-                  </div>
-                ))}
-              </dl>
-            )}
-          </div>
-        </div>
-      </section>
+    <div className="mx-auto max-w-[90rem] space-y-3 px-2 pt-3 sm:px-3">
+      <Hero next={next} founded={founded} />
 
-      {/* Missions : une liste, pas des tuiles */}
-      <section className="border-t border-line py-20 sm:py-28">
-        <div className="container-site grid gap-12 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-4">
-            <h2 className="heading-lg text-balance">Ce que fait le réseau</h2>
-            <p className="mt-5 max-w-[26rem] text-[1.05rem] leading-relaxed text-muted">
-              Six chantiers conduits avec les pouvoirs publics, les universités et les partenaires du secteur.
-            </p>
-            <Link href="/objectifs-missions" className="link-arrow mt-8">
-              Objectifs et missions
-            </Link>
-          </div>
-          <ul className="grid gap-x-12 sm:grid-cols-2 lg:col-span-8">
+      {/* Grille modulaire */}
+      <section aria-label="Le réseau en bref" data-stagger className="grid gap-3 lg:grid-cols-12">
+        {/* Missions */}
+        <div className={`${panel} flex flex-col bg-navy p-7 text-white sm:p-10 lg:col-span-5 lg:row-span-2`}>
+          <h2 className="text-[1.9rem] leading-[1.05] font-bold tracking-[-0.03em] sm:text-[2.4rem]">Ce que fait le réseau</h2>
+          <ul data-stagger className="mt-8 divide-y divide-white/12 border-y border-white/12">
             {missions.map((m) => (
-              <li key={m.title} className="border-t border-line py-7">
-                <h3 className="text-[1.12rem] leading-snug font-semibold tracking-[-0.01em] text-navy">{m.title}</h3>
-                <p className="mt-2.5 text-[0.98rem] leading-relaxed text-muted">{m.description}</p>
+              <li key={m.title} className="py-3.5 text-[1.02rem] font-medium text-white/90">
+                {m.title}
               </li>
             ))}
           </ul>
+          <Link href="/objectifs-missions" className="mt-auto inline-flex self-start pt-8 text-sm font-semibold text-[#7cc4ea] hover:text-white">
+            Objectifs et missions
+          </Link>
         </div>
+
+        {/* Membres */}
+        <BigFigure figure={members} fallback={{ value: "100+", label: "Membres" }} className="bg-white lg:col-span-3" href="/adhesion" linkLabel="Rejoindre" since={Number(founded?.value) || 2017} />
+
+        {/* Photo */}
+        <Link href="/presentation" className={`${panel} lift group relative min-h-[22rem] lg:col-span-4 lg:row-span-2`}>
+          <Image src="/images/reptic/pages/assemblee-generale.webp" alt="" fill sizes="(min-width: 1024px) 30vw, 100vw" className="img-hover object-cover" />
+          <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-navy-deep/85 via-navy-deep/10 to-transparent" />
+          <span className="absolute inset-x-0 bottom-0 p-7 text-white">
+            <span className="block text-[0.9rem] text-white/75">Assemblée générale, Yaoundé</span>
+            <span className="mt-1 block text-[1.5rem] leading-tight font-bold tracking-[-0.02em]">Découvrir l&apos;association</span>
+          </span>
+        </Link>
+
+        {/* Secteurs */}
+        <BigFigure figure={sectors} fallback={{ value: "21", label: "Secteurs représentés" }} className="bg-cyan-tint lg:col-span-3" href="/acteurs" linkLabel="Les familles d'acteurs" />
+
+        {/* Adhésion */}
+        <div className={`${panel} grid gap-6 bg-white p-7 sm:p-10 lg:col-span-7 lg:grid-cols-2`}>
+          <div>
+            <h2 className="text-[1.6rem] leading-[1.1] font-bold tracking-[-0.025em] text-navy sm:text-[2rem]">Deux façons d&apos;adhérer</h2>
+            <p className="mt-3 text-[0.98rem] leading-relaxed text-muted">Dossier en ligne, pièces justificatives déposées et suivies depuis votre espace.</p>
+            <CapsuleLink href="/adhesion/demande" className="mt-6">
+              Déposer ma demande
+            </CapsuleLink>
+          </div>
+          <ul className="grid gap-3">
+            <ProfileLink href="/adhesion#physique" kind="Personne physique" title="Professionnels indépendants" />
+            <ProfileLink href="/adhesion#morale" kind="Personne morale" title="Entreprises et organisations" />
+          </ul>
+        </div>
+
+        {/* Contact */}
+        <Link href="/contact" className={`${panel} lift group flex flex-col justify-between gap-8 bg-cyan-dark p-7 text-white sm:p-10 lg:col-span-5`}>
+          <span className="text-[1.6rem] leading-[1.1] font-bold tracking-[-0.025em] sm:text-[2rem]">Un projet, une question, un partenariat ?</span>
+          <span className="flex items-center justify-between gap-4">
+            <span className="text-[0.98rem] text-white/80">Le secrétariat vous répond à Yaoundé.</span>
+            <span className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-navy transition-transform group-hover:scale-105">Écrire</span>
+          </span>
+        </Link>
       </section>
 
-      {/* Prochain rendez-vous, présenté comme un billet */}
-      {next && (
-        <section className="bg-ice py-20 sm:py-24">
-          <div className="container-site">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <h2 className="heading-md">Prochain rendez-vous</h2>
-              <Link href="/evenements" className="link-arrow">
-                Tout l&apos;agenda
-              </Link>
-            </div>
-            <EventTicket item={next} />
-          </div>
-        </section>
-      )}
-
-      {/* Actualités : une à la une, deux en liste */}
-      <section className="py-20 sm:py-28">
-        <div className="container-site">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 className="heading-lg">Actualités du réseau</h2>
+      {/* Actualités en carrousel */}
+      {news.length > 0 && (
+        <section data-anim className={`${panel} bg-white py-8 sm:py-12`}>
+          <div className="flex flex-wrap items-end justify-between gap-4 px-7 sm:px-10">
+            <h2 className="text-[1.9rem] leading-[1.05] font-bold tracking-[-0.03em] text-navy sm:text-[2.6rem]">Actualités</h2>
             <Link href="/actualites" className="link-arrow">
               Toutes les actualités
             </Link>
           </div>
-          {featured ? (
-            <div className="mt-12 grid gap-10 lg:grid-cols-12 lg:gap-12">
-              <FeaturedNews item={featured} />
-              <ul className="lg:col-span-5">
-                {others.map((n) => (
-                  <NewsLine key={n.slug} item={n} />
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <p className="mt-10 text-muted">Les prochaines actualités du réseau seront publiées ici.</p>
-          )}
-        </div>
-      </section>
-
-      {/* Bureau exécutif */}
-      {board.length > 0 && (
-        <section className="border-t border-line py-20 sm:py-28">
-          <div className="container-site grid gap-12 lg:grid-cols-12 lg:gap-10">
-            <div className="lg:col-span-4">
-              <h2 className="heading-lg text-balance">Le Bureau exécutif</h2>
-              <p className="mt-5 max-w-[26rem] text-[1.05rem] leading-relaxed text-muted">
-                {board.length} dirigeants du secteur élus pour conduire l&apos;action du réseau.
-              </p>
-              <Link href="/gouvernance" className="link-arrow mt-8">
-                Voir tout le bureau
-              </Link>
-            </div>
-            <ul className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4 lg:col-span-8">
-              {board.slice(0, 8).map((m) => (
-                <li key={m.id} className="group">
-                  <div className="relative size-24 overflow-hidden rounded-full bg-ice sm:size-28">
-                    {m.photoUrl ? (
-                      <Image src={m.photoUrl} alt="" fill sizes="112px" className="img-hover object-cover" />
-                    ) : (
-                      <span className="grid size-full place-items-center text-xl font-semibold text-navy/50">{initials(m.fullName)}</span>
-                    )}
-                  </div>
-                  <p className="mt-4 text-[0.98rem] leading-snug font-semibold text-navy">{m.fullName}</p>
-                  <p className="mt-1 text-[0.88rem] leading-snug text-muted">{m.positionTitle}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <div className="mt-8"><ScrollRail label="Dernières actualités" className="gap-3 scroll-px-7 px-7 pb-2 sm:scroll-px-10 sm:px-10">
+            {news.map((n) => (
+              <NewsTile key={n.slug} item={n} />
+            ))}
+          </ScrollRail></div>
         </section>
       )}
 
-      <LinkedinPosts />
-
-      {/* Adhésion */}
-      <section className="bg-navy-deep py-20 text-white sm:py-28">
-        <div className="container-site grid gap-12 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-5">
-            <h2 className="font-display text-[1.9rem] leading-[1.08] font-bold tracking-[-0.025em] text-balance sm:text-[2.75rem]">Rejoindre le REPTIC.CM</h2>
-            <p className="mt-5 max-w-[28rem] text-[1.05rem] leading-relaxed text-white/70">
-              La demande se fait en ligne : vous déposez vos justificatifs et suivez l&apos;instruction de votre dossier depuis votre espace.
-            </p>
-            <Link href="/adhesion" className="btn-inverse mt-9">
-              Déposer ma demande
+      {/* Bureau exécutif */}
+      {board.length > 0 && (
+        <section data-anim className={`${panel} bg-ice py-8 sm:py-12`}>
+          <div className="flex flex-wrap items-end justify-between gap-4 px-7 sm:px-10">
+            <div>
+              <h2 className="text-[1.9rem] leading-[1.05] font-bold tracking-[-0.03em] text-navy sm:text-[2.6rem]">Le Bureau exécutif</h2>
+              <p className="mt-2 text-[0.98rem] text-muted">{board.length} dirigeants du secteur élus pour conduire l&apos;action du réseau.</p>
+            </div>
+            <Link href="/gouvernance" className="link-arrow">
+              Voir tout le bureau
             </Link>
           </div>
-          <ul className="lg:col-span-6 lg:col-start-7">
-            {profiles.map((p) => (
-              <li key={p.anchor} className="border-t border-white/15 py-7 first:border-t-0 first:pt-0 lg:first:border-t lg:first:pt-7">
-                <p className="text-[0.9rem] font-medium text-[#7cc4ea]">{p.kind}</p>
-                <p className="mt-2 text-[1.3rem] leading-snug font-semibold tracking-[-0.015em]">{p.title}</p>
-                <p className="mt-2 text-[0.98rem] leading-relaxed text-white/70">{p.text}</p>
-                <Link
-                  href={`/adhesion#${p.anchor}`}
-                  className="mt-4 inline-block border-b border-white/40 pb-0.5 text-sm font-semibold hover:border-white"
-                >
-                  Conditions et pièces à fournir
-                </Link>
+          <div className="mt-8"><ScrollRail label="Membres du Bureau exécutif" className="gap-3 scroll-px-7 px-7 pb-2 sm:scroll-px-10 sm:px-10">
+            {board.map((m) => (
+              <li key={m.id} className="w-[12rem] shrink-0 snap-start">
+                <BoardCard member={m} className="h-full" />
               </li>
             ))}
-          </ul>
+          </ScrollRail></div>
+        </section>
+      )}
+
+    </div>
+
+      <LinkedinPosts />
+
+    <div className="mx-auto max-w-[90rem] px-2 pt-3 sm:px-3">
+
+      {/* Appel final */}
+      <section data-anim className={`${panel} relative isolate bg-navy-deep text-white`}>
+        <div className="grid lg:grid-cols-12">
+          <div className="p-8 sm:p-12 lg:col-span-7 lg:p-16">
+            <h2 className="text-[2.4rem] leading-[1] font-bold tracking-[-0.04em] text-balance sm:text-[3.6rem] lg:text-[4.4rem]">
+              Votre entreprise fait le numérique camerounais<span className="text-cyan">.</span>
+            </h2>
+            <p className="mt-6 max-w-[32rem] text-[1.1rem] leading-relaxed text-white/75">Rejoignez les opérateurs, éditeurs, startups et experts qui portent la voix du secteur.</p>
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <CapsuleLink href="/adhesion" tone="light">
+                Conditions d&apos;adhésion
+              </CapsuleLink>
+              <Link href="/contact" className="btn-inverse-outline">
+                Nous contacter
+              </Link>
+            </div>
+          </div>
+          <div className="relative min-h-[16rem] lg:col-span-5">
+            <Image src="/images/reptic/pages/adhesion-reseau.webp" alt="" fill sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover object-[60%_30%]" />
+          </div>
         </div>
       </section>
+    </div>
     </>
   );
 }
 
-function initials(name: string) {
-  return name
-    .replace(/^(Dr\.?-?(Ing\.)?|Mme|M\.)\s+/i, "")
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase();
+function Hero({ next, founded }: { next?: EventItem; founded?: KeyFigure }) {
+  return (
+    <section className={`${panel} relative isolate flex min-h-[calc(100svh-6.25rem)] flex-col justify-end bg-navy-deep text-white`}>
+      <div aria-hidden className="hero-zoom absolute inset-0 -z-20">
+        <Image src="/images/reptic/pages/adhesion-reseau.webp" alt="" fill priority sizes="100vw" className="banner-parallax object-cover object-[70%_30%]" />
+      </div>
+      <div aria-hidden className="absolute inset-0 -z-10 bg-navy-deep/75 lg:bg-transparent lg:bg-gradient-to-r lg:from-navy-deep/95 lg:via-navy-deep/70 lg:to-navy-deep/25" />
+
+      <div className="grid gap-10 p-7 sm:p-12 lg:grid-cols-12 lg:items-end lg:p-16">
+        <div className="lg:col-span-8">
+          <h1 className="text-[2.9rem] leading-[0.98] font-bold tracking-[-0.045em] sm:text-[4.6rem] lg:text-[6.2rem]">
+            <RiseWords text="Le réseau qui fédère le numérique camerounais" accent="." start={150} step={60} />
+          </h1>
+          <p className="intro mt-7 max-w-[34rem] text-[1.12rem] leading-[1.6] text-white/80 [--intro-delay:650ms]">
+            Entreprises et professionnels des télécoms et du numérique, réunis pour défendre le secteur et accélérer la transformation digitale du Cameroun.
+          </p>
+          <div className="intro mt-9 flex flex-wrap items-center gap-3 [--intro-delay:780ms]">
+            <CapsuleLink href="/adhesion" tone="light">
+              Devenir membre
+            </CapsuleLink>
+            <Link href="/presentation" className="btn-inverse-outline">
+              Découvrir le réseau
+            </Link>
+          </div>
+        </div>
+
+        <div className="intro lg:col-span-4 [--intro-delay:950ms]">
+          {next ? (
+            <Link href={`/evenements/${next.slug}`} className="group block rounded-3xl bg-navy-deep/55 p-5 ring-1 ring-white/20 backdrop-blur-xl transition-colors hover:bg-navy-deep/70">
+              <span className="flex items-center justify-between gap-3 text-[0.85rem] text-white/70">
+                Prochain rendez-vous
+                <Countdown startsAt={next.startsAt} className="rounded-full bg-cyan px-2.5 py-0.5 text-[0.75rem] font-semibold text-white" />
+              </span>
+              <span className="mt-3 flex items-center gap-4">
+                <span className="grid size-16 shrink-0 place-content-center rounded-2xl bg-white text-center text-navy">
+                  <span className="text-[1.5rem] leading-none font-bold">{formatDate(next.startsAt, { day: "numeric" })}</span>
+                  <span className="mt-0.5 text-[0.72rem]">{formatDate(next.startsAt, { month: "short" })}</span>
+                </span>
+                <span className="text-[1.05rem] leading-snug font-semibold">{next.title}</span>
+              </span>
+            </Link>
+          ) : (
+            <div className="rounded-3xl bg-navy-deep/55 p-5 ring-1 ring-white/20 backdrop-blur-xl">
+              <span className="text-[0.85rem] text-white/70">Association professionnelle</span>
+              <p className="mt-2 text-[1.05rem] leading-snug font-semibold">
+                Yaoundé, Cameroun{founded ? `, depuis ${founded.value}` : ""}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
 }
 
-function EventTicket({ item }: { item: EventItem }) {
-  const start = new Date(item.startsAt);
-  const end = item.endsAt ? new Date(item.endsAt) : null;
-  const sameDay = !end || end.toDateString() === start.toDateString();
-  const days = sameDay ? formatDate(item.startsAt, { day: "numeric" }) : `${formatDate(item.startsAt, { day: "numeric" })}–${formatDate(item.endsAt!, { day: "numeric" })}`;
-  const monthYear = formatDate(item.startsAt, { month: "long", year: "numeric" });
-  const place = [item.locationName, item.city].filter(Boolean).join(", ");
-
+function BigFigure({ figure, fallback, className, href, linkLabel, since }: {
+  figure?: KeyFigure;
+  fallback: KeyFigure;
+  className: string;
+  href: string;
+  linkLabel: string;
+  /** Année de départ : affiche la frise de croissance sous le chiffre. */
+  since?: number;
+}) {
+  const f = figure ?? fallback;
   return (
-    <Link
-      href={`/evenements/${item.slug}`}
-      className="group mt-10 grid overflow-hidden rounded-2xl bg-white ring-1 ring-line transition-shadow hover:ring-navy/30 sm:grid-cols-[11rem_1fr] lg:grid-cols-[11rem_1fr_20rem]"
-    >
-      <div className="flex flex-row items-baseline gap-3 bg-navy px-7 transition-colors duration-300 group-hover:bg-cyan-dark py-6 text-white sm:flex-col sm:justify-center sm:gap-1 sm:py-8">
-        <span className="text-[2.6rem] leading-none font-bold tracking-[-0.04em] tabular-nums">{days}</span>
-        <span className="text-[0.95rem] text-white/75">{monthYear}</span>
-      </div>
-      <div className="border-line px-7 py-7 sm:border-l sm:border-dashed sm:py-9">
-        {place && <p className="text-[0.92rem] font-medium text-cyan-dark">{place}</p>}
-        <h3 className="title-sweep mt-2 inline text-[1.45rem] leading-snug font-bold tracking-[-0.02em] text-navy sm:text-[1.7rem]">{item.title}</h3>
-        {item.excerpt && <p className="mt-3 max-w-[40rem] text-[0.98rem] leading-relaxed text-muted">{item.excerpt}</p>}
-        <p className="mt-6 text-sm font-semibold text-navy">{item.registrationEnabled ? "S'inscrire" : "Voir le programme"}</p>
-      </div>
-      {item.coverUrl && (
-        <div className="relative hidden lg:block">
-          <Image src={item.coverUrl} alt="" fill sizes="320px" className="img-hover object-cover" />
-        </div>
+    <Link href={href} className={`${panel} lift group flex min-h-[13rem] flex-col justify-between gap-6 p-7 sm:p-8 ${className}`}>
+      {since ? (
+        <AnimatedFigure value={f.value} since={since} />
+      ) : (
+        <span className="text-[4.2rem] leading-[0.9] font-bold tracking-[-0.05em] text-navy sm:text-[5rem]">
+          <CountUp value={f.value} />
+        </span>
       )}
+      <span className="flex items-end justify-between gap-3">
+        <span className="text-[1rem] font-medium text-navy">{f.label}</span>
+        <span className="text-[0.85rem] font-semibold text-cyan-dark group-hover:text-navy">{linkLabel}</span>
+      </span>
     </Link>
   );
 }
 
-function FeaturedNews({ item }: { item: NewsItem }) {
+function ProfileLink({ href, kind, title }: { href: string; kind: string; title: string }) {
   return (
-    <article className="group relative lg:col-span-7">
-      <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-ice">
-        {item.coverUrl && <Image src={item.coverUrl} alt="" fill sizes="(min-width: 1024px) 720px, 100vw" className="img-hover object-cover" />}
-      </div>
-      <p className="mt-6 text-[0.9rem] text-muted">
-        {item.category && <span className="font-medium text-cyan-dark">{item.category}</span>}
-        {item.category && <span aria-hidden>, </span>}
-        <time dateTime={item.publishedAt}>{formatDate(item.publishedAt)}</time>
-      </p>
-      <h3 className="mt-2 text-[1.5rem] leading-snug font-bold tracking-[-0.02em] text-navy sm:text-[1.85rem]">
-        <Link href={`/actualites/${item.slug}`} className="title-sweep after:absolute after:inset-0">
-          {item.title}
-        </Link>
-      </h3>
-      {item.excerpt && <p className="mt-3 max-w-[38rem] text-[1rem] leading-relaxed text-muted">{item.excerpt}</p>}
-    </article>
+    <li>
+      <Link href={href} className="lift group flex h-full flex-col justify-between rounded-2xl bg-ice p-5 transition-colors hover:bg-navy">
+        <span className="text-[0.85rem] text-muted group-hover:text-white/70">{kind}</span>
+        <span className="mt-4 text-[1.1rem] leading-snug font-semibold text-navy group-hover:text-white">{title}</span>
+      </Link>
+    </li>
   );
 }
 
-function NewsLine({ item }: { item: NewsItem }) {
+function NewsTile({ item }: { item: NewsItem }) {
   return (
-    <li className="group relative flex gap-5 border-t border-line py-6 first:border-t-0 first:pt-0 lg:first:border-t lg:first:pt-6">
-      <div className="relative size-24 shrink-0 overflow-hidden rounded-lg bg-ice">
-        {item.coverUrl && <Image src={item.coverUrl} alt="" fill sizes="96px" className="img-hover object-cover" />}
+    <li className="lift group relative aspect-[4/5] w-[78%] shrink-0 snap-start overflow-hidden rounded-3xl bg-navy sm:w-[46%] lg:w-[31%]">
+      {item.coverUrl && <Image src={item.coverUrl} alt="" fill sizes="(min-width: 1024px) 30vw, 80vw" className="img-hover object-cover" />}
+      <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-navy-deep via-navy-deep/35 to-navy-deep/10" />
+      {/* Pastille vitrée (catégorie) et temps de lecture */}
+      <div className="absolute inset-x-0 top-0 flex items-center justify-between gap-3 p-5 text-white">
+        {item.category ? (
+          <span className="rounded-full bg-white/15 px-3 py-1 text-[0.78rem] font-medium ring-1 ring-white/30 backdrop-blur-md">{item.category}</span>
+        ) : (
+          <span />
+        )}
+        <span className="flex items-center gap-1.5 text-[0.78rem] text-white/85">
+          <Clock aria-hidden className="size-3.5" /> {readingTime(item.body ?? item.excerpt)}
+        </span>
       </div>
-      <div>
-        <p className="text-[0.85rem] text-muted">
+      <div className="absolute inset-x-0 bottom-0 p-6 text-white">
+        <p className="text-[0.85rem] text-white/75">
           <time dateTime={item.publishedAt}>{formatDate(item.publishedAt)}</time>
         </p>
-        <h3 className="mt-1.5 text-[1.05rem] leading-snug font-semibold text-navy">
-          <Link href={`/actualites/${item.slug}`} className="title-sweep after:absolute after:inset-0">
+        <h3 className="mt-2 text-[1.3rem] leading-snug font-bold tracking-[-0.015em] text-balance">
+          <Link href={`/actualites/${item.slug}`} className="after:absolute after:inset-0">
             {item.title}
           </Link>
         </h3>
+        {/* Chapeau dévoilé au survol (toujours visible sur écran tactile) */}
+        {item.excerpt && <p className="reveal-on-hover text-[0.92rem] leading-relaxed text-white/80">{item.excerpt}</p>}
       </div>
     </li>
   );

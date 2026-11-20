@@ -1,16 +1,22 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown } from "lucide-react";
-import type { NavItem } from "@/content/site";
+import { heroBanners, type NavItem } from "@/content/site";
+
+/** Photo d'aperçu d'un lien du menu : la bannière de la page visée. */
+const previewFor = (href: string) => heroBanners[href.replace(/^\//, "") as keyof typeof heroBanners] ?? heroBanners.default;
 
 const linkBase =
-  "relative flex h-[4.75rem] items-center gap-1 px-2.5 text-[0.92rem] font-semibold whitespace-nowrap xl:px-3.5 text-navy transition-colors hover:text-cyan-dark after:absolute after:inset-x-3 after:bottom-0 after:h-[3px] after:origin-left after:scale-x-0 after:bg-cyan after:transition-transform hover:after:scale-x-100";
+  "flex h-10 items-center gap-1 rounded-full px-2.5 text-[0.9rem] xl:px-3.5 font-semibold whitespace-nowrap text-navy transition-colors hover:bg-ice aria-expanded:bg-ice";
 
 export function MainNav({ items, cta, mobileExtra }: { items: NavItem[]; cta: React.ReactNode; mobileExtra: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -45,7 +51,14 @@ export function MainNav({ items, cta, mobileExtra }: { items: NavItem[]; cta: Re
       <nav ref={navRef} aria-label="Navigation principale" className="hidden items-center lg:flex">
         {items.map((item) =>
           item.children ? (
-            <div key={item.label} className="relative" onMouseLeave={() => setOpenMenu(null)}>
+            <div
+              key={item.label}
+              className="relative"
+              onMouseLeave={() => {
+                setOpenMenu(null);
+                setPreview(null);
+              }}
+            >
               <button
                 type="button"
                 aria-expanded={openMenu === item.label}
@@ -57,17 +70,42 @@ export function MainNav({ items, cta, mobileExtra }: { items: NavItem[]; cta: Re
                 <ChevronDown aria-hidden className={`size-3.5 transition-transform ${openMenu === item.label ? "rotate-180" : ""}`} />
               </button>
               {openMenu === item.label && (
-                <div className="absolute top-full left-0 z-50 w-80 border border-t-0 border-line bg-white">
-                  <ul>
-                    {item.children.map((child) => (
-                      <li key={child.href} className="border-t border-line first:border-t-0">
-                        <Link href={child.href} onClick={close} className="group block px-5 py-4 hover:bg-paper">
-                          <span className="block text-[0.92rem] font-semibold text-navy group-hover:text-cyan-dark">{child.label}</span>
-                          {child.description && <span className="mt-0.5 block text-[0.8rem] text-muted">{child.description}</span>}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+                // Menu enrichi : liste à gauche, aperçu photo à droite qui suit le lien survolé
+                <div className="menu-pop absolute top-full left-0 z-50 pt-3">
+                  <div className="grid w-[34rem] grid-cols-[1fr_13rem] gap-2 rounded-3xl bg-white p-2 shadow-[0_18px_50px_-16px_rgb(20_26_51/0.3)] ring-1 ring-line">
+                    <ul className="py-1">
+                      {item.children.map((child) => (
+                        <li key={child.href}>
+                          <Link
+                            href={child.href}
+                            onClick={close}
+                            onMouseEnter={() => setPreview(child.href)}
+                            onFocus={() => setPreview(child.href)}
+                            className="group block rounded-2xl px-4 py-3 transition-colors hover:bg-ice focus-visible:bg-ice"
+                          >
+                            <span className="block text-[0.92rem] font-semibold text-navy">{child.label}</span>
+                            {child.description && <span className="mt-0.5 block text-[0.8rem] text-muted">{child.description}</span>}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="relative overflow-hidden rounded-2xl bg-ice">
+                      {item.children.map((child) => (
+                        <Image
+                          key={child.href}
+                          src={previewFor(child.href)}
+                          alt=""
+                          fill
+                          sizes="208px"
+                          className={`object-cover transition-opacity duration-300 ${(preview ?? item.children![0].href) === child.href ? "opacity-100" : "opacity-0"}`}
+                        />
+                      ))}
+                      <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-navy-deep/70 to-transparent" />
+                      <span className="absolute inset-x-0 bottom-0 p-4 text-[0.85rem] font-semibold text-white">
+                        {item.children.find((c) => c.href === (preview ?? item.children![0].href))?.label}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -96,9 +134,12 @@ export function MainNav({ items, cta, mobileExtra }: { items: NavItem[]; cta: Re
         </span>
       </button>
 
-      {mobileOpen && (
-        <div id="menu-mobile" className="fixed inset-x-0 top-[4.8rem] bottom-0 z-40 overflow-y-auto border-t border-line bg-white lg:hidden">
-          <nav aria-label="Navigation mobile" className="container-site py-4">
+      {/* Rendu dans <body> : à l'intérieur de la pastille floutée (backdrop-filter),
+          un élément « fixed » serait enfermé dans la pastille et invisible. */}
+      {mobileOpen &&
+        createPortal(
+        <div id="menu-mobile" className="menu-pop fixed inset-x-2 top-[5.25rem] bottom-2 z-40 sm:inset-x-3 lg:hidden">
+          <nav aria-label="Navigation mobile" className="h-full overflow-y-auto rounded-[1.75rem] bg-white px-6 py-4 shadow-[0_24px_60px_-20px_rgb(20_26_51/0.35)] ring-1 ring-line">
             {items.map((item) =>
               item.children ? (
                 <div key={item.label} className="border-b border-line py-4">
@@ -115,13 +156,16 @@ export function MainNav({ items, cta, mobileExtra }: { items: NavItem[]; cta: Re
                 </Link>
               ),
             )}
-            <div className="mt-8 grid gap-3" onClick={close}>
-              {cta}
+            <div className="mt-8 grid gap-3 pb-4" onClick={close}>
               {mobileExtra}
+              <Link href="/adhesion" className="btn-primary w-full">
+                Adhérer
+              </Link>
             </div>
           </nav>
-        </div>
-      )}
+        </div>,
+          document.body,
+        )}
     </>
   );
 }

@@ -22,7 +22,7 @@ export default async function ContactPage() {
   return (
     <>
       <PageHero image={heroBanners.contact} title="Contact" eyebrow="Nous écrire" summary="Une question sur l'association, l'adhésion ou un partenariat ? Le secrétariat vous répond." />
-      <section className="container-site grid gap-14 py-16 sm:py-24 lg:grid-cols-12 lg:gap-6">
+      <section className="panel panel-pad grid gap-14 bg-white lg:grid-cols-12 lg:gap-6">
         <aside className="lg:col-span-3">
           <dl className="border-t-2 border-navy">
             <div className="border-b border-line py-5">

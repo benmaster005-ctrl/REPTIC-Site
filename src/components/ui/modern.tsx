@@ -123,7 +123,9 @@ export function FaqAccordion({ items, name = "faq" }: { items: { question: strin
 export function FilterChips({ label, options, current }: { label: string; options: { label: string; href: string; value: string | null }[]; current: string | null }) {
   return (
     <nav aria-label={label} className="-mx-4 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
-      <ul className="flex w-max gap-2 sm:w-auto sm:flex-wrap">
+      {/* Contrôle segmenté : l'indicateur blanc glisse d'un choix à l'autre
+          (transition de vue partagée entre les deux pages). */}
+      <ul className="inline-flex w-max gap-0.5 rounded-full bg-ice p-1 ring-1 ring-line">
         {options.map((o) => {
           const active = o.value === current;
           return (
@@ -132,8 +134,9 @@ export function FilterChips({ label, options, current }: { label: string; option
                 href={o.href}
                 scroll={false}
                 aria-current={active ? "page" : undefined}
+                style={active ? { viewTransitionName: "filtre-actif" } : undefined}
                 className={`inline-flex items-center rounded-full px-4 py-2 text-[0.88rem] font-semibold whitespace-nowrap transition-colors ${
-                  active ? "bg-navy text-white" : "border border-line bg-white text-navy hover:border-navy"
+                  active ? "bg-white text-navy shadow-[0_2px_8px_-2px_rgb(20_26_51/0.18)]" : "text-muted hover:text-navy"
                 }`}
               >
                 {o.label}

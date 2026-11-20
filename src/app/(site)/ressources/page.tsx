@@ -26,7 +26,7 @@ export default async function ResourcesPage() {
         summary="Documents de l'association en libre accès. Les membres retrouvent des ressources supplémentaires dans leur espace."
         crumbs={[{ label: "Le REPTIC" }]}
       />
-      <section className="container-site py-16 sm:py-24">
+      <section className="panel panel-pad bg-white">
         {resources.length ? (
           <RevealGroup as="ul" className="border-b border-line lg:ml-[calc(25%+0.375rem)]">
             {resources.map((r) => (

@@ -5,7 +5,7 @@ type Variant = "bar" | "nav" | "block";
 
 const styles: Record<Variant, string> = {
   bar: "font-semibold text-white hover:text-cyan",
-  nav: "text-[0.92rem] font-semibold whitespace-nowrap text-navy hover:text-cyan-dark",
+  nav: "flex h-10 items-center rounded-full px-4 text-[0.9rem] font-semibold whitespace-nowrap text-navy transition-colors hover:bg-ice",
   block: "btn-secondary w-full",
 };
 

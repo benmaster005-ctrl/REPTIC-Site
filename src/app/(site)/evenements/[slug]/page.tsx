@@ -51,9 +51,9 @@ async function EventDetail({ params }: Pick<PageProps<"/evenements/[slug]">, "pa
       <ReadingColumn
         aside={
           <div className="space-y-8 lg:sticky lg:top-36">
-            <dl className="border-t-2 border-navy">
+            <dl className="rounded-3xl bg-ice px-5 py-1">
               {facts.map((f) => (
-                <div key={f.label} className="border-b border-line py-4">
+                <div key={f.label} className="border-b border-line py-4 last:border-b-0">
                   <dt className="label">{f.label}</dt>
                   <dd className="mt-1.5 font-semibold text-navy first-letter:uppercase">{f.value}</dd>
                 </div>

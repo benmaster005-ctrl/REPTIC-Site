@@ -6,28 +6,33 @@ import { MainNav } from "./MainNav";
 import { AccountLink, AccountLinkFallback } from "./AccountLink";
 import { HeaderShell } from "@/components/motion/HeaderShell";
 
-/** En-tête : une seule barre (logo, navigation, espace membre, adhésion). */
+/** En-tête flottant : une pastille dépolie détachée du bord, posée sur la page. */
 export function SiteHeader() {
   return (
     <HeaderShell>
-      <div className="border-b border-line">
-        <div className="container-site flex h-[4.75rem] items-center justify-between gap-6">
-          <Logo priority className="h-10 w-auto sm:h-11" />
-          <MainNav
-            items={mainNav}
-            cta={
-              <div className="flex items-center gap-4 xl:gap-6">
+      <div className="header-pill mx-auto flex h-16 max-w-[90rem] items-center justify-between gap-4 rounded-full bg-white/80 pr-2 pl-5 ring-1 ring-navy/8 backdrop-blur-xl backdrop-saturate-150 sm:pl-6">
+        <Logo priority className="h-9 w-auto sm:h-10" />
+        <MainNav
+          items={mainNav}
+          cta={
+            <div className="flex items-center gap-2">
+              {/* Entre 1024 et 1280 px, la place manque : l'espace membre reste dans le pied de page */}
+              <span className="hidden xl:contents">
                 <Suspense fallback={<AccountLinkFallback variant="nav" />}>
                   <AccountLink variant="nav" />
                 </Suspense>
-                <Link href="/adhesion" className="btn-primary">
-                  Adhérer
-                </Link>
-              </div>
-            }
-            mobileExtra={null}
-          />
-        </div>
+              </span>
+              <Link href="/adhesion" className="btn-primary h-12">
+                Adhérer
+              </Link>
+            </div>
+          }
+          mobileExtra={
+            <Suspense fallback={<AccountLinkFallback variant="block" />}>
+              <AccountLink variant="block" />
+            </Suspense>
+          }
+        />
       </div>
     </HeaderShell>
   );

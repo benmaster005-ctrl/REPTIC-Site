@@ -14,7 +14,7 @@ export async function LinkedinPosts({ limit = 3 }: { limit?: number }) {
   if (!posts.length) return null;
 
   return (
-    <section className="border-t border-line bg-paper py-20 sm:py-28">
+    <section className="panel bg-white py-10 sm:py-14">
       <div className="container-site">
         <SectionHeader label="Sur LinkedIn" title="Le réseau sur LinkedIn" action={{ label: "Suivre la page", href: PAGE_URL }} />
         {/* Carrousel glissant sur mobile, grille à partir de la tablette */}

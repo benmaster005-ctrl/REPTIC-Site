@@ -20,7 +20,7 @@ export default async function ActorsPage() {
         summary="Les familles de professionnels qui composent l'écosystème numérique représenté par le réseau."
         crumbs={[{ label: "Membres" }]}
       />
-      <section className="container-site py-16 sm:py-24">
+      <section className="panel panel-pad bg-white">
         <RevealGroup as="ol" className="grid border-b border-line md:grid-cols-2 md:gap-x-12">
           {categories.map((c) => (
             <li key={c.slug} id={c.slug} className="border-t border-line py-8 target:bg-cyan-tint">

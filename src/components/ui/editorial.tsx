@@ -18,7 +18,7 @@ export async function editorialMetadata(slug: string, path: string): Promise<Met
 /** Colonne de lecture alignée sur la grille (colonnes 4 à 12). */
 export function ReadingColumn({ children, aside }: { children: React.ReactNode; aside?: React.ReactNode }) {
   return (
-    <div className="container-site grid gap-10 py-16 sm:py-20 lg:grid-cols-12 lg:gap-6">
+    <div className="panel panel-pad grid gap-10 bg-white lg:grid-cols-12 lg:gap-6">
       <aside className="lg:col-span-3">{aside}</aside>
       <div className="lg:col-span-9">{children}</div>
     </div>

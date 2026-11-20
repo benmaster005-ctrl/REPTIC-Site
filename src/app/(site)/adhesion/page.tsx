@@ -30,15 +30,15 @@ export default async function MembershipPage() {
         crumbs={[{ label: "Membres" }]}
       />
 
-      <section className="container-site py-16 sm:py-24">
+      <section className="panel panel-pad bg-white">
         <SectionHeader label="Avantages" title="Pourquoi adhérer" />
         <div className="mt-12 lg:ml-[calc(25%+0.375rem)]">
           <RuledList items={memberBenefits} columns={2} />
         </div>
       </section>
 
-      <section className="bg-paper py-16 sm:py-24">
-        <div className="container-site">
+      <section className="panel panel-pad bg-ice">
+        <div>
           <SectionHeader label="Catégories" title="Deux profils, deux dossiers" description="Les pièces demandées dépendent de votre profil." />
           <RevealGroup className="mt-12 grid gap-4 lg:ml-[calc(25%+0.375rem)] lg:grid-cols-2">
             {profiles.map((p) => (
@@ -63,7 +63,7 @@ export default async function MembershipPage() {
         </div>
       </section>
 
-      <section className="container-site py-16 sm:py-24">
+      <section className="panel panel-pad bg-white">
         <SectionHeader label="Procédure" title="Cinq étapes, en ligne" />
         <RevealGroup as="ol" className="relative mt-12 grid gap-6 sm:grid-cols-5 sm:gap-4 lg:ml-[calc(25%+0.375rem)]">
           {/* Fil de la frise : vertical sur mobile, horizontal ensuite */}
@@ -91,8 +91,8 @@ export default async function MembershipPage() {
         )}
       </section>
 
-      <section className="border-t border-line bg-paper py-16 sm:py-24">
-        <div className="container-site">
+      <section className="panel panel-pad bg-ice">
+        <div>
           <SectionHeader label="Questions fréquentes" title="Vos questions sur l'adhésion" />
           <div className="mt-12 lg:ml-[calc(25%+0.375rem)]">
             <FaqAccordion items={membershipFaq} name="faq-adhesion" />
@@ -100,8 +100,8 @@ export default async function MembershipPage() {
         </div>
       </section>
 
-      <section className="bg-navy text-white">
-        <div className="container-site flex flex-col gap-8 py-14 sm:flex-row sm:items-center sm:justify-between">
+      <section className="panel bg-navy text-white">
+        <div className="flex flex-col gap-8 p-8 sm:flex-row sm:items-center sm:justify-between sm:p-12 lg:px-16">
           <div>
             <p className="font-display text-[1.8rem] leading-tight font-extrabold tracking-[-0.02em]">Prêt à déposer votre dossier ?</p>
             <p className="mt-2 text-white/70">Préparez vos justificatifs : la saisie prend une quinzaine de minutes.</p>

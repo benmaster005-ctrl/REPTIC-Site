@@ -2,11 +2,12 @@ import Link from "next/link";
 import Image from "next/image";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Clock } from "lucide-react";
 import type { EventItem, NewsItem } from "@/lib/types";
-import { formatDate } from "@/lib/format";
+import { formatDate, readingTime } from "@/lib/format";
 import { isDemo } from "@/lib/data/public";
 import { heroBanners } from "@/content/site";
+import { CapsuleLink } from "./CapsuleLink";
 
 export type Crumb = { label: string; href?: string };
 
@@ -35,16 +36,17 @@ export function PageHero({ title, summary, crumbs = [], eyebrow, image, imageAlt
   // Le fil d'Ariane situe déjà la page : pas de libellé au-dessus du titre.
   void eyebrow;
   return (
-    <section className="relative isolate overflow-hidden bg-navy-deep text-white">
+    <section className="panel relative isolate bg-navy-deep text-white">
       <Image src={banner} alt={cover ? "" : imageAlt} fill priority sizes="100vw" className={`banner-parallax -z-20 object-cover object-[70%_35%] ${cover ? "hidden lg:block" : ""}`} />
       {/* Voile marine, comme la bannière de l'accueil : plein sur mobile, dégradé depuis la gauche sur grand écran */}
       <span
         aria-hidden
         className={`absolute inset-0 -z-10 ${cover ? "bg-navy-deep/95" : "bg-navy-deep/80 lg:bg-transparent lg:bg-gradient-to-r lg:from-navy-deep lg:via-navy-deep/85 lg:to-navy-deep/20"}`}
       />
-      <div className="container-site pt-8 pb-16 sm:pb-20 lg:min-h-[26rem] lg:pb-24">
-        <nav aria-label="Fil d'Ariane">
-          <ol className="flex flex-wrap items-center gap-2 text-[0.85rem] text-white/65">
+      <div className={`flex flex-col p-6 sm:p-10 lg:p-14 ${cover ? "" : "min-h-[22rem] sm:min-h-[26rem] lg:min-h-[30rem]"}`}>
+        {/* Fil d'Ariane en pastille vitrée */}
+        <nav aria-label="Fil d'Ariane" className="self-start">
+          <ol className="flex flex-wrap items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-[0.82rem] text-white/70 ring-1 ring-white/15 backdrop-blur-md">
             {trail.map((c, i) => (
               <li key={i} className="flex items-center gap-2">
                 {i > 0 && <span aria-hidden className="text-white/35">/</span>}
@@ -64,11 +66,11 @@ export function PageHero({ title, summary, crumbs = [], eyebrow, image, imageAlt
         {cover ? (
           <div className="mt-12 grid gap-10 lg:mt-16 lg:grid-cols-12 lg:items-center lg:gap-12">
             <div className="lg:col-span-7">
-              <h1 className="heading-lg text-balance !text-white">{title}</h1>
+              <h1 className="font-display text-[2.2rem] leading-[1.04] font-bold tracking-[-0.035em] text-balance sm:text-[3rem] lg:text-[3.4rem]">{title}</h1>
               {summary && <p className="mt-6 max-w-2xl text-[1.1rem] leading-relaxed text-white/80">{summary}</p>}
             </div>
             <figure className="lg:col-span-5 lg:justify-self-end">
-              <a href={cover.src} target="_blank" rel="noopener noreferrer" className="group block w-fit overflow-hidden rounded-xl border border-white/15 bg-navy-deep">
+              <a href={cover.src} target="_blank" rel="noopener noreferrer" className="group block w-fit overflow-hidden rounded-3xl ring-1 ring-white/15 bg-navy-deep">
                 <Image
                   src={cover.src}
                   alt={cover.alt}
@@ -88,8 +90,8 @@ export function PageHero({ title, summary, crumbs = [], eyebrow, image, imageAlt
             </figure>
           </div>
         ) : (
-          <div className="mt-16 max-w-[44rem] lg:mt-24">
-            <h1 className="font-display text-[2.3rem] leading-[1.04] font-bold tracking-[-0.03em] text-balance sm:text-[3.2rem] lg:text-[3.6rem]">{title}</h1>
+          <div className="mt-auto max-w-[48rem] pt-16">
+            <h1 className="font-display text-[2.5rem] leading-[1] font-bold tracking-[-0.04em] text-balance sm:text-[3.6rem] lg:text-[4.4rem]">{title}</h1>
             {summary && <p className="mt-6 max-w-[36rem] text-[1.1rem] leading-[1.65] text-white/80">{summary}</p>}
           </div>
         )}
@@ -159,7 +161,7 @@ export function RichText({ children }: { children: string | null }) {
 /** Liste éditoriale (missions, avantages) : lignes séparées par des filets. */
 export function RuledList({ items, columns = 1 }: { items: { title: string; description: string }[]; columns?: 1 | 2 }) {
   return (
-    <ul className={`grid border-b border-line ${columns === 2 ? "md:grid-cols-2 md:gap-x-12" : ""}`}>
+    <ul data-stagger className={`grid border-b border-line ${columns === 2 ? "md:grid-cols-2 md:gap-x-12" : ""}`}>
       {items.map((m) => (
         <li key={m.title} className="group grid gap-3 border-t border-line py-7 sm:grid-cols-12 sm:gap-8">
           <h3 className={`font-display text-[1.15rem] leading-snug font-semibold tracking-[-0.01em] text-navy ${columns === 2 ? "sm:col-span-12" : "sm:col-span-5"}`}>{m.title}</h3>
@@ -205,11 +207,23 @@ export function NewsCard({ item, size = "default", delay = 0 }: { item: NewsItem
         ) : (
           <CardPlaceholder />
         )}
+        {!compact && (
+          <div className="absolute inset-x-0 top-0 flex items-center justify-between gap-3 p-4 text-white">
+            {item.category ? (
+              <span className="rounded-full bg-navy-deep/35 px-3 py-1 text-[0.75rem] font-medium ring-1 ring-white/30 backdrop-blur-md">{item.category}</span>
+            ) : (
+              <span />
+            )}
+            <span className="flex items-center gap-1.5 rounded-full bg-navy-deep/35 px-2.5 py-1 text-[0.75rem] backdrop-blur-md">
+              <Clock aria-hidden className="size-3.5" /> {readingTime(item.body ?? item.excerpt)}
+            </span>
+          </div>
+        )}
       </div>
       <div className={`flex flex-1 flex-col ${compact ? "" : "pt-5"}`}>
         <p className="text-[0.85rem] text-muted">
-          {item.category && <span className="font-medium text-cyan-dark">{item.category}</span>}
-          {item.category && <span aria-hidden>, </span>}
+          {compact && item.category && <span className="font-medium text-cyan-dark">{item.category}</span>}
+          {compact && item.category && <span aria-hidden>, </span>}
           <time dateTime={item.publishedAt}>{date}</time>
         </p>
         <h3
@@ -273,23 +287,23 @@ export function EventRow({ item }: { item: EventItem }) {
 /** Appel à l'adhésion en bas des pages : aplat marine et photo nette. */
 export function JoinBand() {
   return (
-    <section className="overflow-hidden bg-navy-deep text-white">
-      <div className="container-site grid lg:grid-cols-12">
-        <div className="py-20 sm:py-24 lg:col-span-7 lg:pr-12">
-          <p className="font-display text-[1.9rem] leading-[1.08] font-bold tracking-[-0.025em] text-balance sm:text-[2.75rem]">
-            Votre entreprise fait le numérique camerounais. Faites-la entendre.
+    <section className="panel bg-navy-deep text-white">
+      <div className="grid lg:grid-cols-12">
+        <div className="p-8 sm:p-12 lg:col-span-7 lg:p-16">
+          <p className="font-display text-[2.2rem] leading-[1] font-bold tracking-[-0.04em] text-balance sm:text-[3.2rem] lg:text-[3.8rem]">
+            Votre entreprise fait le numérique camerounais<span className="text-cyan">.</span>
           </p>
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-            <Link href="/adhesion" className="btn-inverse">
+          <div className="mt-9 flex flex-wrap items-center gap-3">
+            <CapsuleLink href="/adhesion" tone="light">
               Conditions d&apos;adhésion
-            </Link>
+            </CapsuleLink>
             <Link href="/contact" className="btn-inverse-outline">
               Nous contacter
             </Link>
           </div>
         </div>
-        <div className="relative hidden lg:col-span-5 lg:-mr-[max(1.5rem,calc((100vw-84rem)/2+1.5rem))] lg:block">
-          <Image src="/images/reptic/pages/adhesion-reseau.webp" alt="" fill sizes="40vw" className="object-cover" />
+        <div className="relative min-h-[14rem] lg:col-span-5">
+          <Image src="/images/reptic/pages/adhesion-reseau.webp" alt="" fill sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover object-[60%_30%]" />
         </div>
       </div>
     </section>

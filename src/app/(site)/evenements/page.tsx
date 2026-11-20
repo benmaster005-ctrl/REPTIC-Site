@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getEvents } from "@/lib/data/public";
-import { EmptyState, EventRow, PageHero, SectionHeader } from "@/components/ui/content";
+import { EmptyState, PageHero, SectionHeader } from "@/components/ui/content";
+import { EventTicket } from "@/components/ui/EventTicket";
 import { RevealGroup } from "@/components/motion/Reveal";
 import { heroBanners } from "@/content/site";
 
@@ -15,13 +16,13 @@ export default async function EventsPage() {
   return (
     <>
       <PageHero image={heroBanners.evenements} title="Événements" eyebrow="Agenda" summary="Forums, ateliers et rencontres du réseau." />
-      <section className="container-site py-16 sm:py-24">
+      <section className="panel panel-pad bg-white">
         <SectionHeader label="À venir" title="Prochains rendez-vous" />
         <div className="mt-12 lg:ml-[calc(25%+0.375rem)]">
           {upcoming.length ? (
             <RevealGroup as="ul" className="grid gap-3">
               {upcoming.map((e) => (
-                <EventRow key={e.slug} item={e} />
+                <li key={e.slug}><EventTicket item={e} notch="#fff" /></li>
               ))}
             </RevealGroup>
           ) : (
@@ -30,12 +31,12 @@ export default async function EventsPage() {
         </div>
       </section>
       {past.length > 0 && (
-        <section className="border-t border-line bg-paper py-16 sm:py-24">
-          <div className="container-site">
+        <section className="panel panel-pad bg-white">
+          <div>
             <SectionHeader label="Archives" title="Événements passés" />
             <RevealGroup as="ul" className="mt-12 grid gap-3 lg:ml-[calc(25%+0.375rem)]">
               {past.slice(0, 10).map((e) => (
-                <EventRow key={e.slug} item={e} />
+                <li key={e.slug}><EventTicket item={e} notch="#fff" /></li>
               ))}
             </RevealGroup>
           </div>

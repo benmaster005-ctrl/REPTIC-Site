@@ -19,7 +19,7 @@ export default function NewsListPage({ searchParams }: PageProps<"/actualites">)
   return (
     <>
       <PageHero image={heroBanners.actualites} title="Actualités" eyebrow="Informations" summary="Communiqués, vie du réseau et actualités du secteur numérique." />
-      <section className="container-site py-16 sm:py-24">
+      <section className="panel panel-pad bg-white">
         <Suspense fallback={<NewsGridSkeleton />}>
           <NewsGrid searchParams={searchParams} />
         </Suspense>
@@ -57,7 +57,7 @@ async function NewsGrid({ searchParams }: Pick<PageProps<"/actualites">, "search
         </div>
       )}
       {!items.length && <EmptyState title={category ? "Aucune actualité dans cette catégorie." : "Aucune actualité publiée pour le moment."} />}
-      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      <div data-stagger className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {items.map((n, i) => (
           <NewsCard key={n.slug} item={n} delay={(i % 3) * 100} />
         ))}
