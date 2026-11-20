@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
 import logo from "../../../public/brand/logo-reptic.svg";
@@ -28,9 +27,11 @@ export function AppShell({ product, nav, account, topbar, children }: {
   topbar?: React.ReactNode;
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const [openFor, setOpenFor] = useState<string | null>(null);
-  const open = openFor === pathname; // le tiroir se referme dès que la page change
+
+  // Pas de lecture de l'URL ici (usePathname) : avec Cache Components, elle bloquerait
+  // le prérendu de toutes les pages. Le tiroir se referme au clic sur un lien.
+  const [open, setOpen] = useState(false);
+
   const [collapsed, setCollapsed] = useState(false);
 
   // Choix « barre réduite » mémorisé (confort de chaque visiteur, sans garantie)
@@ -53,7 +54,7 @@ export function AppShell({ product, nav, account, topbar, children }: {
   useEffect(() => {
     if (!open) return;
     document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpenFor(null);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     document.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = "";
@@ -72,7 +73,7 @@ export function AppShell({ product, nav, account, topbar, children }: {
       {withClose && (
         <button
           type="button"
-          onClick={() => setOpenFor(null)}
+          onClick={() => setOpen(false)}
           aria-label="Fermer le menu"
           className="ml-auto grid size-9 place-items-center rounded-lg text-muted hover:bg-ice hover:text-heading"
         >
@@ -106,11 +107,15 @@ export function AppShell({ product, nav, account, topbar, children }: {
           type="button"
           tabIndex={-1}
           aria-label="Fermer le menu"
-          onClick={() => setOpenFor(null)}
+          onClick={() => setOpen(false)}
           className={`absolute inset-0 bg-black/45 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}
         />
         <aside
           inert={!open}
+          // Un clic sur un lien du tiroir (navigation) le referme
+          onClickCapture={(e) => {
+            if ((e.target as HTMLElement).closest("a")) setOpen(false);
+          }}
           className={`absolute inset-y-0 left-0 flex w-72 max-w-[85%] flex-col border-r border-line bg-surface shadow-2xl transition-transform duration-300 ease-[var(--ease-out)] ${
             open ? "translate-x-0" : "-translate-x-full"
           }`}
@@ -125,7 +130,7 @@ export function AppShell({ product, nav, account, topbar, children }: {
           {/* Mobile : ouvre le tiroir */}
           <button
             type="button"
-            onClick={() => setOpenFor(pathname)}
+            onClick={() => setOpen(true)}
             aria-label="Ouvrir le menu"
             aria-expanded={open}
             className="-ml-1.5 grid size-9 place-items-center rounded-lg text-heading hover:bg-ice lg:hidden"
