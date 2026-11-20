@@ -13,7 +13,7 @@ export default function ForgotPasswordPage() {
         <ForgotPasswordForm />
       </div>
       <p className="mt-8 text-center text-sm">
-        <Link href="/connexion" className="font-semibold text-navy underline underline-offset-4 hover:text-cyan-dark">
+        <Link href="/connexion" className="font-semibold text-heading underline underline-offset-4 hover:text-cyan-dark">
           Retour à la connexion
         </Link>
       </p>

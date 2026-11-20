@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { Logo } from "@/components/layout/Logo";
+import logo from "../../../public/brand/logo-reptic.svg";
+import logoWhite from "../../../public/brand/logo-reptic-blanc.svg";
 import { getKeyFigures } from "@/lib/data/public";
 
 /** Quelques visages du bureau, affichés en pastilles qui se chevauchent. */
@@ -30,16 +31,21 @@ export default async function AuthLayout({
   // Premier chiffre clé qui n'est pas l'année de création (ex. nombre de membres)
   const figure = figures.find((f) => !/création|fondation/i.test(f.label));
   return (
-    <div className="grid min-h-screen lg:grid-cols-12">
+    // .site-theme : mode sombre comme le site public (globals.css)
+    <div className="site-theme grid min-h-screen bg-surface lg:grid-cols-12">
       <main
         id="contenu"
         className="flex flex-col px-4 py-6 sm:px-10 lg:col-span-5 lg:px-14"
       >
         <div className="flex items-center justify-between gap-4">
-          <Logo className="h-10 w-auto" />
+          {/* Logo couleur en clair, logo blanc en mode sombre */}
+          <Link href="/" aria-label="REPTIC.CM, retour à l'accueil" className="inline-block shrink-0">
+            <Image src={logo} alt="REPTIC.CM" priority unoptimized className="h-10 w-auto dark:hidden" />
+            <Image src={logoWhite} alt="REPTIC.CM" priority unoptimized className="hidden h-10 w-auto dark:block" />
+          </Link>
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted hover:text-navy"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted hover:text-heading"
           >
             <ArrowLeft aria-hidden className="size-4" /> Retour au site
           </Link>

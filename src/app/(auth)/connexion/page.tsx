@@ -21,7 +21,7 @@ export default function LoginPage({ searchParams }: PageProps<"/connexion">) {
       </div>
       <p className="mt-8 text-center text-sm text-muted">
         Pas encore membre ?{" "}
-        <Link href="/adhesion" className="font-semibold text-navy underline underline-offset-4 hover:text-cyan-dark">
+        <Link href="/adhesion" className="font-semibold text-heading underline underline-offset-4 hover:text-cyan-dark">
           Déposer une demande d&apos;adhésion
         </Link>
       </p>

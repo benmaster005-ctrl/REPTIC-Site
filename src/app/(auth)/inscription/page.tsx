@@ -22,7 +22,7 @@ export default function SignUpPage({ searchParams }: PageProps<"/inscription">) 
       </div>
       <p className="mt-8 text-center text-sm text-muted">
         Déjà un compte ?{" "}
-        <Link href="/connexion?suite=/espace/adhesion" className="font-semibold text-navy underline underline-offset-4 hover:text-cyan-dark">
+        <Link href="/connexion?suite=/espace/adhesion" className="font-semibold text-heading underline underline-offset-4 hover:text-cyan-dark">
           Se connecter
         </Link>
       </p>
@@ -40,7 +40,7 @@ async function SignUpWithNext({ searchParams }: Pick<PageProps<"/inscription">, 
         note={
           <>
             En continuant avec Google ou LinkedIn, vous acceptez la{" "}
-            <Link href="/confidentialite" className="font-semibold text-navy underline underline-offset-2">
+            <Link href="/confidentialite" className="font-semibold text-heading underline underline-offset-2">
               politique de confidentialité
             </Link>
             .
