@@ -43,7 +43,9 @@ export function PageHero({ title, summary, crumbs = [], eyebrow, image, imageAlt
         aria-hidden
         className={`absolute inset-0 -z-10 ${cover ? "bg-navy-deep/95" : "bg-navy-deep/80 lg:bg-transparent lg:bg-gradient-to-r lg:from-navy-deep lg:via-navy-deep/85 lg:to-navy-deep/20"}`}
       />
-      <div className={`flex flex-col p-6 sm:p-10 lg:p-14 ${cover ? "" : "min-h-[22rem] sm:min-h-[26rem] lg:min-h-[30rem]"}`}>
+      {/* Haut de la photo assombri : liens de la navigation lisibles */}
+      <span aria-hidden className="absolute inset-x-0 top-0 -z-10 h-40 bg-gradient-to-b from-navy-deep/75 to-transparent" />
+      <div className={`flex flex-col p-6 pt-28 sm:p-10 sm:pt-32 lg:p-14 lg:pt-36 ${cover ? "" : "min-h-[26rem] sm:min-h-[30rem] lg:min-h-[34rem]"}`}>
         {/* Fil d'Ariane en pastille vitrée */}
         <nav aria-label="Fil d'Ariane" className="self-start">
           <ol className="flex flex-wrap items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-[0.82rem] text-white/70 ring-1 ring-white/15 backdrop-blur-md">

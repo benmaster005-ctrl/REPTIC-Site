@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: PageProps<"/actualites/[slug]
 
 export default function NewsArticlePage({ params }: PageProps<"/actualites/[slug]">) {
   return (
-    <Suspense fallback={<div className="h-96 animate-pulse border-b border-line bg-paper" />}>
+    <Suspense fallback={<div className="panel h-96 animate-pulse bg-navy-deep" />}>
       <Article params={params} />
     </Suspense>
   );

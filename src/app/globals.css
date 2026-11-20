@@ -363,14 +363,53 @@ body {
 }
 
 /* --- En-tête dépoli une fois la page défilée ----------------------------- */
-.site-header[data-scrolled] .header-pill {
-  background-color: rgb(255 255 255 / 0.9);
-  box-shadow: 0 10px 30px -14px rgb(20 26 51 / 0.28);
-}
+/* --- En-tête posé sur la bannière ------------------------------------------
+   En haut de page : transparent, liens et logo blancs, sur la photo marine.
+   Dès que la page défile : pastille blanche dépolie, liens marine. */
 .header-pill {
   transition:
-    background-color 0.3s,
-    box-shadow 0.3s;
+    background-color 0.35s,
+    box-shadow 0.35s,
+    backdrop-filter 0.35s;
+}
+.site-header[data-scrolled] .header-pill {
+  background-color: rgb(255 255 255 / 0.88);
+  box-shadow:
+    0 0 0 1px rgb(35 45 87 / 0.08),
+    0 10px 30px -14px rgb(20 26 51 / 0.28);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+}
+.logo-white {
+  opacity: 0;
+  transition: opacity 0.35s;
+}
+.logo-color {
+  transition: opacity 0.35s;
+}
+.site-header:not([data-scrolled]) .logo-white {
+  opacity: 1;
+}
+.site-header:not([data-scrolled]) .logo-color {
+  opacity: 0;
+}
+.site-header:not([data-scrolled]) .nav-link {
+  color: #fff;
+}
+.site-header:not([data-scrolled]) .nav-link:hover,
+.site-header:not([data-scrolled]) .nav-link[aria-expanded="true"] {
+  background-color: rgb(255 255 255 / 0.14);
+}
+.site-header:not([data-scrolled]) .nav-bar {
+  background-color: #fff;
+}
+.site-header:not([data-scrolled]) .header-pill .btn-primary {
+  background-color: #fff;
+  color: var(--color-navy);
+}
+.site-header:not([data-scrolled]) .header-pill .btn-primary:hover {
+  background-color: var(--color-cyan);
+  color: #fff;
 }
 
 /* --- Images des cartes : rapprochement discret au survol ----------------- */

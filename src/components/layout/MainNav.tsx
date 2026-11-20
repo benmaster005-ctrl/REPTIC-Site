@@ -11,7 +11,7 @@ import { heroBanners, type NavItem } from "@/content/site";
 const previewFor = (href: string) => heroBanners[href.replace(/^\//, "") as keyof typeof heroBanners] ?? heroBanners.default;
 
 const linkBase =
-  "flex h-10 items-center gap-1 rounded-full px-2.5 text-[0.9rem] xl:px-3.5 font-semibold whitespace-nowrap text-navy transition-colors hover:bg-ice aria-expanded:bg-ice";
+  "nav-link flex h-10 items-center gap-1 rounded-full px-2.5 text-[0.9rem] xl:px-3.5 font-semibold whitespace-nowrap text-navy transition-colors hover:bg-ice aria-expanded:bg-ice";
 
 export function MainNav({ items, cta, mobileExtra }: { items: NavItem[]; cta: React.ReactNode; mobileExtra: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -121,7 +121,7 @@ export function MainNav({ items, cta, mobileExtra }: { items: NavItem[]; cta: Re
 
       <button
         type="button"
-        className="flex h-11 items-center gap-2.5 px-1 text-sm font-semibold text-navy lg:hidden"
+        className="nav-link flex h-11 items-center gap-2.5 rounded-full px-3 text-sm font-semibold text-navy lg:hidden"
         aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
         aria-expanded={mobileOpen}
         aria-controls="menu-mobile"
@@ -129,8 +129,8 @@ export function MainNav({ items, cta, mobileExtra }: { items: NavItem[]; cta: Re
       >
         <span>{mobileOpen ? "Fermer" : "Menu"}</span>
         <span aria-hidden className="relative block h-3 w-6">
-          <span className={`absolute left-0 h-[2px] w-6 bg-navy transition-transform ${mobileOpen ? "top-[5px] rotate-45" : "top-0"}`} />
-          <span className={`absolute left-0 h-[2px] bg-navy transition-all ${mobileOpen ? "top-[5px] w-6 -rotate-45" : "top-[10px] w-4"}`} />
+          <span className={`nav-bar absolute left-0 h-[2px] w-6 bg-navy transition-transform ${mobileOpen ? "top-[5px] rotate-45" : "top-0"}`} />
+          <span className={`nav-bar absolute left-0 h-[2px] bg-navy transition-all ${mobileOpen ? "top-[5px] w-6 -rotate-45" : "top-[10px] w-4"}`} />
         </span>
       </button>
 
@@ -138,7 +138,7 @@ export function MainNav({ items, cta, mobileExtra }: { items: NavItem[]; cta: Re
           un élément « fixed » serait enfermé dans la pastille et invisible. */}
       {mobileOpen &&
         createPortal(
-        <div id="menu-mobile" className="menu-pop fixed inset-x-2 top-[5.25rem] bottom-2 z-40 sm:inset-x-3 lg:hidden">
+        <div id="menu-mobile" className="menu-pop fixed inset-x-2 top-[5.75rem] bottom-2 z-40 sm:inset-x-3 sm:top-[6.25rem] lg:hidden">
           <nav aria-label="Navigation mobile" className="h-full overflow-y-auto rounded-[1.75rem] bg-white px-6 py-4 shadow-[0_24px_60px_-20px_rgb(20_26_51/0.35)] ring-1 ring-line">
             {items.map((item) =>
               item.children ? (

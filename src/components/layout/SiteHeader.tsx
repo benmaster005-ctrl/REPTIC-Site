@@ -1,17 +1,27 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { mainNav } from "@/content/site";
-import { Logo } from "./Logo";
+import Image from "next/image";
+import logo from "../../../public/brand/logo-reptic.svg";
+import logoWhite from "../../../public/brand/logo-reptic-blanc.svg";
 import { MainNav } from "./MainNav";
 import { AccountLink, AccountLinkFallback } from "./AccountLink";
 import { HeaderShell } from "@/components/motion/HeaderShell";
 
-/** En-tête flottant : une pastille dépolie détachée du bord, posée sur la page. */
+/**
+ * En-tête flottant posé sur la bannière : transparent, texte et logo blancs en
+ * haut de page ; pastille blanche dépolie dès que la page défile (globals.css,
+ * « .site-header[data-scrolled] »).
+ */
 export function SiteHeader() {
   return (
     <HeaderShell>
-      <div className="header-pill mx-auto flex h-16 max-w-[90rem] items-center justify-between gap-4 rounded-full bg-white/80 pr-2 pl-5 ring-1 ring-navy/8 backdrop-blur-xl backdrop-saturate-150 sm:pl-6">
-        <Logo priority className="h-9 w-auto sm:h-10" />
+      <div className="header-pill mx-auto flex h-16 max-w-[90rem] items-center justify-between gap-4 rounded-full pr-2 pl-5 sm:pl-6">
+        {/* Deux versions du logo : blanche sur la bannière, couleur une fois la page défilée */}
+        <Link href="/" aria-label="REPTIC.CM, retour à l'accueil" className="relative inline-block shrink-0">
+          <Image src={logo} alt="REPTIC.CM" priority unoptimized className="logo-color h-9 w-auto sm:h-10" />
+          <Image src={logoWhite} alt="" aria-hidden priority unoptimized className="logo-white absolute inset-0 h-9 w-auto sm:h-10" />
+        </Link>
         <MainNav
           items={mainNav}
           cta={

@@ -167,13 +167,15 @@ export default async function HomePage() {
 
 function Hero({ next, founded }: { next?: EventItem; founded?: KeyFigure }) {
   return (
-    <section className={`${panel} relative isolate flex min-h-[calc(100svh-6.25rem)] flex-col justify-end bg-navy-deep text-white`}>
+    <section className={`${panel} relative isolate flex min-h-[calc(100svh-1.5rem)] flex-col justify-end bg-navy-deep text-white`}>
       <div aria-hidden className="hero-zoom absolute inset-0 -z-20">
         <Image src="/images/reptic/pages/adhesion-reseau.webp" alt="" fill priority sizes="100vw" className="banner-parallax object-cover object-[70%_30%]" />
       </div>
       <div aria-hidden className="absolute inset-0 -z-10 bg-navy-deep/75 lg:bg-transparent lg:bg-gradient-to-r lg:from-navy-deep/95 lg:via-navy-deep/70 lg:to-navy-deep/25" />
+      {/* Assombrit le haut de la photo : liens de la navigation lisibles */}
+      <div aria-hidden className="absolute inset-x-0 top-0 -z-10 h-44 bg-gradient-to-b from-navy-deep/75 to-transparent" />
 
-      <div className="grid gap-10 p-7 sm:p-12 lg:grid-cols-12 lg:items-end lg:p-16">
+      <div className="grid gap-10 p-7 pt-32 sm:p-12 sm:pt-36 lg:grid-cols-12 lg:items-end lg:p-16 lg:pt-40">
         <div className="lg:col-span-8">
           <h1 className="text-[2.9rem] leading-[0.98] font-bold tracking-[-0.045em] sm:text-[4.6rem] lg:text-[6.2rem]">
             <RiseWords text="Le réseau qui fédère le numérique camerounais" accent="." start={150} step={60} />

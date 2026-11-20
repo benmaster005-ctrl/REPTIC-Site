@@ -43,7 +43,7 @@ export function HeaderShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <header ref={ref} className="site-header sticky top-0 z-50 px-2 pt-2 sm:px-3 sm:pt-3" style={{ viewTransitionName: "site-header" }}>
+    <header ref={ref} className="site-header fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 sm:pt-6" style={{ viewTransitionName: "site-header" }}>
       {children}
     </header>
   );
