@@ -2,6 +2,7 @@ import { ViewTransition } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { DemoNotice } from "@/components/ui/content";
+import { BackToTop } from "@/components/motion/BackToTop";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -13,11 +14,12 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       </a>
       <DemoNotice />
       <SiteHeader />
-      <main id="contenu" className="flex-1">
+      <main id="contenu" tabIndex={-1} className="flex-1 outline-none">
         {/* Fondu enchaîné du contenu entre deux pages ; l'en-tête reste fixe. */}
         <ViewTransition default="page">{children}</ViewTransition>
       </main>
       <SiteFooter />
+      <BackToTop />
     </div>
   );
 }
