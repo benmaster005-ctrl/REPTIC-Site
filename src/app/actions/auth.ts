@@ -79,12 +79,14 @@ export async function signInWithOAuthProvider(formData: FormData) {
   redirect(data.url);
 }
 
-export async function signOut() {
+export async function signOut(formData?: FormData) {
   if (isSupabaseConfigured) {
     const supabase = await createClient();
     await supabase.auth.signOut();
   }
-  redirect("/connexion");
+  // « suite » facultatif : se reconnecter avec un autre compte puis revenir (ex. lien d'invitation)
+  const next = formData?.get("suite");
+  redirect(next ? `/connexion?suite=${encodeURIComponent(safeNext(next))}` : "/connexion");
 }
 
 const signUpSchema = z

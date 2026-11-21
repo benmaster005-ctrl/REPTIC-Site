@@ -20,12 +20,6 @@ export default function SignUpPage({ searchParams }: PageProps<"/inscription">) 
           <SignUpWithNext searchParams={searchParams} />
         </Suspense>
       </div>
-      <p className="mt-8 text-center text-sm text-muted">
-        Déjà un compte ?{" "}
-        <Link href="/connexion?suite=/espace/adhesion" className="font-semibold text-heading underline underline-offset-4 hover:text-cyan-dark">
-          Se connecter
-        </Link>
-      </p>
     </>
   );
 }
@@ -48,6 +42,12 @@ async function SignUpWithNext({ searchParams }: Pick<PageProps<"/inscription">, 
         }
       />
       <SignUpForm next={next} />
+      <p className="mt-8 text-center text-sm text-muted">
+        Déjà un compte ?{" "}
+        <Link href={`/connexion?suite=${encodeURIComponent(next ?? "/espace/adhesion")}`} className="font-semibold text-heading underline underline-offset-4 hover:text-cyan-dark">
+          Se connecter
+        </Link>
+      </p>
     </>
   );
 }

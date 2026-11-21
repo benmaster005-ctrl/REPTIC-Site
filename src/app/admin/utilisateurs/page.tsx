@@ -5,6 +5,41 @@ import { PAGE_SIZE, listUsers } from "@/lib/data/admin";
 import { formatDate } from "@/lib/format";
 import { AdminHeader, DataTable, FilterBar, Pagination, Panel, StatusTag, listHref, pageNum, str } from "@/components/admin/ui";
 import { UserActiveForm, UserRoleForm } from "@/components/admin/UserForms";
+import { AddUserButton, RevokeInviteForm } from "@/components/admin/RoleInviteForms";
+import { createClient } from "@/lib/supabase/server";
+
+/** Invitations en attente (ni utilisées, ni annulées, ni expirées). */
+async function PendingInvitations() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("role_invitations")
+    .select("id, role_key, email, note, expires_at, created_at")
+    .is("used_at", null)
+    .is("revoked_at", null)
+    .gt("expires_at", new Date().toISOString())
+    .order("created_at", { ascending: false });
+  if (!data?.length) return null;
+  return (
+    <Panel className="mt-4">
+      <h2 className="text-[1.05rem] font-semibold text-heading">Invitations en attente</h2>
+      <p className="mt-1 text-[0.88rem] text-muted">Le rôle est attribué dès que la personne accepte l&apos;invitation reçue par e-mail.</p>
+      <ul className="mt-3 divide-y divide-line">
+        {data.map((i) => (
+          <li key={i.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
+            <span className="min-w-0 text-[0.88rem] break-words">
+              <span className="font-semibold text-heading">{i.email ?? "—"}</span>
+              <span className="text-muted">
+                {` · ${roleLabels[i.role_key] ?? i.role_key}`}
+                {` · expire le ${formatDate(i.expires_at, { day: "numeric", month: "short", year: "numeric" })}`}
+              </span>
+            </span>
+            <RevokeInviteForm id={i.id} />
+          </li>
+        ))}
+      </ul>
+    </Panel>
+  );
+}
 
 export const metadata: Metadata = { title: "Utilisateurs et rôles" };
 
@@ -31,7 +66,12 @@ async function Users({ searchParams }: Pick<PageProps<"/admin/utilisateurs">, "s
 
   return (
     <>
-      <AdminHeader label="Paramètres" title="Utilisateurs et rôles" description="Pour donner accès à l'administration, la personne crée d'abord son compte sur le site (Créer un compte), puis vous lui attribuez un rôle ici." />
+      <AdminHeader
+        label="Paramètres"
+        title="Utilisateurs et rôles"
+        description="Ajoutez un utilisateur : il reçoit une invitation par e-mail et obtient le rôle choisi dès qu'il crée son compte ou se connecte."
+        action={<AddUserButton />}
+      />
       <Panel className="mt-4">
         <h2 className="label">Rôles d&apos;équipe (moindre privilège)</h2>
         <dl className="mt-4 grid gap-4 sm:grid-cols-3">
@@ -43,6 +83,9 @@ async function Users({ searchParams }: Pick<PageProps<"/admin/utilisateurs">, "s
           ))}
         </dl>
       </Panel>
+      <Suspense fallback={null}>
+        <PendingInvitations />
+      </Suspense>
       <FilterBar
         q={filters.q}
         placeholder="E-mail, nom…"

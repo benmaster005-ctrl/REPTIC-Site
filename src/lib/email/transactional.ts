@@ -17,6 +17,7 @@ export type TemplateKey =
   | "event.registered"
   | "contact.received"
   | "invitation.member"
+  | "invitation.team"
   | "payment.received";
 
 export type Vars = Record<string, string | null | undefined>;
@@ -24,6 +25,8 @@ export type Vars = Record<string, string | null | undefined>;
 type Definition = {
   eyebrow: string;
   button?: { label: string; path: string };
+  /** Adresse du bouton calculée à partir des variables (ex. lien d'invitation personnel), prioritaire sur button.path. */
+  buttonUrl?: (v: Vars) => string | null | undefined;
   facts?: (v: Vars) => { label: string; value: string | null | undefined }[];
   /** Variables affichées en encadré (texte libre saisi par une personne). */
   quoted?: Record<string, string>;
@@ -115,6 +118,16 @@ export const definitions: Record<TemplateKey, Definition> = {
     quoted: { message: "Son message" },
     reason: "Vous recevez cet e-mail car un membre du REPTIC.CM a souhaité vous inviter. Vous ne recevrez pas d'autre message si vous ne donnez pas suite.",
   },
+  "invitation.team": {
+    eyebrow: "Équipe",
+    button: { label: "Accepter l'invitation", path: "/connexion" },
+    buttonUrl: (v) => v.lien,
+    facts: (v) => [
+      { label: "Rôle", value: v.role },
+      { label: "Invitation valable jusqu'au", value: v.expire_le },
+    ],
+    reason: "Vous recevez cet e-mail car un administrateur du REPTIC.CM vous a ajouté à l'équipe. Le lien est personnel et ne fonctionne qu'une fois.",
+  },
   "payment.received": {
     eyebrow: "Cotisation",
     button: { label: "Voir mon reçu", path: "/espace/cotisation" },
@@ -148,6 +161,10 @@ export const sampleVars: Vars = {
   montant: "50 000 FCFA",
   objet: "Partenariat pour le forum 2027",
   recu_le: "12 novembre 2026 à 10:42",
+  role: "Éditeur",
+  invite_par: "Pierre-François Kamanou",
+  expire_le: "19 novembre 2026",
+  lien: "https://reptic.cm/invitation/exemple",
   message: "Bonjour,\nNous souhaiterions présenter notre offre de sponsoring pour le prochain forum.\nCordialement.",
 };
 
@@ -239,7 +256,7 @@ export function buildEmail(key: TemplateKey, template: { subject: string; body: 
     }
   });
   if (!factsInserted && facts.length) blocks.push({ type: "facts", rows: facts });
-  if (def.button) blocks.push({ type: "button", label: def.button.label, url: `${opts.siteUrl}${def.button.path}` });
+  if (def.button) blocks.push({ type: "button", label: def.button.label, url: def.buttonUrl?.(vars) || `${opts.siteUrl}${def.button.path}` });
 
   const content = {
     preheader: interpolate(paragraphs[1] ?? paragraphs[0] ?? subject, vars, false).slice(0, 140),

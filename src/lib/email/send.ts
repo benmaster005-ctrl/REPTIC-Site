@@ -103,6 +103,23 @@ export async function sendTemplated(key: TemplateKey, to: string | null | undefi
   }
 }
 
+/**
+ * Comme sendTemplated, mais attend l'envoi et renvoie le résultat : pour les
+ * actions où la personne doit savoir si l'e-mail est parti (ex. invitation).
+ */
+export async function sendTemplatedNow(key: TemplateKey, to: string, vars: Vars, opts: { replyTo?: string } = {}) {
+  try {
+    const template = await loadTemplate(key);
+    if (!template) return { ok: false as const, error: "Modèle d'e-mail introuvable (migration à appliquer)." };
+    if (!template.is_enabled) return { ok: false as const, error: "Ce modèle d'e-mail est désactivé (Administration → E-mails)." };
+    const email = buildEmail(key, template, vars, { siteUrl: SITE_URL, contactEmail: await contactEmail() });
+    return await deliver({ to, ...email, replyTo: opts.replyTo });
+  } catch (e) {
+    console.error(`sendTemplatedNow(${key})`, e);
+    return { ok: false as const, error: "L'e-mail n'a pas pu être préparé." };
+  }
+}
+
 /** Expéditeur nu (sans nom) : destinataire visible des envois groupés en copie cachée. */
 export function senderAddress() {
   const m = FROM.match(/<([^>]+)>/);
