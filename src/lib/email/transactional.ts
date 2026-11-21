@@ -27,6 +27,17 @@ type Definition = {
   facts?: (v: Vars) => { label: string; value: string | null | undefined }[];
   /** Variables affichées en encadré (texte libre saisi par une personne). */
   quoted?: Record<string, string>;
+  /**
+   * Fiche simple : toutes les données, une par ligne, dans l'ordre du formulaire.
+   * Quand elle est définie, l'e-mail se limite à la phrase d'introduction du
+   * modèle, à la fiche, puis au bouton (les autres paragraphes sont ignorés).
+   */
+  record?: (v: Vars) => { label: string; value: string | null | undefined; multiline?: boolean; link?: string }[];
+  /**
+   * Carte « message reçu » (formulaire de contact) : utilise les variables nom,
+   * email, telephone, objet, message et recu_le. Introduction du modèle + carte.
+   */
+  message?: boolean;
   reason: string;
 };
 
@@ -94,15 +105,9 @@ export const definitions: Record<TemplateKey, Definition> = {
   },
   "contact.received": {
     eyebrow: "Formulaire de contact",
-    button: { label: "Ouvrir les messages", path: "/admin/messages" },
-    facts: (v) => [
-      { label: "Expéditeur", value: v.nom },
-      { label: "E-mail", value: v.email },
-      { label: "Téléphone", value: v.telephone },
-      { label: "Objet", value: v.objet },
-    ],
-    quoted: { message: "Message" },
-    reason: "Alerte interne envoyée à l'adresse du secrétariat du REPTIC.CM.",
+    // Carte « message reçu » : expéditeur (nom, e-mail, téléphone), objet, message, date. Sans bouton.
+    message: true,
+    reason: "Alerte interne envoyée à l'adresse du secrétariat du REPTIC.CM. Répondez directement à cet e-mail pour écrire à l'expéditeur.",
   },
   "invitation.member": {
     eyebrow: "Invitation",
@@ -142,6 +147,7 @@ export const sampleVars: Vars = {
   annee: "2027",
   montant: "50 000 FCFA",
   objet: "Partenariat pour le forum 2027",
+  recu_le: "12 novembre 2026 à 10:42",
   message: "Bonjour,\nNous souhaiterions présenter notre offre de sponsoring pour le prochain forum.\nCordialement.",
 };
 
@@ -155,6 +161,63 @@ export function buildEmail(key: TemplateKey, template: { subject: string; body: 
   const def = definitions[key];
   const subject = interpolate(template.subject, vars, false).replace(/\s+/g, " ").trim();
   const paragraphs = template.body.split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean);
+
+  // Carte « message reçu » : introduction (premier paragraphe sans variable), puis la carte
+  if (def.message) {
+    const intro = paragraphs.find((p) => !/\{\{\s*[a-z_]+\s*\}\}/.test(p));
+    const name = String(vars.nom ?? "Expéditeur");
+    const link = (href: string, label: string) => `<a href="${escapeHtml(href)}" style="color:#157BB0;text-decoration:none;">${escapeHtml(label)}</a>`;
+    // En-tête dans l'ordre du formulaire, puis la date de réception
+    const rows = [
+      { label: "De", value: escapeHtml(name), strong: true },
+      vars.email ? { label: "E-mail", value: link(`mailto:${vars.email}`, vars.email) } : null,
+      { label: "Téléphone", value: vars.telephone ? link(`tel:${vars.telephone.replace(/\s/g, "")}`, vars.telephone) : "Non renseigné" },
+      { label: "Objet", value: escapeHtml(String(vars.objet ?? "")), strong: true },
+      vars.recu_le ? { label: "Reçu le", value: escapeHtml(vars.recu_le) } : null,
+    ].filter(Boolean) as { label: string; value: string; strong?: boolean }[];
+    const blocks: EmailBlock[] = [];
+    if (intro) blocks.push({ type: "paragraph", html: interpolate(intro, vars, true) });
+    blocks.push({ type: "message", rows, html: escapeHtml(String(vars.message ?? "")).replace(/\n/g, "<br>") });
+    const content = {
+      preheader: `${name} : ${vars.objet ?? subject}`.slice(0, 140),
+      eyebrow: def.eyebrow,
+      title: escapeHtml(subject),
+      blocks,
+      reason: def.reason,
+      contactEmail: opts.contactEmail,
+      siteUrl: opts.siteUrl,
+      signature: false,
+    };
+    return { subject, html: renderEmail(content), text: renderText(content) };
+  }
+
+  // Fiche simple : introduction (premier paragraphe du modèle), fiche, bouton
+  if (def.record) {
+    const intro = paragraphs.find((p) => !/\{\{\s*[a-z_]+\s*\}\}/.test(p)) ?? paragraphs[0];
+    const rows = def.record(vars)
+      .filter((r) => r.value)
+      .map((r) => {
+        let html = escapeHtml(String(r.value));
+        if (r.multiline) html = html.replace(/\n/g, "<br>");
+        if (r.link) html = `<a href="${escapeHtml(r.link)}" style="color:inherit;text-decoration:underline;">${html}</a>`;
+        return { label: escapeHtml(r.label), value: html };
+      });
+    const recordBlocks: EmailBlock[] = [];
+    if (intro) recordBlocks.push({ type: "paragraph", html: interpolate(intro, vars, true) });
+    recordBlocks.push({ type: "record", rows });
+    if (def.button) recordBlocks.push({ type: "button", label: def.button.label, url: `${opts.siteUrl}${def.button.path}` });
+    const recordContent = {
+      preheader: `${vars.nom ?? ""} : ${vars.objet ?? subject}`.slice(0, 140),
+      eyebrow: def.eyebrow,
+      title: escapeHtml(subject),
+      blocks: recordBlocks,
+      reason: def.reason,
+      contactEmail: opts.contactEmail,
+      siteUrl: opts.siteUrl,
+      signature: false,
+    };
+    return { subject, html: renderEmail(recordContent), text: renderText(recordContent) };
+  }
 
   const blocks: EmailBlock[] = [];
   let factsInserted = false;

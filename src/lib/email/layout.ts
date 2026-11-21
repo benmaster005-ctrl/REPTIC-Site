@@ -31,6 +31,10 @@ export type EmailBlock =
   | { type: "paragraph"; html: string }
   | { type: "button"; label: string; url: string }
   | { type: "facts"; rows: { label: string; value: string }[] }
+  /** Fiche : chaque donnée sur sa ligne, libellé au-dessus de la valeur, dans l'ordre donné. */
+  | { type: "record"; rows: { label: string; value: string }[] }
+  /** Message reçu : en-tête (De, E-mail, Téléphone, Objet, Reçu le) puis le message. Valeurs déjà échappées. */
+  | { type: "message"; rows: { label: string; value: string; strong?: boolean }[]; html: string }
   | { type: "quote"; label?: string; html: string }
   | { type: "code"; value: string }
   | { type: "link"; label: string; url: string }
@@ -80,29 +84,89 @@ function button(label: string, url: string) {
 </table>`;
 }
 
-/** Récapitulatif : libellé à gauche, valeur à droite, sans filets. */
+/**
+ * Récapitulatif (référence, numéro de membre, date, montant…) : encadré gris
+ * clair à filet fin, libellé à gauche, valeur à droite. Même présentation que
+ * l'en-tête du message de contact.
+ */
 function facts(rows: { label: string; value: string }[]) {
   const cells = rows
     .map(
       (r) => `
+        <tr>
+          <td width="42%" valign="top" style="padding:4px 12px 4px 0;${text(13, 20, brand.muted)}">${r.label}</td>
+          <td valign="top" style="padding:4px 0;${text(14, 20, brand.ink, "font-weight:600;")}">${r.value}</td>
+        </tr>`,
+    )
+    .join("");
+  return `
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin:4px 0 22px;border:1px solid ${brand.line};border-radius:10px;border-collapse:separate;">
   <tr>
-    <td style="padding:5px 0;${text(14, 20, brand.muted)}width:45%;vertical-align:top;">${r.label}</td>
-    <td style="padding:5px 0;${text(14, 20, brand.ink, "font-weight:600;")}vertical-align:top;">${r.value}</td>
+    <td style="padding:14px 20px;background:${brand.soft};border-radius:10px;">
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">${cells}
+      </table>
+    </td>
+  </tr>
+</table>`;
+}
+
+/** Fiche lisible sur téléphone : libellé discret au-dessus, valeur en dessous, filet entre les lignes. */
+function record(rows: { label: string; value: string }[]) {
+  const cells = rows
+    .map(
+      (r, i) => `
+  <tr>
+    <td style="padding:12px 0;${i ? `border-top:1px solid ${brand.line};` : ""}">
+      <p style="margin:0 0 3px;${text(12, 16, brand.muted)}">${r.label}</p>
+      <p style="margin:0;${text(15, 22, brand.ink)}">${r.value}</p>
+    </td>
   </tr>`,
     )
     .join("");
   return `
-<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 20px;">${cells}
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 20px;border-top:1px solid ${brand.line};border-bottom:1px solid ${brand.line};">${cells}
 </table>`;
 }
 
-/** Texte libre saisi par une personne (motif, message) : fond gris très clair. */
+/**
+ * Message reçu, présentation sobre de type « ticket » : un en-tête en tableau
+ * (De, E-mail, Téléphone, Objet, Reçu le), un filet, puis le message.
+ * Pas d'avatar. Tableaux et styles en ligne (Outlook, Gmail, Apple Mail).
+ */
+function messageCard(b: Extract<EmailBlock, { type: "message" }>) {
+  const rows = b.rows
+    .map(
+      (r) => `
+        <tr>
+          <td width="96" valign="top" style="padding:4px 12px 4px 0;${text(13, 20, brand.muted)}white-space:nowrap;">${r.label}</td>
+          <td valign="top" style="padding:4px 0;${text(14, 20, brand.ink, r.strong ? "font-weight:600;" : "")}">${r.value}</td>
+        </tr>`,
+    )
+    .join("");
+  return `
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin:4px 0 8px;border:1px solid ${brand.line};border-radius:10px;border-collapse:separate;">
+  <tr>
+    <td style="padding:16px 20px;background:${brand.soft};border-radius:10px 10px 0 0;border-bottom:1px solid ${brand.line};">
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">${rows}
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:20px 20px 22px;">
+      <p style="margin:0 0 8px;${text(13, 20, brand.muted)}">Message</p>
+      <p style="margin:0;${text(15, 24, brand.ink)}">${b.html}</p>
+    </td>
+  </tr>
+</table>`;
+}
+
+/** Texte libre saisi par une personne (motif, message) : encadré à filet fin, libellé discret, texte sur fond blanc. */
 function quote(html: string, label?: string) {
   return `
-<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin:4px 0 24px;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin:4px 0 24px;border:1px solid ${brand.line};border-radius:10px;border-collapse:separate;">
   <tr>
-    <td style="background:${brand.soft};border-radius:6px;padding:16px 18px;">
-      ${label ? `<p style="margin:0 0 6px;${text(13, 18, brand.muted)}">${label}</p>` : ""}
+    <td style="padding:16px 20px 18px;">
+      ${label ? `<p style="margin:0 0 8px;${text(13, 20, brand.muted)}">${label}</p>` : ""}
       <p style="margin:0;${text(15, 24, brand.ink)}">${html}</p>
     </td>
   </tr>
@@ -149,6 +213,10 @@ function renderBlock(b: EmailBlock) {
       return button(b.label, b.url);
     case "facts":
       return facts(b.rows);
+    case "record":
+      return record(b.rows);
+    case "message":
+      return messageCard(b);
     case "quote":
       return quote(b.html, b.label);
     case "code":
@@ -251,6 +319,9 @@ export function renderText(c: EmailContent) {
     else if (b.type === "button" || b.type === "link") lines.push(`${strip(b.label)} : ${b.url}`, "");
     else if (b.type === "code") lines.push(b.value, "");
     else if (b.type === "facts") lines.push(...b.rows.map((r) => `${strip(r.label)} : ${strip(r.value)}`), "");
+    else if (b.type === "record") lines.push(...b.rows.flatMap((r) => [`${strip(r.label)} :`, strip(r.value), ""]));
+    else if (b.type === "message")
+      lines.push(...b.rows.map((r) => `${strip(r.label)} : ${strip(r.value)}`), "", "Message :", strip(b.html.replace(/<br\s*\/?>/gi, "\n")), "");
     else if (b.type === "article") lines.push(`${b.meta ? `[${strip(b.meta)}] ` : ""}${strip(b.title)}`, ...(b.html ? [strip(b.html)] : []), b.url, "");
   }
   if (c.signature !== false) lines.push("Cordialement,", "L'équipe du REPTIC.CM", "");

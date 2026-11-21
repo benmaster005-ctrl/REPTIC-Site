@@ -7,6 +7,7 @@ import { after } from "next/server";
 import { redirect } from "next/navigation";
 import { emailSchema, fieldErrors, formValues, isLikelySpam, type FormState } from "@/lib/forms";
 import { internalRecipient, sendTemplated } from "@/lib/email/send";
+import { formatDateTime } from "@/lib/format";
 import { RECAPTCHA_ERROR, verifyRecaptcha } from "@/lib/recaptcha";
 
 /**
@@ -130,7 +131,14 @@ export async function sendContactMessage(_prev: FormState, formData: FormData): 
     sendTemplated(
       "contact.received",
       await internalRecipient(),
-      { nom: row.full_name, email: row.email, telephone: row.phone || null, objet: row.subject, message: row.message },
+      {
+        nom: row.full_name,
+        email: row.email,
+        telephone: row.phone || null,
+        objet: row.subject,
+        message: row.message,
+        recu_le: formatDateTime(new Date().toISOString()), // ex. « 12 novembre 2026 à 10:42 » (heure de Douala)
+      },
       { replyTo: row.email },
     ),
   );
